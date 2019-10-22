@@ -1,0 +1,8 @@
+node_modules
+npm-debug.log
+.env
+.editorconfig
+.vscode
+.idea
+.nuxt
+Dockerfile

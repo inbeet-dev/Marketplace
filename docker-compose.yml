@@ -1,0 +1,36 @@
+version: "3.7"
+
+services:
+  site:
+    build: .
+    environment:
+      ENV_SILENT: "true"
+      HOST: "0.0.0.0"
+      PORT: 3000
+      NODE_ENV: "development"
+      APP_URL: "http://${HOST}:${PORT}"
+      DB_CONNECTION: pg
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: lumber_click
+      DB_USER: lumber_click
+      DB_PASSWORD: 123Lumber.Click321
+      CACHE_VIEWS: "false"
+      APP_KEY: 2wsjLSopTjD6WQEztTYIZgCFou8wpLJn
+      SESSION_DRIVER: cookie
+    ports:
+      - "5001:3000"
+
+  postgres:
+    image: matno/postgres-postgis:11
+    environment:
+      POSTGRES_DB: lumber_click
+      POSTGRES_USER: lumber_click
+      POSTGRES_PASSWORD: 123Lumber.Click321
+    ports:
+      - "5435:5432"
+    volumes:
+      - "postgres:/var/lib/postgresql/data"
+
+volumes:
+  postgres:
