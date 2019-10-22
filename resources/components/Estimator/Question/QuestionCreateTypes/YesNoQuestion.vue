@@ -1,7 +1,11 @@
 <template>
   <v-row justify="center" align-content="center" align="center" no-gutters>
     <v-col cols="12" sm="8">
-      <textfield v-model="text" label="YesNoQuestion" />
+      <textfield
+        v-model="text"
+        label="YesNoQuestion"
+        placeholder="Question Text"
+      />
     </v-col>
     <v-col cols="12" sm="4" class="yes-no-question-create__actions">
       <v-btn icon color="red"><v-icon>mdi-delete</v-icon></v-btn>
