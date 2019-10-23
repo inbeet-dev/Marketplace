@@ -49,13 +49,17 @@ class QuestionController {
     projectQuestion.type = type
     projectQuestion.project_id = projectId
     projectQuestion.question = question
+    projectQuestion.answer = {}
     projectQuestion.asked_at = new Date()
     projectQuestion.status = ProjectQuestion.STATUS.notAnswered
 
     await save(projectQuestion, response)
 
     return {
-      success: true
+      success: true,
+      data: {
+        projectQuestion
+      }
     }
   }
 
