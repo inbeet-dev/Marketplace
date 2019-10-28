@@ -70,6 +70,7 @@
                     <th class="text-left">Date Assigned</th>
                     <th class="text-left">Date Due</th>
                     <th class="text-left">Time Remaining</th>
+                    <th class="text-left"></th>
                   </tr>
                 </thead>
                 <tbody v-for="(project, index) in projects" :key="index">
@@ -88,6 +89,7 @@
                     <td>{{ dateConvert(project.created_at) }}</td>
                     <td>{{ dateConvert(project.due_date) }}</td>
                     <td>{{ remainingTime(project.due_date) }}</td>
+                    <td><v-icon color="#9ca2c3">mdi-eye-circle</v-icon></td>
                   </tr>
                 </tbody>
               </v-simple-table>
