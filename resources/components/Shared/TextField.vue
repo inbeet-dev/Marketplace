@@ -2,7 +2,7 @@
   <div :class="{ 'form-group--error': error }">
     <label v-if="label" class="label"
       >{{ label }}
-      <div v-if="important" class="important-star"></div>
+      <div v-if="important" class="important-star">*</div>
     </label>
     <div class="main">
       <textarea
@@ -106,12 +106,10 @@ export default {
 }
 .label .important-star {
   position: absolute;
-  top: 0;
+  top: -13px;
   right: -10px;
-  background-color: #f78f1e;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
+  color: red;
+  font-size: 13px;
 }
 .main {
   margin-bottom: 10px;

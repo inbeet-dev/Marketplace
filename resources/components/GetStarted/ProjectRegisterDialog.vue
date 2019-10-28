@@ -6,7 +6,7 @@
       </v-icon>
       <form action="" ref="registerForm" class="registerForm">
         <v-row style="margin:0">
-          <v-col xl="3" lg="3" md="6" sm="6" cols="6">
+          <v-col xl="3" lg="3" md="6" sm="6" cols="12">
             <h5>Project Name</h5>
             <text-field
               type="text"
@@ -36,7 +36,7 @@
               :error="$v.address.$error"
             />
           </v-col>
-          <v-col xl="3" lg="3" md="6" sm="6" cols="6">
+          <v-col xl="3" lg="3" md="6" sm="6" cols="12">
             <h5>Postal code</h5>
             <text-field
               type="text"

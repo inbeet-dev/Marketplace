@@ -26,7 +26,7 @@
         <a href="#" class="link" @click.stop="videoDialog = true"
           >watch video <v-icon>mdi-chevron-right</v-icon></a
         >
-        <a href="#" class="link" @click.stop="projectLumberQuestion = true"
+        <a href="#" class="link" @click.stop="selectRoleDialog = true"
           >get started<v-icon>mdi-chevron-right</v-icon></a
         >
         <v-row justify="center">
@@ -41,12 +41,11 @@
           </v-dialog>
         </v-row>
         <v-row justify="center">
-          <v-dialog v-model="projectLumberQuestion" max-width="600">
+          <v-dialog v-model="selectRoleDialog" max-width="600">
             <v-card class="login-card">
-              <h1 class="get-start">Let's Get Started</h1>
               <v-card-text
                 ><h1 class="lumber-list">
-                  Do you Have a Lumber List?
+                  Are you a Supplier or Customer?
                 </h1></v-card-text
               >
               <v-card-actions class="action-card">
@@ -56,29 +55,23 @@
                       width="100%"
                       color="green darken-1"
                       text
-                      @click.stop="
-                        registerDialog = !registerDialog
-                        projectLumberQuestion = false
-                        setUploadType('LUMBER_LIST')
-                      "
-                      >yes</v-btn
-                    ><register-dialog v-model="registerDialog"
-                  /></v-col>
+                      @click.stop="selectRoleDialog = false"
+                      disabled
+                      >supplier</v-btn
+                    ></v-col
+                  >
                   <v-col cols="6">
                     <v-btn
                       width="100%"
                       color="green darken-1"
                       text
                       @click.stop="
-                        architecturalDrawingDialog = !architecturalDrawingDialog
-                        projectLumberQuestion = false
-                        setUploadType('EFILE')
+                        haveLumberListDialog = !haveLumberListDialog
+                        selectRoleDialog = false
                       "
-                      >no</v-btn
+                      >customer</v-btn
                     >
-                    <architectural-drawing-dialog
-                      v-model="architecturalDrawingDialog"
-                    />
+                    <have-lumber-list-dialog v-model="haveLumberListDialog" />
                   </v-col>
                 </v-row>
               </v-card-actions>
@@ -91,25 +84,17 @@
 </template>
 <script>
 import LumberHeader from '../components/Header.vue'
-import RegisterDialog from '../components/GetStarted/UserRegisterDialog'
-import ArchitecturalDrawingDialog from '../components/GetStarted/ArchitecturalDrawingDialog'
+import HaveLumberListDialog from '../components/GetStarted/HaveLumberListDialog.vue'
 export default {
   components: {
     LumberHeader,
-    RegisterDialog,
-    ArchitecturalDrawingDialog
+    HaveLumberListDialog
   },
   data: () => ({
-    registerDialog: false,
+    haveLumberListDialog: false,
     videoDialog: false,
-    projectLumberQuestion: false,
-    architecturalDrawingDialog: false
-  }),
-  methods: {
-    setUploadType(type) {
-      this.$store.dispatch('UploadType/store', type)
-    }
-  }
+    selectRoleDialog: false
+  })
 }
 </script>
 <style lang="scss" scoped>
@@ -173,22 +158,24 @@ export default {
 }
 .v-dialog .login-card .lumber-list {
   padding: 20px 0 0px;
-  font-family: Lato, 'sans';
+  font-family: 'Lato', sans-serif;
   font-style: italic;
   color: #000000;
   text-align: center;
   font-weight: 600;
   font-size: 26px;
+  line-height: 55px;
 }
 .v-dialog .login-card .col:first-child .v-btn {
   margin: 0px 0px;
-  color: #ffffff !important;
-  background-color: #f78f1e;
+  background-color: #f1f4f8;
+  color: #9ea4c4 !important;
   box-shadow: none;
   height: 50px;
   font-style: italic;
   font-size: 15px;
   text-align: center;
+  transition: 0.5s;
 }
 .v-dialog .login-card .col:last-child .v-btn {
   margin: 0px 0px;
@@ -199,6 +186,11 @@ export default {
   font-style: italic;
   font-size: 15px;
   text-align: center;
+  transition: 0.5s;
+}
+.v-dialog .login-card .col .v-btn:hover {
+  background-color: #f78f1e;
+  color: #ffffff !important;
 }
 .v-dialog .login-card .btn-row {
   padding: 20px 25px 30px;
