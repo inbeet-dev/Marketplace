@@ -19,7 +19,7 @@
                 v-model.trim="$v.name.$model"
                 type="text"
                 placeholder="Enter Name"
-                label="name"
+                :label="company ? 'Company Name' : 'Name'"
                 important
                 name="name"
                 message="Name is required"
@@ -68,7 +68,6 @@
                 type="tel"
                 placeholder="Enter Contact Number"
                 label="Contact Number"
-                important
                 name="phoneNumber"
                 message="Contact number is required"
                 :error="$v.phoneNumber.$error"
@@ -154,7 +153,8 @@
                 text
                 @click.stop="
                   accountTypeDialog = false
-                  registerDialog = !registerDialog
+                  registerDialog = true
+                  company = true
                 "
                 >Company</v-btn
               ></v-col
@@ -164,12 +164,13 @@
                 width="100%"
                 color="green darken-1"
                 text
-                @click.stop="accountTypeDialog = false"
+                @click.stop="
+                  accountTypeDialog = false
+                  registerDialog = true
+                  company = false
+                "
                 >Individual</v-btn
               >
-              <architectural-drawing-dialog
-                v-model="architecturalDrawingDialog"
-              />
             </v-col>
           </v-row>
         </v-card-actions>
@@ -197,7 +198,8 @@ export default {
       password: '',
       reTypePassword: '',
       phoneNumber: '',
-      checkBox: ''
+      checkBox: '',
+      company: false
     }
   },
   /* eslint-disable */
