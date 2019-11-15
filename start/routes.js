@@ -21,6 +21,7 @@ Route.group(() => {
   Route.post('login', 'UserController.login')
   Route.post('register', 'UserController.register')
   Route.get('dashboard', 'UserController.dashboard')
+  Route.put('', 'UserController.editProfile')
 }).prefix('api/v1/user')
 
 Route.group(() => {
