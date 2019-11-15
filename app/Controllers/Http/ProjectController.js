@@ -376,6 +376,12 @@ class ProjectController {
       }
     }
   }
+
+  assignEstimator({ response, request, auth }) {
+    return {
+      success: true
+    }
+  }
 }
 
 module.exports = ProjectController
