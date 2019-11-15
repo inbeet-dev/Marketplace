@@ -379,6 +379,8 @@ class ProjectController {
   }
 
   async assignEstimator({ response, request, auth }) {
+    await authenticate.admin(response, auth)
+
     const { projectId, estimatorId } = request.all()
 
     const lumberList = await LumberList.findBy('project_id', projectId)
