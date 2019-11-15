@@ -47,6 +47,8 @@ class LumberListController {
   }
 
   async getLumberList({ response, params, auth }) {
+    await authenticate.estimator(response, auth)
+
     const { projectId } = params
 
     const items = await Database.select(
