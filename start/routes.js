@@ -58,6 +58,7 @@ Route.group(() => {
 
 Route.group(() => {
   Route.post('item', 'LumberListController.addItems')
+  Route.get(':projectId', 'LumberListController.getLumberList')
 }).prefix('api/v1/lumberlist')
 
 Route.group(() => {
