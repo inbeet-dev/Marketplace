@@ -46,6 +46,8 @@ class LumberListController {
   }
 
   async editItems({ request, response, auth }) {
+    await authenticate.estimator(response, auth)
+
     const { projectId, items } = request.all()
 
     const lumberList = await LumberList.findBy('project_id', projectId)
