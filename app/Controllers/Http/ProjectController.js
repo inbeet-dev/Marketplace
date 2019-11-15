@@ -377,7 +377,12 @@ class ProjectController {
     }
   }
 
-  assignEstimator({ response, request, auth }) {
+  async assignEstimator({ response, request, auth }) {
+    const { projectId } = request.all()
+
+    const lumberList = await LumberList.findBy('project_id', projectId)
+    if (!lumberList) throw new ServerException('Project not found', 404)
+
     return {
       success: true
     }
