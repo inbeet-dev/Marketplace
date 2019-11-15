@@ -39,6 +39,7 @@ Route.group(() => {
   Route.get(':id/bid', 'ProjectController.getProjectBid')
   Route.put('despoit', 'ProjectController.despoit')
   Route.get(':id/suppliers', 'ProjectController.getSuppliers')
+  Route.put('assign', 'ProjectController.assignEstimator')
 }).prefix('api/v1/project')
 
 Route.group(() => {
