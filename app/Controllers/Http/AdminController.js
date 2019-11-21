@@ -77,21 +77,14 @@ class AdminController {
       LumberListBid.STATUS.accept
     )
 
-    // eslint-disable-next-line no-var
-    var acceptedBidInWeek = 0
-    await bidAccepted.map((bid) => {
-      const time = bid.updated_at
-
-      if (
-        time.getTime() >= Date.monday().getTime() &&
-        time.getTime() <=
-          Date.next()
-            .sunday()
-            .getTime()
-      ) {
-        acceptedBidInWeek++
-      }
-    })
+    const { rows: acceptedBidRows } = await Database.raw(
+      `SELECT count(id)
+      FROM lumber_list_bids
+      WHERE extract(week from updated_at) = extract(week from current_date)
+      AND extract(year from updated_at) = extract(year from current_date) AND status=?;`,
+      [LumberListBid.STATUS.accept]
+    )
+    const { count: acceptedBidInWeek } = acceptedBidRows[0]
 
     const acceptedBidsWithAmount = await Database.select(
       'lumber_list_bids.status',
@@ -134,7 +127,7 @@ class AdminController {
           week: {
             newCustomers: Number(customersInWeek),
             newBidsSubmitted: Number(newBidSubmittedInWeek),
-            bidAccepted: acceptedBidInWeek,
+            bidAccepted: Number(acceptedBidInWeek),
             acceptedProjectsPrice: weeklyAmount
           },
           total: {
