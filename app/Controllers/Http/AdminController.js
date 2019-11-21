@@ -58,10 +58,11 @@ class AdminController {
       .where('status', LumberList.STATUS.Awaiting)
       .getCount()
 
-    const { rowCount: customersInWeek } = await Database.raw(`SELECT id
+    const { rows: customerRows } = await Database.raw(`SELECT count(id)
     FROM users
     WHERE extract(week from created_at) = extract(week from current_date)
     AND extract(year from created_at) = extract(year from current_date) AND role = 'customer';`)
+    const { count: customersInWeek } = customerRows[0]
 
     const { rows: lumberListBidRows } = await Database.raw(`SELECT count(id)
     FROM lumber_list_bids
@@ -131,7 +132,7 @@ class AdminController {
       data: {
         statistics: {
           week: {
-            newCustomers: customersInWeek,
+            newCustomers: Number(customersInWeek),
             newBidsSubmitted: Number(newBidSubmittedInWeek),
             bidAccepted: acceptedBidInWeek,
             acceptedProjectsPrice: weeklyAmount
