@@ -63,22 +63,13 @@ class AdminController {
     WHERE extract(week from created_at) = extract(week from current_date)
     AND extract(year from created_at) = extract(year from current_date) AND role = 'customer';`)
 
-    // eslint-disable-next-line no-var
-    var newBidSubmittedInWeek = 0
-    const newBidsSubmitted = await LumberListBid.query()
-    await newBidsSubmitted.map((bid) => {
-      const time = bid.created_at
+    const { rows: lumberListBidRows } = await Database.raw(`SELECT count(id)
+    FROM lumber_list_bids
+    WHERE extract(week from updated_at) = extract(week from current_date)
+    AND extract(year from updated_at) = extract(year from current_date);`)
+    const { count: newBidSubmittedInWeek } = lumberListBidRows[0]
 
-      if (
-        time.getTime() >= Date.monday().getTime() &&
-        time.getTime() <=
-          Date.next()
-            .sunday()
-            .getTime()
-      ) {
-        newBidSubmittedInWeek++
-      }
-    })
+    const newBidsSubmitted = await LumberListBid.query()
 
     const bidAccepted = await LumberListBid.query().where(
       'status',
@@ -141,7 +132,7 @@ class AdminController {
         statistics: {
           week: {
             newCustomers: customersInWeek,
-            newBidsSubmitted: newBidSubmittedInWeek,
+            newBidsSubmitted: Number(newBidSubmittedInWeek),
             bidAccepted: acceptedBidInWeek,
             acceptedProjectsPrice: weeklyAmount
           },
