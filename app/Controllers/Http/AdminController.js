@@ -89,37 +89,23 @@ class AdminController {
     )
     const { count: acceptedBidInWeek } = acceptedBidRows[0]
 
-    const acceptedBidsWithAmount = await Database.select(
-      'lumber_list_bids.status',
-      'lumber_list_bids.updated_at',
-      'amount'
+    const { rows: acceptedBidsWithAmountRows } = await Database.raw(
+      `select sum(amount)
+      from lumber_list_bids left join lumber_list_bid_items on lumber_list_bid_items.lumber_list_bid_id = lumber_list_bids.id
+      where lumber_list_bids.status = ?`,
+      [LumberListBid.STATUS.accept]
     )
-      .from('lumber_list_bids')
-      .leftJoin(
-        'lumber_list_bid_items',
-        'lumber_list_bid_items.lumber_list_bid_id',
-        'lumber_list_bids.id'
-      )
-      .where('lumber_list_bids.status', 'Accept Bid')
 
-    // eslint-disable-next-line no-var
-    var totalAmount = 0
-    // eslint-disable-next-line no-var
-    var weeklyAmount = 0
-    await acceptedBidsWithAmount.map((bid) => {
-      totalAmount += bid.amount
-      const time = bid.updated_at
+    const { sum: totalAmount } = acceptedBidsWithAmountRows[0]
 
-      if (
-        time.getTime() >= Date.monday().getTime() &&
-        time.getTime() <=
-          Date.next()
-            .sunday()
-            .getTime()
-      ) {
-        weeklyAmount += bid.amount
-      }
-    })
+    const {
+      rows: acceptedWeeklyBidsWithAmountRows
+    } = await Database.raw(`select sum(amount)
+    from lumber_list_bids left join lumber_list_bid_items on lumber_list_bid_items.lumber_list_bid_id = lumber_list_bids.id
+    where lumber_list_bids.status = 'Accept Bid' AND extract(week from lumber_list_bids.updated_at) = extract(week from current_date)
+    AND extract(year from lumber_list_bids.updated_at) = extract(year from current_date);`)
+
+    const { sum: weeklyAmount } = acceptedWeeklyBidsWithAmountRows[0]
 
     const customers = await User.query().where('role', User.ROLES.customer)
 
@@ -131,13 +117,13 @@ class AdminController {
             newCustomers: Number(customersInWeek),
             newBidsSubmitted: Number(newBidSubmittedInWeek),
             bidAccepted: Number(acceptedBidInWeek),
-            acceptedProjectsPrice: weeklyAmount
+            acceptedProjectsPrice: Number(weeklyAmount)
           },
           total: {
             newCustomers: customers.length,
             newBidsSubmitted: newBidsSubmitted.length,
             bidAccepted: bidAccepted.length,
-            acceptedProjectsPrice: totalAmount
+            acceptedProjectsPrice: Number(totalAmount)
           }
         },
         lumberLists: {
