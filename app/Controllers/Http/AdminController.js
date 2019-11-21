@@ -58,23 +58,10 @@ class AdminController {
       .where('status', LumberList.STATUS.Awaiting)
       .getCount()
 
-    const customers = await User.query().where('role', User.ROLES.customer)
-
-    // eslint-disable-next-line no-var
-    var customersInWeek = 0
-    await customers.map((customer) => {
-      const time = customer.created_at
-
-      if (
-        time.getTime() >= Date.monday().getTime() &&
-        time.getTime() <=
-          Date.next()
-            .sunday()
-            .getTime()
-      ) {
-        customersInWeek++
-      }
-    })
+    const { rowCount: customersInWeek } = await Database.raw(`SELECT id
+    FROM users
+    WHERE extract(week from created_at) = extract(week from current_date)
+    AND extract(year from created_at) = extract(year from current_date) AND role = 'customer';`)
 
     // eslint-disable-next-line no-var
     var newBidSubmittedInWeek = 0
@@ -145,6 +132,8 @@ class AdminController {
         weeklyAmount += bid.amount
       }
     })
+
+    const customers = await User.query().where('role', User.ROLES.customer)
 
     return {
       success: true,
