@@ -123,6 +123,19 @@ class UserController {
       success: true
     }
   }
+
+  async getUser({ response, auth }) {
+    await authenticate.allUser(response, auth)
+
+    const user = await auth.getUser()
+
+    return {
+      success: true,
+      data: {
+        user
+      }
+    }
+  }
 }
 
 module.exports = UserController
