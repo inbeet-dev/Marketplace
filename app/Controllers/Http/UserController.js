@@ -96,7 +96,7 @@ class UserController {
   async editProfile({ request, response, auth }) {
     await authenticate.allUser(response, auth)
 
-    const { name, email, phone } = request.all()
+    const { name, email, phone, address } = request.all()
 
     const rules = {
       email: 'email|unique:users'
@@ -115,6 +115,7 @@ class UserController {
     if (email) user.email = email
     if (name) user.name = name
     if (phone) user.meta = { ...user.meta, phoneNumber: phone }
+    if (address) user.meta = { ...user.meta, address }
 
     await save(user, response)
 
