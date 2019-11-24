@@ -31,6 +31,7 @@ class UserController {
       success: true,
       data: {
         role: user.role,
+        name: user.name,
         token,
         refreshToken
       }
