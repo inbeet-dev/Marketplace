@@ -93,7 +93,9 @@ class UserController {
     }
   }
 
-  getUser({ response, auth }) {
+  async getUser({ response, auth }) {
+    await authenticate.allUser(response, auth)
+
     return {
       success: true
     }
