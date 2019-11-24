@@ -92,6 +92,12 @@ class UserController {
       }
     }
   }
+
+  getUser({ response, auth }) {
+    return {
+      success: true
+    }
+  }
 }
 
 module.exports = UserController
