@@ -55,7 +55,7 @@
                 <tr>
                   <td>{{ lumberList.inReview }}</td>
                   <td>{{ lumberList.received }}</td>
-                  <td>0</td>
+                  <td>{{ lumberList.complete }</td>
                   <td>{{ lumberList.awaitingManagerApproval }}</td>
                 </tr>
               </tbody>
@@ -179,6 +179,7 @@ export default {
         }
       })
       .then((data) => {
+        console.log(data.data.data.lumberLists)
         this.bids = data.data.data.bids
         this.suppliers = data.data.data.suppliers
         this.customers = data.data.data.customers
@@ -189,7 +190,6 @@ export default {
           name: data.data.data.user.name,
           role: data.data.data.user.role
         })
-        console.log(data.data)
       })
       .catch((data) => {
         // console.log(data)
