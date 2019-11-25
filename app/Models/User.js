@@ -80,7 +80,8 @@ User.ROLES = {
 User.STATUS = {
   active: 'active',
   deActive: 'de-active',
-  terminated: 'terminated'
+  terminated: 'terminated',
+  inReview: 'in review'
 }
 
 module.exports = User

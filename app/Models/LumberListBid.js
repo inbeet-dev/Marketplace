@@ -17,7 +17,8 @@ LumberListBid.STATUS = {
   open: 'Open Bid',
   paused: 'Paused Bid',
   complete: 'Complete Bid',
-  cancel: 'Cancel Bid'
+  cancel: 'Cancel Bid',
+  accept: 'Accept Bid'
 }
 
 module.exports = LumberListBid
