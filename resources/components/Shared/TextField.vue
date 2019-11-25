@@ -78,7 +78,7 @@ export default {
   },
   data() {
     return {
-      data: null
+      data: ''
     }
   },
   watch: {
@@ -91,6 +91,12 @@ export default {
   },
   beforeCreated() {
     this.data = this.value
+  },
+  mounted() {
+    console.log(this.data, this.value)
+    if (this.data !== this.value) {
+      this.data = this.value
+    }
   }
 }
 </script>
