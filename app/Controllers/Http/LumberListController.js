@@ -55,26 +55,16 @@ class LumberListController {
     if (!lumberList)
       throw new ServerException('lumber list of project not found')
 
-    const lumberListItems = await LumberListItem.query().where(
-      'lumber_list_id',
-      lumberList.id
-    )
+    await LumberListItem.query()
+      .where('lumber_list_id', lumberList.id)
+      .delete()
 
-    for (let i = 0; i < lumberListItems.length; i++) {
-      const lumberListItem = await LumberListItem.find(lumberListItems[i].id)
-      lumberListItem.type = items[i].type
-      lumberListItem.meta = items[i].meta
-      await save(lumberListItem, response)
-    }
-
-    if (lumberListItems.length !== items.length) {
-      for (let i = lumberListItems.length; i < items.length; i++) {
-        const item = new LumberListItem()
-        item.type = items[i].type
-        item.meta = items[i].meta
-        item.lumber_list_id = lumberList.id
-        await save(item, response)
-      }
+    for (let i = 0; i < items.length; i++) {
+      const item = new LumberListItem()
+      item.type = items[i].type
+      item.meta = items[i].meta
+      item.lumber_list_id = lumberList.id
+      await save(item, response)
     }
 
     return {
