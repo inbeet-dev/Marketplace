@@ -4,6 +4,8 @@ const Auth = use('App/Utils/authenticate')
 const authenticate = new Auth()
 const { validate } = use('Validator')
 const ServerException = use('App/Exceptions/ServerException')
+const User = use('App/Models/User')
+const { save } = use('App/Utils/dbFunctions')
 
 class AdminController {
   async addEmployee({ request, response, auth }) {
@@ -22,6 +24,27 @@ class AdminController {
 
     if (validation.fails())
       throw new ServerException(validation.messages(), 400)
+
+    const { name, address, email, phone, password, role } = request.all()
+
+    const user = new User()
+
+    if (
+      role !== User.ROLES.customer ||
+      role !== User.ROLES.supplier ||
+      role !== User.ROLES.estimator ||
+      role !== User.ROLES.supportCustomer ||
+      role !== User.ROLES.admin
+    )
+      throw new ServerException('Role is invalid', 400)
+
+    user.name = name
+    user.email = email
+    user.password = password
+    user.role = role
+    user.meta = { address, phoneNumber: phone }
+
+    await save(user, response)
 
     return {
       success: true
