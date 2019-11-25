@@ -109,6 +109,11 @@ class AdminController {
 
     const customers = await User.query().where('role', User.ROLES.customer)
 
+    const completeLumberList = await LumberList.query().where(
+      'status',
+      LumberList.STATUS.complete
+    )
+
     return {
       success: true,
       data: {
@@ -131,7 +136,8 @@ class AdminController {
           received: Number(receivedLumberListCount),
           awaitingManagerApproval: Number(
             awaitingManagerApprovalLumberListCount
-          )
+          ),
+          complete: Number(completeLumberList)
         },
         bids: {
           openBids: Number(openBidsCount),
