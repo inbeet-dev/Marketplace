@@ -83,6 +83,7 @@
                 width="100%"
                 height="50px"
                 style="color:#ffffff !important"
+                @click.stop="$store.dispatch('Dialog/show', 'LumberListDialog')"
               >
                 lumber list
               </v-btn>
@@ -102,6 +103,7 @@
           </v-row>
         </v-card>
       </v-col>
+      <lumber-list-dialog />
     </v-row>
   </v-container>
 </template>
@@ -111,12 +113,14 @@ import moment from 'moment'
 import LumberHeader from '@/components/Header.vue'
 import PlansDialog from '@/components/PlansDialog.vue'
 import QuestionList from '@/components/Estimator/Question/QuestionList.vue'
+import LumberListDialog from '@/components/Estimator/LumberList/LumberListDialog.vue'
 
 export default {
   components: {
     LumberHeader,
     PlansDialog,
-    QuestionList
+    QuestionList,
+    LumberListDialog
   },
   data() {
     return {
