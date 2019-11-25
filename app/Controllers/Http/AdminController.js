@@ -1,7 +1,12 @@
 'use strict'
 
+const Auth = use('App/Utils/authenticate')
+const authenticate = new Auth()
+
 class AdminController {
-  addEmployee({ request, response, auth }) {
+  async addEmployee({ request, response, auth }) {
+    await authenticate.admin(response, auth)
+
     return {
       success: true
     }
