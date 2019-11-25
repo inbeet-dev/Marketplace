@@ -33,6 +33,8 @@
                     placeholder="Enter Name"
                     label="Name"
                     name="name"
+                    :value="info.name"
+                    v-model="info.name"
                   />
                 </v-col>
                 <v-col cols="12" md="11">
@@ -41,6 +43,8 @@
                     placeholder="Enter Email"
                     label="Email"
                     name="email"
+                    :value="info.email"
+                    v-model="info.email"
                   />
                 </v-col>
                 <v-col cols="12" md="11">
@@ -49,6 +53,8 @@
                     placeholder="Enter Contact Number"
                     label="Contact Number"
                     name="phoneNumber"
+                    :value="info.phoneNumber"
+                    v-model="info.phoneNumber"
                   />
                 </v-col>
                 <v-col cols="12" md="11">
@@ -57,12 +63,19 @@
                     placeholder="Enter Address"
                     label="Address"
                     name="address"
+                    :value="info.address"
+                    v-model="info.address"
                   />
                 </v-col>
               </v-row>
             </v-col>
             <v-col cols="11">
-              <v-btn width="100%" color="#f78f1e" height="45px" class="edit-btn"
+              <v-btn
+                width="100%"
+                color="#f78f1e"
+                height="45px"
+                class="edit-btn"
+                @click="edit()"
                 >edit</v-btn
               >
             </v-col>
@@ -77,9 +90,71 @@
 import LumberHeader from '../../components/Header.vue'
 import TextField from '../../components/Shared/TextField.vue'
 export default {
+  data() {
+    return {
+      email: '',
+      info: {
+        name: '',
+        email: '',
+        phoneNumber: '',
+        address: ''
+      }
+    }
+  },
   components: {
     LumberHeader,
     TextField
+  },
+  async mounted() {
+    await this.$store.restored
+    this.$axios
+      .get('/api/v1/user/', {
+        headers: {
+          Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
+        }
+      })
+      .then((data) => {
+        this.info.name = data.data.data.user.name
+        this.info.email = data.data.data.user.email
+        this.info.phoneNumber = data.data.data.user.meta.phoneNumber
+        this.info.address = data.data.data.user.meta.address
+        this.email = data.data.data.user.email
+      })
+  },
+  methods: {
+    edit() {
+      const info = {
+        name: this.info.name,
+        address: this.info.address,
+        phone: this.info.phoneNumber
+      }
+      if (this.email !== this.info.email) {
+        info.email = this.info.email
+      }
+      this.$axios
+        .put('/api/v1/user', info, {
+          headers: {
+            Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
+          }
+        })
+        .then((data) => {
+          this.$store.dispatch(
+            'SnackBar/show',
+            'Your Profile Successfuly Updated'
+          )
+        })
+        .catch((e) => {
+          console.log(e.response)
+          if (e.response) {
+            this.$store.dispatch(
+              'SnackBar/show',
+              e.response.data.error[0].message
+            )
+          } else {
+            this.$store.dispatch('SnackBar/show', 'an error occured')
+          }
+        })
+    }
   }
 }
 </script>
