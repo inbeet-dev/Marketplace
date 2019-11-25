@@ -7,6 +7,7 @@ const LumberList = use('App/Models/LumberList')
 const Auth = use('App/Utils/authenticate')
 const authenticate = new Auth()
 const ServerException = use('App/Exceptions/ServerException')
+const Database = use('Database')
 
 class LumberListController {
   async addItems({ request, response, auth }) {
@@ -69,6 +70,32 @@ class LumberListController {
 
     return {
       success: true
+    }
+  }
+
+  async getLumberList({ response, params, auth }) {
+    await authenticate.estimator(response, auth)
+
+    const { projectId } = params
+
+    const items = await Database.select(
+      'lumber_list_items.id',
+      'lumber_list_items.type',
+      'lumber_list_items.meta'
+    )
+      .from('lumber_list_items')
+      .leftJoin(
+        'lumber_lists',
+        'lumber_list_items.lumber_list_id',
+        'lumber_lists.id'
+      )
+      .where('lumber_lists.project_id', projectId)
+
+    return {
+      success: true,
+      data: {
+        items
+      }
     }
   }
 }
