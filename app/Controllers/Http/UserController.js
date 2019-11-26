@@ -92,6 +92,50 @@ class UserController {
       }
     }
   }
+
+  async editProfile({ request, response, auth }) {
+    await authenticate.allUser(response, auth)
+
+    const { name, email, phone, address } = request.all()
+
+    const rules = {
+      email: 'email|unique:users'
+    }
+
+    const validation = await validate(request.all(), rules)
+
+    if (validation.fails())
+      throw new ServerException(validation.messages(), 400)
+
+    if (!name && !email && !phone)
+      throw new ServerException('name and email and phne')
+
+    const user = await auth.getUser()
+
+    if (email) user.email = email
+    if (name) user.name = name
+    if (phone) user.meta = { ...user.meta, phoneNumber: phone }
+    if (address) user.meta = { ...user.meta, address }
+
+    await save(user, response)
+
+    return {
+      success: true
+    }
+  }
+
+  async getUser({ response, auth }) {
+    await authenticate.allUser(response, auth)
+
+    const user = await auth.getUser()
+
+    return {
+      success: true,
+      data: {
+        user
+      }
+    }
+  }
 }
 
 module.exports = UserController
