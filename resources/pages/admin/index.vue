@@ -4,7 +4,7 @@
       :items="[
         { name: 'home', link: '/' },
         { name: 'Account Profile', link: 'AccountProfile' },
-        { name: 'Employee profiles', link: 'Employeeprofiles' },
+        { name: 'Employee profiles', link: '/admin/employees' },
         { name: 'messages', link: 'message' }
       ]"
       :user="$store.getters['User/getUser']"
