@@ -83,7 +83,7 @@
                 width="100%"
                 height="50px"
                 style="color:#ffffff !important"
-                @click.stop="$store.dispatch('Dialog/show', 'LumberListDialog')"
+                @click.stop="showLumberListDialog()"
               >
                 lumber list
               </v-btn>
@@ -127,10 +127,11 @@ export default {
       dialog: false,
       questionList: false,
       project: {},
+      status: '',
       statuses: [
         { name: 'Lumber list open', class: 'active' },
         { name: 'lumber list completed', class: 'active' },
-        { name: 'awating manager approval', class: 'active' },
+        { name: 'Awaiting Manager Approval', class: 'active' },
         { name: 'project completed', class: 'active' }
       ]
     }
@@ -147,6 +148,8 @@ export default {
     )
     this.project = project.data.data
 
+    this.status = project.data.data.status
+
     let className = 'status-card__list__item--completed'
     for (let i = 0, status; (status = this.statuses[i]); i++) {
       status.class = className
@@ -158,6 +161,17 @@ export default {
   computed: {
     dueDate() {
       return moment(this.project.due_date).format('DD MMMM YYYY')
+    }
+  },
+  methods: {
+    showLumberListDialog() {
+      if (this.status !== 'Awaiting Manager Approval')
+        this.$store.dispatch('Dialog/show', 'LumberListDialog')
+      else
+        this.$store.dispatch(
+          'SnackBar/show',
+          'Manager approval is still in progress'
+        )
     }
   }
 }
