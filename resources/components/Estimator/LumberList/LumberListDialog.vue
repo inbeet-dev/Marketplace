@@ -58,7 +58,11 @@
           ></v-col
         >
         <v-col lg="5" md="12"
-          ><v-btn width="100%" color="#f78f1e" class="submit"
+          ><v-btn
+            width="100%"
+            color="#f78f1e"
+            class="submit"
+            @click="submitForApproval()"
             >Sumbit For Manager Approval</v-btn
           ></v-col
         >
@@ -105,7 +109,31 @@ export default {
             'Lumber List successfully saved'
           )
         })
-        .cache((data) => {
+        .catch((data) => {
+          this.$store.dispatch('SnackBar/show', 'an error occured')
+        })
+    },
+    submitForApproval() {
+      this.$axios
+        .put(
+          '/api/v1/project/changestatus/approval',
+          {
+            projectId: this.$route.params.id
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
+            }
+          }
+        )
+        .then((data) => {
+          this.$store.dispatch(
+            'SnackBar/show',
+            'Lumber List sended for approval'
+          )
+          this.$store.dispatch('Dialog/show', '')
+        })
+        .catch((data) => {
           this.$store.dispatch('SnackBar/show', 'an error occured')
         })
     }
