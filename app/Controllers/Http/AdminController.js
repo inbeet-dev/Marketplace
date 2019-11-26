@@ -30,11 +30,11 @@ class AdminController {
     const user = new User()
 
     if (
-      role !== User.ROLES.customer &&
-      role !== User.ROLES.supplier &&
-      role !== User.ROLES.estimator &&
-      role !== User.ROLES.supportCustomer &&
-      role !== User.ROLES.admin
+      ![
+        User.ROLES.estimator,
+        User.ROLES.supportCustomer,
+        User.ROLES.admin
+      ].includes(role)
     )
       throw new ServerException('Role is invalid', 400)
 
