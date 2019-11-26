@@ -58,6 +58,15 @@ class User extends Model {
       'supplier_id'
     )
   }
+
+  estimatedProject() {
+    return this.manyThrough(
+      'App/Models/LumberList',
+      'project',
+      'id',
+      'estimator_id'
+    )
+  }
 }
 
 User.ROLES = {

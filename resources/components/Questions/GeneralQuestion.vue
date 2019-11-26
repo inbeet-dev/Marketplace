@@ -5,7 +5,7 @@
         :label="value.question.text"
         placeholder="Respond here"
         v-model="text"
-        :disabled="value.question.answerd_at"
+        :disabled="disabled"
       />
     </v-col>
   </v-row>
@@ -21,6 +21,10 @@ export default {
     value: {
       type: Object,
       default: () => {}
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
