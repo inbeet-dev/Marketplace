@@ -13,6 +13,28 @@ const ServerException = use('App/Exceptions/ServerException')
 const { save } = use('App/Utils/dbFunctions')
 
 class AdminController {
+  async getEmployees({ response, auth }) {
+    await authenticate.admin(response, auth)
+
+    const admin = await auth.getUser()
+
+    const employees = await User.query()
+      .where('id', '!=', admin.id)
+      .whereIn('role', [
+        User.ROLES.admin,
+        User.ROLES.supportCustomer,
+        User.ROLES.estimator
+      ])
+      .fetch()
+
+    return {
+      success: true,
+      data: {
+        employees
+      }
+    }
+  }
+
   async addEmployee({ request, response, auth }) {
     await authenticate.admin(response, auth)
 
