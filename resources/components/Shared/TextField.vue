@@ -93,7 +93,6 @@ export default {
     this.data = this.value
   },
   mounted() {
-    console.log(this.data, this.value)
     if (this.data !== this.value) {
       this.data = this.value
     }
@@ -113,9 +112,10 @@ export default {
 .label .important-star {
   position: absolute;
   top: -13px;
-  right: -10px;
-  color: red;
-  font-size: 13px;
+  right: -8px;
+  color: #f55;
+  width: 5px;
+  height: 5px;
 }
 .main {
   margin-bottom: 10px;
