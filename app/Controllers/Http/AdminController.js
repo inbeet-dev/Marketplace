@@ -18,6 +18,11 @@ class AdminController {
 
     const employees = await User.query()
       .where('id', '!=', admin.id)
+      .whereIn('role', [
+        User.ROLES.admin,
+        User.ROLES.supportCustomer,
+        User.ROLES.estimator
+      ])
       .fetch()
 
     return {
