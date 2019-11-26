@@ -2,7 +2,6 @@
 
 const Auth = use('App/Utils/authenticate')
 const authenticate = new Auth()
-
 const User = use('App/Models/User')
 const Project = use('App/Models/Project')
 const ProjectQuestion = use('App/Models/ProjectQuestion')
