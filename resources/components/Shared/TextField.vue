@@ -2,7 +2,7 @@
   <div :class="{ 'form-group--error': error }">
     <label v-if="label" class="label"
       >{{ label }}
-      <div v-if="important" class="important-star"></div>
+      <div v-if="important" class="important-star">*</div>
     </label>
     <div class="main">
       <textarea
@@ -93,7 +93,6 @@ export default {
     this.data = this.value
   },
   mounted() {
-    console.log(this.data, this.value)
     if (this.data !== this.value) {
       this.data = this.value
     }
@@ -112,12 +111,11 @@ export default {
 }
 .label .important-star {
   position: absolute;
-  top: 0;
-  right: -10px;
-  background-color: #f78f1e;
+  top: -13px;
+  right: -8px;
+  color: #f55;
   width: 5px;
   height: 5px;
-  border-radius: 50%;
 }
 .main {
   margin-bottom: 10px;
