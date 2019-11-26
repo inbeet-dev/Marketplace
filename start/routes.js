@@ -21,6 +21,8 @@ Route.group(() => {
   Route.post('login', 'UserController.login')
   Route.post('register', 'UserController.register')
   Route.get('dashboard', 'UserController.dashboard')
+  Route.put('', 'UserController.editProfile')
+  Route.get('', 'UserController.getUser')
 }).prefix('api/v1/user')
 
 Route.group(() => {
@@ -58,6 +60,8 @@ Route.group(() => {
 
 Route.group(() => {
   Route.post('item', 'LumberListController.addItems')
+  Route.put('items', 'LumberListController.editItems')
+  Route.get(':projectId', 'LumberListController.getLumberList')
 }).prefix('api/v1/lumberlist')
 
 Route.group(() => {
