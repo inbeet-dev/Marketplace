@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="architecturalDrawingDialog" width="600">
+  <v-dialog v-model="dialog" width="600">
     <v-card class="card">
       <p>
         Do you Have Your Architectural And Structural Drawings?
@@ -13,12 +13,11 @@
             style="color:#ffffff !important"
             @click.stop="
               architecturalDrawingDialog = false
-              drawTypeDialog = !drawTypeDialog
+              $store.dispatch('Dialog/show', 'DrawTypeDialog')
             "
           >
             YES
           </v-btn>
-          <draw-type-dialog v-model="drawTypeDialog" />
         </v-col>
         <v-col cols="6">
           <v-btn
@@ -28,12 +27,11 @@
             style="color:#9ea4c4 !important"
             @click.stop="
               architecturalDrawingDialog = false
-              emialDialog = !emialDialog
+              $store.dispatch('Dialog/show', 'EmailDialog')
             "
           >
             No
           </v-btn>
-          <email-dialog v-model="emialDialog" />
         </v-col>
       </v-row>
     </v-card>
@@ -41,30 +39,31 @@
 </template>
 
 <script>
-import EmailDialog from './EmailDialog'
-import DrawTypeDialog from './DrawTypeDialog'
 export default {
   data() {
     return {
-      architecturalDrawingDialog: false,
-      emialDialog: false,
-      drawTypeDialog: false
+      dialog: false
     }
   },
-  components: {
-    EmailDialog,
-    DrawTypeDialog
+  mounted() {
+    this.dialog =
+      this.$store.getters['Dialog/active'] === 'ArchitecturalDrawingDialog'
+    this.$store.watch(
+      (state, getters) => getters['Dialog/active'],
+      (newValue) => {
+        this.dialog = newValue === 'ArchitecturalDrawingDialog'
+      }
+    )
   },
   watch: {
-    value() {
-      this.architecturalDrawingDialog = this.value
-    },
-    architecturalDrawingDialog() {
-      this.$emit('input', this.architecturalDrawingDialog)
+    dialog() {
+      if (
+        this.dialog === false &&
+        this.$store.getters['Dialog/active'] === 'ArchitecturalDrawingDialog'
+      ) {
+        this.$store.dispatch('Dialog/show', '')
+      }
     }
-  },
-  props: {
-    value: { type: Boolean, default: false }
   }
 }
 </script>
