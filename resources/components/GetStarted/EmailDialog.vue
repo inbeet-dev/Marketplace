@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="emailDialog" width="600">
+  <v-dialog v-model="dialog" width="600">
     <v-card class="card">
       <h1>NO Problem!</h1>
       <p>
@@ -25,19 +25,27 @@
 export default {
   data() {
     return {
-      emailDialog: false
+      dialog: false
     }
+  },
+  mounted() {
+    this.dialog = this.$store.getters['Dialog/active'] === 'EmailDialog'
+    this.$store.watch(
+      (state, getters) => getters['Dialog/active'],
+      (newValue) => {
+        this.dialog = newValue === 'EmailDialog'
+      }
+    )
   },
   watch: {
-    value() {
-      this.emailDialog = this.value
-    },
-    emailDialog() {
-      this.$emit('input', this.emailDialog)
+    dialog() {
+      if (
+        this.dialog === false &&
+        this.$store.getters['Dialog/active'] === 'EmailDialog'
+      ) {
+        this.$store.dispatch('Dialog/show', '')
+      }
     }
-  },
-  props: {
-    value: { type: Boolean, default: false }
   }
 }
 </script>
