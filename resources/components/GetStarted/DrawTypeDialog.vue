@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="drawTypeDialog" width="600">
+  <v-dialog v-model="dialog" width="600">
     <v-card class="card">
       <p>
         What Type Of Drawings Do You Have?
@@ -13,12 +13,11 @@
             style="color:#ffffff !important"
             @click.stop="
               drawTypeDialog = false
-              createShippingLabelDialog = !createShippingLabelDialog
+              $store.dispatch('Dialog/show', 'CreateShippingLabelDialog')
             "
           >
             HARD COPY
           </v-btn>
-          <create-shipping-label-dialog v-model="createShippingLabelDialog" />
         </v-col>
         <v-col cols="6">
           <v-btn
@@ -28,12 +27,11 @@
             style="color:#ffffff !important"
             @click.stop="
               drawTypeDialog = false
-              userRegisterDialog = !userRegisterDialog
+              $store.dispatch('Dialog/show', 'AccountTypeDialog')
             "
           >
             E-FILE
           </v-btn>
-          <user-register-dialog v-model="userRegisterDialog" />
         </v-col>
       </v-row>
     </v-card>
@@ -41,30 +39,30 @@
 </template>
 
 <script>
-import UserRegisterDialog from './UserRegisterDialog'
-import CreateShippingLabelDialog from './CreateShippingLabelDialog'
 export default {
   data() {
     return {
-      drawTypeDialog: false,
-      userRegisterDialog: false,
-      createShippingLabelDialog: false
+      dialog: false
     }
   },
-  components: {
-    UserRegisterDialog,
-    CreateShippingLabelDialog
+  mounted() {
+    this.dialog = this.$store.getters['Dialog/active'] === 'DrawTypeDialog'
+    this.$store.watch(
+      (state, getters) => getters['Dialog/active'],
+      (newValue) => {
+        this.dialog = newValue === 'DrawTypeDialog'
+      }
+    )
   },
   watch: {
-    value() {
-      this.drawTypeDialog = this.value
-    },
-    drawTypeDialog() {
-      this.$emit('input', this.drawTypeDialog)
+    dialog() {
+      if (
+        this.dialog === false &&
+        this.$store.getters['Dialog/active'] === 'DrawTypeDialog'
+      ) {
+        this.$store.dispatch('Dialog/show', '')
+      }
     }
-  },
-  props: {
-    value: { type: Boolean, default: false }
   }
 }
 </script>

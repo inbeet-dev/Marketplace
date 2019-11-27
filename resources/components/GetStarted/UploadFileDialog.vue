@@ -1,8 +1,8 @@
 <template>
-  <v-dialog v-model="uploadFileDialog" width="900" persistent>
+  <v-dialog v-model="dialog" width="900" persistent>
     <v-card class="mx-auto box" outlined elevation raised width="100%">
-      <h1>Upload your Lumber List</h1>
-      <v-icon class="close-icon" @click="uploadFileDialog = false">
+      <h1>Upload your{{ type }}</h1>
+      <v-icon class="close-icon" @click="dialog = false">
         mdi-close
       </v-icon>
       <v-row justify="center" class="zone">
@@ -50,7 +50,6 @@
           <button class="submit" @click.stop.prevent="submitFile()">
             Upload Lumber List <v-icon>mdi-chevron-right</v-icon>
           </button>
-          <upload-message-dialog v-model="uploadMessageDialog" />
         </v-col>
       </v-row>
     </v-card>
@@ -58,28 +57,12 @@
 </template>
 
 <script>
-import UploadMessageDialog from './UploadMessage.vue'
 export default {
-  name: 'UploadFileDialog',
-  props: {
-    value: { type: Boolean, default: false }
-  },
-  components: {
-    UploadMessageDialog
-  },
   data() {
     return {
       files: [],
-      uploadFileDialog: false,
-      uploadMessageDialog: false
-    }
-  },
-  watch: {
-    value() {
-      this.uploadFileDialog = this.value
-    },
-    uploadFileDialog() {
-      this.$emit('input', this.uploadFileDialog)
+      dialog: false,
+      type: 'sadasd'
     }
   },
   methods: {
@@ -98,13 +81,10 @@ export default {
           }
         })
         .then(() => {
-          this.uploadFileDialog = false
-          this.uploadMessageDialog = !this.uploadMessageDialog
-          // console.log('SUCCESS!!')
+          this.dialog = false
+          this.$store.dispatch('Dialog/show', 'UploadMessage')
         })
-      // .catch(function() {
-      //   console.log('FAILURE!!')
-      // })
+        .catch(function() {})
     },
     handleFileUpload() {
       this.files = [...this.files, ...this.$refs.file.files]
@@ -116,6 +96,26 @@ export default {
     },
     remove(index) {
       this.files.splice(index, 1)
+    }
+  },
+  mounted() {
+    console.log(this.$store.getters['UploadType/getUploadType'])
+    this.dialog = this.$store.getters['Dialog/active'] === 'UploadFileDialog'
+    this.$store.watch(
+      (state, getters) => getters['Dialog/active'],
+      (newValue) => {
+        this.dialog = newValue === 'UploadFileDialog'
+      }
+    )
+  },
+  watch: {
+    dialog() {
+      if (
+        this.dialog === false &&
+        this.$store.getters['Dialog/active'] === 'UploadFileDialog'
+      ) {
+        this.$store.dispatch('Dialog/show', '')
+      }
     }
   }
 }
