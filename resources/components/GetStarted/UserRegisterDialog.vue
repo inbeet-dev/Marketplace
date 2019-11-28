@@ -36,6 +36,7 @@
                 name="email"
                 message="Email is required and must be valid"
                 :error="$v.email.$error"
+                @input="toLowerCase"
               />
             </v-col>
             <v-col xl="6" lg="6" md="6" sm="12" cols="12" class="form-field">
@@ -186,6 +187,9 @@ export default {
 
   name: 'RegisterDialog',
   methods: {
+    toLowerCase(value) {
+      this.email = value.toLowerCase()
+    },
     submit() {
       if (this.$v.$invalid) {
         this.$store.dispatch('SnackBar/show', 'Please input correct values')
