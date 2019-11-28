@@ -55,7 +55,7 @@
                 <tr>
                   <td>{{ lumberList.inReview }}</td>
                   <td>{{ lumberList.received }}</td>
-                  <td>{{ lumberList.complete }</td>
+                  <td>{{ lumberList.complete }}</td>
                   <td>{{ lumberList.awaitingManagerApproval }}</td>
                 </tr>
               </tbody>
