@@ -80,7 +80,8 @@ import LumberHeader from '../components/Header.vue'
 import TextField from '../components/Shared/TextField'
 export const DASHBOARDS = {
   customer: '/customer',
-  estimator: '/estimator'
+  estimator: '/estimator',
+  admin: '/admin'
 }
 export default {
   components: {
