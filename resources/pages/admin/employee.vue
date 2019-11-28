@@ -25,7 +25,6 @@
                 <th class="text-left">Email</th>
                 <th class="text-left">Data Joined</th>
                 <th class="text-left">Position</th>
-                <th class="text-left">Access Level</th>
                 <th class="text-left">Status</th>
               </tr>
             </thead>
@@ -88,12 +87,12 @@
                     class="form-field"
                   >
                     <text-field
-                      type="password"
+                      type="text"
                       placeholder="Enter Address"
                       label="Address"
                       important
                       name="Address"
-                      message="Password not match"
+                      message="address required "
                     />
                   </v-col>
 
@@ -128,7 +127,6 @@
                       placeholder="Enter Phone"
                       label="Phone"
                       name="Phone"
-                      message="Phone number is required"
                     />
                   </v-col>
                   <v-col
@@ -297,6 +295,7 @@ export default {
 }
 .table-card .position .v-input::v-deep .v-select__selections {
   min-width: 60px;
+  max-width: 120px;
 }
 .table-card .access-level .v-input::v-deep .v-select__selections {
   min-width: 130px;
@@ -305,6 +304,7 @@ export default {
   border-radius: 60px;
 }
 .table-card .status .v-input::v-deep .v-select__selections {
+  max-width: 80px;
   min-width: 80px;
 }
 .table-card .item {
