@@ -1,7 +1,7 @@
 <template>
-  <v-dialog v-model="projectRegistrationDialog" width="900" persistent="">
+  <v-dialog v-model="dialog" width="900" persistent="">
     <v-card class="mx-auto box" outlined elevation raised width="100%">
-      <v-icon class="close-icon" @click="projectRegistrationDialog = false">
+      <v-icon class="close-icon" @click="dialog = false">
         mdi-close
       </v-icon>
       <form action="" ref="registerForm" class="registerForm">
@@ -59,7 +59,6 @@
             <button @click.stop.prevent="register()">
               submit
             </button>
-            <upload-file-dialog v-model="uploadFileDialog" />
           </v-col>
           <v-col
             cols="12"
@@ -79,12 +78,7 @@
 import { required, numeric } from 'vuelidate/lib/validators'
 import TextField from '../Shared/TextField'
 import MyAwesomeMap from './ProjectLocation'
-import UploadFileDialog from './UploadFileDialog.vue'
 export default {
-  name: 'projectRegistrationDialog',
-  props: {
-    value: { type: Boolean, default: false }
-  },
   validations: {
     name: {
       required
@@ -100,8 +94,7 @@ export default {
   data() {
     return {
       position: null,
-      projectRegistrationDialog: false,
-      uploadFileDialog: false,
+      dialog: false,
       name: '',
       address: '',
       zipCode: ''
@@ -109,16 +102,7 @@ export default {
   },
   components: {
     TextField,
-    MyAwesomeMap,
-    UploadFileDialog
-  },
-  watch: {
-    value() {
-      this.projectRegistrationDialog = this.value
-    },
-    projectRegistrationDialog() {
-      this.$emit('input', this.projectRegistrationDialog)
-    }
+    MyAwesomeMap
   },
   methods: {
     register() {
@@ -144,15 +128,31 @@ export default {
               id: data.data.data.projectId
             })
             .then(() => {
-              this.projectRegistrationDialog = false
-              this.uploadFileDialog = !this.uploadFileDialog
+              this.dialog = false
+              this.$store.dispatch('Dialog/show', 'UploadFileDialog')
             })
-
-          console.log(data.data.data)
         })
-        .catch(function(e) {
-          console.log(e)
-        })
+        .catch(function(e) {})
+    }
+  },
+  mounted() {
+    this.dialog =
+      this.$store.getters['Dialog/active'] === 'ProjectRegisterDialog'
+    this.$store.watch(
+      (state, getters) => getters['Dialog/active'],
+      (newValue) => {
+        this.dialog = newValue === 'ProjectRegisterDialog'
+      }
+    )
+  },
+  watch: {
+    dialog() {
+      if (
+        this.dialog === false &&
+        this.$store.getters['Dialog/active'] === 'ProjectRegisterDialog'
+      ) {
+        this.$store.dispatch('Dialog/show', '')
+      }
     }
   }
 }

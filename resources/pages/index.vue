@@ -55,8 +55,10 @@
                       width="100%"
                       color="green darken-1"
                       text
-                      @click.stop="selectRoleDialog = false"
-                      disabled
+                      @click.stop="
+                        $store.dispatch('Dialog/show', 'AccountTypeDialog')
+                        selectRoleDialog = false
+                      "
                       >supplier</v-btn
                     ></v-col
                   >
@@ -66,12 +68,11 @@
                       color="green darken-1"
                       text
                       @click.stop="
-                        haveLumberListDialog = !haveLumberListDialog
+                        $store.dispatch('Dialog/show', 'HaveLumberListDialog')
                         selectRoleDialog = false
                       "
                       >customer</v-btn
                     >
-                    <have-lumber-list-dialog v-model="haveLumberListDialog" />
                   </v-col>
                 </v-row>
               </v-card-actions>
@@ -79,19 +80,40 @@
           </v-dialog>
         </v-row>
       </v-col>
+      <have-lumber-list-dialog />
+      <account-type-dialog />
+      <user-register-dialog />
+      <project-register-dialog />
+      <upload-file-dialog />
+      <architectural-drawing-dialog />
+      <draw-type-dialog />
+      <email-dialog />
     </v-row>
   </v-container>
 </template>
 <script>
 import LumberHeader from '../components/Header.vue'
 import HaveLumberListDialog from '../components/GetStarted/HaveLumberListDialog.vue'
+import AccountTypeDialog from '../components/GetStarted/AccountTypeDialog.vue'
+import UserRegisterDialog from '../components/GetStarted/UserRegisterDialog.vue'
+import ProjectRegisterDialog from '../components/GetStarted/ProjectRegisterDialog.vue'
+import UploadFileDialog from '../components/GetStarted/UploadFileDialog.vue'
+import ArchitecturalDrawingDialog from '../components/GetStarted/ArchitecturalDrawingDialog.vue'
+import DrawTypeDialog from '../components/GetStarted/DrawTypeDialog.vue'
+import EmailDialog from '../components/GetStarted/EmailDialog.vue'
 export default {
   components: {
     LumberHeader,
-    HaveLumberListDialog
+    HaveLumberListDialog,
+    AccountTypeDialog,
+    UserRegisterDialog,
+    ProjectRegisterDialog,
+    ArchitecturalDrawingDialog,
+    DrawTypeDialog,
+    EmailDialog,
+    UploadFileDialog
   },
   data: () => ({
-    haveLumberListDialog: false,
     videoDialog: false,
     selectRoleDialog: false
   })
