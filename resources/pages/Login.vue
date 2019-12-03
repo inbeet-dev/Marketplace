@@ -30,6 +30,8 @@
                       icon="mdi-email-outline"
                       label="email"
                       name="email"
+                      v-model="email"
+                      @input="toLowerCase"
                     />
                   </v-col>
                   <v-col cols="12">
@@ -88,7 +90,15 @@ export default {
     TextField,
     LumberHeader
   },
+  data() {
+    return {
+      email: ''
+    }
+  },
   methods: {
+    toLowerCase(value) {
+      this.email = value.toLowerCase()
+    },
     login() {
       const formData = new FormData(this.$refs.loginForm)
       this.$axios
