@@ -53,7 +53,7 @@ module.exports = {
    ** Plugins to load before mounting the App
    */
   plugins: [
-    { src: '~/plugins/Vuelidate.js', ssr: false },
+    { src: '~/plugins/Vuelidate.js' },
     { src: '~/plugins/vuex-persist', ssr: false }
   ],
   /*
