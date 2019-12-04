@@ -5,6 +5,7 @@ const authenticate = new Auth()
 const { validate } = use('Validator')
 const ServerException = use('App/Exceptions/ServerException')
 const User = use('App/Models/User')
+const { save } = use('App/Utils/dbFunctions')
 
 class SupplierController {
   async changeStatus({ response, request, auth }) {
@@ -15,7 +16,7 @@ class SupplierController {
       status: 'required'
     })
 
-    const { status } = request.all()
+    const { status, supplierId } = request.all()
 
     if (validation.fails())
       throw new ServerException(validation.messages(), 400)
@@ -29,6 +30,12 @@ class SupplierController {
       ].includes(status)
     )
       throw new ServerException('Role is invalid', 400)
+
+    const supplier = await User.find(supplierId)
+    if (!supplier) throw new ServerException('Supplier not found', 404)
+
+    supplier.status = status
+    await save(supplier, response)
 
     return {
       success: true
