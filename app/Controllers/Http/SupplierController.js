@@ -18,12 +18,18 @@ class SupplierController {
       status: User.STATUS.active
     })
 
+    const deActiveSupplier = await User.query().where({
+      role: User.ROLES.supplier,
+      status: User.STATUS.deActive
+    })
+
     return {
       success: true,
       data: {
         suppliers: {
           inReview: inReviewSupplier,
-          active: activeSupplier
+          active: activeSupplier,
+          deActive: deActiveSupplier
         }
       }
     }
