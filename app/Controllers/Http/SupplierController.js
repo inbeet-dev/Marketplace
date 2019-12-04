@@ -1,5 +1,11 @@
 'use strict'
 
-class SupplierController {}
+class SupplierController {
+  editSupplier({ response, request, auth }) {
+    return {
+      success: true
+    }
+  }
+}
 
 module.exports = SupplierController
