@@ -1,11 +1,11 @@
 <template>
   <div>
-    <v-dialog v-model="registerDialog" max-width="1000" persistent>
+    <v-dialog v-model="dialog" max-width="1000" persistent>
       <v-card class="content-card">
         <h1>
           Sign Up To Upload
         </h1>
-        <v-icon class="close-icon" @click="registerDialog = false">
+        <v-icon class="close-icon" @click="dialog = false">
           mdi-close
         </v-icon>
         <form ref="regsiterForm">
@@ -19,7 +19,7 @@
                 v-model.trim="$v.name.$model"
                 type="text"
                 placeholder="Enter Name"
-                :label="company ? 'Company Name' : 'Name'"
+                :label="type + ' name'"
                 important
                 name="name"
                 message="Name is required"
@@ -36,6 +36,7 @@
                 name="email"
                 message="Email is required and must be valid"
                 :error="$v.email.$error"
+                @input="toLowerCase"
               />
             </v-col>
             <v-col xl="6" lg="6" md="6" sm="12" cols="12" class="form-field">
@@ -118,9 +119,6 @@
                 >
                   SIGN UP
                 </button>
-                <project-registration-dialog
-                  v-model="projectRegistrationDialog"
-                />
               </v-col>
               <v-col
                 cols="12"
@@ -137,69 +135,24 @@
         </form>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="accountTypeDialog" max-width="600">
-      <v-card class="login-card">
-        <v-card-text
-          ><h1 class="lumber-list">
-            Are you a Company or Individual?
-          </h1></v-card-text
-        >
-        <v-card-actions class="action-card">
-          <v-row style="margin:0;" justify="center" class="btn-row">
-            <v-col cols="6">
-              <v-btn
-                width="100%"
-                color="green darken-1"
-                text
-                @click.stop="
-                  accountTypeDialog = false
-                  registerDialog = true
-                  company = true
-                "
-                >Company</v-btn
-              ></v-col
-            >
-            <v-col cols="6">
-              <v-btn
-                width="100%"
-                color="green darken-1"
-                text
-                @click.stop="
-                  accountTypeDialog = false
-                  registerDialog = true
-                  company = false
-                "
-                >Individual</v-btn
-              >
-            </v-col>
-          </v-row>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 
 <script>
 import { required, sameAs, email, numeric } from 'vuelidate/lib/validators'
 import TextField from '../Shared/TextField'
-import ProjectRegistrationDialog from './ProjectRegisterDialog.vue'
 
 export default {
-  props: {
-    value: { type: Boolean, default: false }
-  },
   data() {
     return {
-      accountTypeDialog: false,
-      registerDialog: false,
-      projectRegistrationDialog: false,
+      dialog: false,
       name: '',
       email: '',
       password: '',
       reTypePassword: '',
       phoneNumber: '',
       checkBox: '',
-      company: false
+      type: ''
     }
   },
   /* eslint-disable */
@@ -229,19 +182,14 @@ export default {
   },
 
   components: {
-    TextField,
-    ProjectRegistrationDialog
+    TextField
   },
-  watch: {
-    value() {
-      this.accountTypeDialog = this.value
-    },
-    accountTypeDialog() {
-      this.$emit('input', this.accountTypeDialog)
-    }
-  },
+
   name: 'RegisterDialog',
   methods: {
+    toLowerCase(value) {
+      this.email = value.toLowerCase()
+    },
     submit() {
       if (this.$v.$invalid) {
         this.$store.dispatch('SnackBar/show', 'Please input correct values')
@@ -251,22 +199,41 @@ export default {
       this.$axios
         .post('/api/v1/user/register', formData, {})
         .then((data) => {
-          console.log('SUCCESS!!')
-          console.log(data)
           this.$store
             .dispatch('Auth/store', {
               refreshToken: data.data.refreshToken,
               token: data.data.token
             })
             .then(() => {
-              this.registerDialog = false
-              this.projectRegistrationDialog = !this.projectRegistrationDialog
+              this.$store.dispatch('Dialog/show', 'ProjectRegisterDialog')
+              this.dialog = false
             })
         })
         .catch((e) => {
-          console.log(JSON.stringify(e.response.data.error))
           this.$store.dispatch('SnackBar/show', e.response.data.error)
         })
+    }
+  },
+  mounted() {
+    this.dialog = this.$store.getters['Dialog/active'] === 'UserRegisterDialog'
+    this.$store.watch(
+      function(state, getters) {
+        return getters['Dialog/active']
+      },
+      (newValue) => {
+        this.dialog = newValue === 'UserRegisterDialog'
+        this.type = this.$store.getters['Dialog/getData']
+      }
+    )
+  },
+  watch: {
+    dialog() {
+      if (
+        this.dialog === false &&
+        this.$store.getters['Dialog/active'] === 'UserRegisterDialog'
+      ) {
+        this.$store.dispatch('Dialog/show', '')
+      }
     }
   }
 }

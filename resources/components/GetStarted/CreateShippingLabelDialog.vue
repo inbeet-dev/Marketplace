@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="createShippingLabelDialog" width="600">
+  <v-dialog v-model="dialog" width="600">
     <v-card class="card">
       <h1>NO Problem!</h1>
       <p>
@@ -26,19 +26,28 @@
 export default {
   data() {
     return {
-      createShippingLabelDialog: false
+      dialog: false
     }
+  },
+  mounted() {
+    this.dialog =
+      this.$store.getters['Dialog/active'] === 'CreateShippingLabelDialog'
+    this.$store.watch(
+      (state, getters) => getters['Dialog/active'],
+      (newValue) => {
+        this.dialog = newValue === 'CreateShippingLabelDialog'
+      }
+    )
   },
   watch: {
-    value() {
-      this.createShippingLabelDialog = this.value
-    },
-    createShippingLabelDialog() {
-      this.$emit('input', this.createShippingLabelDialog)
+    dialog() {
+      if (
+        this.dialog === false &&
+        this.$store.getters['Dialog/active'] === 'CreateShippingLabelDialog'
+      ) {
+        this.$store.dispatch('Dialog/show', '')
+      }
     }
-  },
-  props: {
-    value: { type: Boolean, default: false }
   }
 }
 </script>
