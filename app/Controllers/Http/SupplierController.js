@@ -9,15 +9,21 @@ class SupplierController {
     await authenticate.admin(response, auth)
 
     const inReviewSupplier = await User.query().where({
-      role: 'supplier',
+      role: User.ROLES.supplier,
       status: User.STATUS.inReview
+    })
+
+    const activeSupplier = await User.query().where({
+      role: User.ROLES.supplier,
+      status: User.STATUS.active
     })
 
     return {
       success: true,
       data: {
         suppliers: {
-          inReview: inReviewSupplier
+          inReview: inReviewSupplier,
+          active: activeSupplier
         }
       }
     }
