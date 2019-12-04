@@ -8,12 +8,17 @@ class SupplierController {
   async getSuppliers({ response, auth }) {
     await authenticate.admin(response, auth)
 
-    const users = await User.query().where('role', 'supplier')
+    const inReviewSupplier = await User.query().where({
+      role: 'supplier',
+      status: User.STATUS.inReview
+    })
 
     return {
       success: true,
       data: {
-        users
+        suppliers: {
+          inReview: inReviewSupplier
+        }
       }
     }
   }
