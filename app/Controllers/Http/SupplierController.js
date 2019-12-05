@@ -23,10 +23,10 @@ class SupplierController {
       status: User.STATUS.deActive
     })
 
-    const terminatedSupplier = await User.query().where({
-      role: User.ROLES.supplier,
-      status: User.STATUS.terminated
-    })
+    const cancelledOrPausedSupplier = await User.query().whereRaw(
+      'status = ? or status = ?',
+      [User.STATUS.cancelled, User.STATUS.paused]
+    )
 
     return {
       success: true,
@@ -35,7 +35,7 @@ class SupplierController {
           inReview: inReviewSupplier,
           active: activeSupplier,
           deActive: deActiveSupplier,
-          terminated: terminatedSupplier
+          cancelledOrPaused: cancelledOrPausedSupplier
         }
       }
     }
