@@ -56,7 +56,10 @@
                       color="green darken-1"
                       text
                       @click.stop="
-                        $store.dispatch('Dialog/show', 'AccountTypeDialog')
+                        $store.dispatch('Dialog/show', {
+                          name: 'AccountTypeDialog',
+                          data: 'supplier'
+                        })
                         selectRoleDialog = false
                       "
                       >supplier</v-btn
@@ -68,7 +71,10 @@
                       color="green darken-1"
                       text
                       @click.stop="
-                        $store.dispatch('Dialog/show', 'HaveLumberListDialog')
+                        $store.dispatch('Dialog/show', {
+                          name: 'HaveLumberListDialog',
+                          data: 'user'
+                        })
                         selectRoleDialog = false
                       "
                       >customer</v-btn

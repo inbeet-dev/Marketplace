@@ -152,7 +152,8 @@ export default {
       reTypePassword: '',
       phoneNumber: '',
       checkBox: '',
-      type: ''
+      type: '',
+      role: ''
     }
   },
   /* eslint-disable */
@@ -191,13 +192,14 @@ export default {
       this.email = value.toLowerCase()
     },
     submit() {
+      console.log(this.role)
       if (this.$v.$invalid) {
         this.$store.dispatch('SnackBar/show', 'Please input correct values')
         return
       }
       const formData = new FormData(this.$refs.regsiterForm)
       this.$axios
-        .post('/api/v1/user/register', formData, {})
+        .post(`/api/v1/${this.role}/register`, formData, {})
         .then((data) => {
           this.$store
             .dispatch('Auth/store', {
@@ -222,7 +224,11 @@ export default {
       },
       (newValue) => {
         this.dialog = newValue === 'UserRegisterDialog'
-        this.type = this.$store.getters['Dialog/getData']
+        if (this.dialog) {
+          this.type = this.$store.getters['Dialog/getData'].type
+          this.role = this.$store.getters['Dialog/getData'].role
+          console.log(this.type)
+        }
       }
     )
   },
