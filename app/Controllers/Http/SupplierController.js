@@ -8,33 +8,21 @@ class SupplierController {
   async getSuppliers({ response, auth }) {
     await authenticate.admin(response, auth)
 
-    const inReviewSupplier = await User.query().where({
-      role: User.ROLES.supplier,
-      status: User.STATUS.inReview
-    })
-
-    const activeSupplier = await User.query().where({
-      role: User.ROLES.supplier,
-      status: User.STATUS.active
-    })
-
-    const deActiveSupplier = await User.query().where({
-      role: User.ROLES.supplier,
-      status: User.STATUS.deActive
-    })
+    const inReviewOrActvieSupplier = await User.query().whereRaw(
+      'role = ? and (status = ? or status = ?)',
+      [User.ROLES.supplier, User.STATUS.active, User.STATUS.inReview]
+    )
 
     const cancelledOrPausedSupplier = await User.query().whereRaw(
-      'status = ? or status = ?',
-      [User.STATUS.cancelled, User.STATUS.paused]
+      'role = ? and (status = ? or status = ?)',
+      [User.ROLES.supplier, User.STATUS.cancelled, User.STATUS.paused]
     )
 
     return {
       success: true,
       data: {
         suppliers: {
-          inReview: inReviewSupplier,
-          active: activeSupplier,
-          deActive: deActiveSupplier,
+          inReviewOrActive: inReviewOrActvieSupplier,
           cancelledOrPaused: cancelledOrPausedSupplier
         }
       }
