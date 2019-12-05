@@ -26,7 +26,10 @@ class SupplierController {
         User.STATUS.active,
         User.STATUS.deActive,
         User.STATUS.terminated,
-        User.STATUS.inReview
+        User.STATUS.inReview,
+        User.STATUS.paused,
+        User.STATUS.removed,
+        User.STATUS.cancelled
       ].includes(status)
     )
       throw new ServerException('Role is invalid', 400)
