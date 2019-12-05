@@ -74,6 +74,13 @@
                 :error="$v.phoneNumber.$error"
               />
             </v-col>
+          </v-row>
+          <v-row style="margin:0">
+            <v-col xl="12" lg="12 " md="12" sm="12" cols="12">
+              <my-awesome-map style="height:400px;100%" v-model="position" />
+            </v-col>
+          </v-row>
+          <v-row style="padding:0px 10px;margin:0" justify="center">
             <v-col cols="12">
               <v-row justify="center">
                 <v-col cols="12" style="text-align:center;padding:0;">
@@ -141,6 +148,7 @@
 <script>
 import { required, sameAs, email, numeric } from 'vuelidate/lib/validators'
 import TextField from '../Shared/TextField'
+import MyAwesomeMap from './ProjectLocation'
 
 export default {
   data() {
@@ -152,7 +160,8 @@ export default {
       reTypePassword: '',
       phoneNumber: '',
       checkBox: '',
-      type: ''
+      type: '',
+      position: null
     }
   },
   /* eslint-disable */
@@ -182,7 +191,8 @@ export default {
   },
 
   components: {
-    TextField
+    TextField,
+    MyAwesomeMap
   },
 
   name: 'RegisterDialog',
@@ -191,13 +201,26 @@ export default {
       this.email = value.toLowerCase()
     },
     submit() {
+      if (!this.position) {
+        this.$store.dispatch(
+          'SnackBar/show',
+          'Please set project location on map'
+        )
+        return
+      }
       if (this.$v.$invalid) {
         this.$store.dispatch('SnackBar/show', 'Please input correct values')
         return
       }
       const formData = new FormData(this.$refs.regsiterForm)
+      formData.append('lat', this.position.lat)
+      formData.append('long', this.position.lng)
+      formData.append(
+        'accountType',
+        this.$store.getters['Dialog/getData'].toLowerCase()
+      )
       this.$axios
-        .post('/api/v1/user/register', formData, {})
+        .post('/api/v1/supplier/register', formData, {})
         .then((data) => {
           this.$store
             .dispatch('Auth/store', {
@@ -205,8 +228,8 @@ export default {
               token: data.data.token
             })
             .then(() => {
-              this.$store.dispatch('Dialog/show', 'ProjectRegisterDialog')
               this.dialog = false
+              this.$router.push('/supplier')
             })
         })
         .catch((e) => {
@@ -215,14 +238,17 @@ export default {
     }
   },
   mounted() {
-    this.dialog = this.$store.getters['Dialog/active'] === 'UserRegisterDialog'
+    this.dialog =
+      this.$store.getters['Dialog/active'] === 'SupplierRegisterDialog'
     this.$store.watch(
       function(state, getters) {
         return getters['Dialog/active']
       },
       (newValue) => {
-        this.dialog = newValue === 'UserRegisterDialog'
-        this.type = this.$store.getters['Dialog/getData']
+        this.dialog = newValue === 'SupplierRegisterDialog'
+        if (this.dialog) {
+          this.type = this.$store.getters['Dialog/getData']
+        }
       }
     )
   },
@@ -230,7 +256,7 @@ export default {
     dialog() {
       if (
         this.dialog === false &&
-        this.$store.getters['Dialog/active'] === 'UserRegisterDialog'
+        this.$store.getters['Dialog/active'] === 'SupplierRegisterDialog'
       ) {
         this.$store.dispatch('Dialog/show', '')
       }
@@ -349,6 +375,39 @@ h1 {
 }
 .v-dialog .login-card .btn-row {
   padding: 20px 25px 30px;
+}
+.register {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+h5 {
+  margin: 5px 7px;
+  color: #0b3265;
+  font-style: italic;
+}
+button {
+  height: 56px;
+  width: 100%;
+  background-color: #f48f2e;
+  border-radius: 10px;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+a {
+  line-height: 56px;
+  color: #8c8dae;
+}
+.registerForm {
+  padding-top: 30px;
+}
+.close-icon {
+  position: absolute;
+  right: 20px;
+  top: 10px;
+}
+.close-icon:hover {
+  color: #f48f2e;
 }
 @media only screen and (max-width: 960px) {
   .form-field {
