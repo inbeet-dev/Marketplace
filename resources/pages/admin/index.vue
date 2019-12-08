@@ -55,7 +55,7 @@
                 <tr>
                   <td>{{ lumberList.inReview }}</td>
                   <td>{{ lumberList.received }}</td>
-                  <td>0</td>
+                  <td>{{ lumberList.complete }}</td>
                   <td>{{ lumberList.awaitingManagerApproval }}</td>
                 </tr>
               </tbody>
@@ -189,7 +189,6 @@ export default {
           name: data.data.data.user.name,
           role: data.data.data.user.role
         })
-        console.log(data.data)
       })
       .catch((data) => {
         // console.log(data)
