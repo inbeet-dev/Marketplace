@@ -3,7 +3,7 @@
     <v-dialog v-model="dialog" max-width="1000" persistent>
       <v-card class="content-card">
         <h1>
-          Sign Up To Upload
+          Sign Up Supplier
         </h1>
         <v-icon class="close-icon" @click="dialog = false">
           mdi-close
@@ -19,7 +19,7 @@
                 v-model.trim="$v.name.$model"
                 type="text"
                 placeholder="Enter Name"
-                :label="type + ' name'"
+                :label="(type === 'Company' ? 'Company ' : '') + 'name'"
                 important
                 name="name"
                 message="Name is required"
@@ -77,6 +77,7 @@
           </v-row>
           <v-row style="margin:0">
             <v-col xl="12" lg="12 " md="12" sm="12" cols="12">
+              <span>Location</span>
               <my-awesome-map style="height:400px;100%" v-model="position" />
             </v-col>
           </v-row>
@@ -323,6 +324,14 @@ p {
 }
 h1 {
   text-align: center;
+}
+span {
+  margin: 5px 7px;
+  color: #0b3265;
+  font-style: italic;
+  font-size: 15px;
+  line-height: 40px;
+  text-transform: capitalize;
 }
 @media only screen and (max-width: 1264px) {
   .free-div {
