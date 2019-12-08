@@ -11,25 +11,28 @@ class SupplierController {
 
     const supplier = await auth.getUser()
 
-    const { rows: projects } = await Database.raw(
-      `SELECT * FROM projects LEFT JOIN
-      (SELECT project_id AS id FROM lumber_lists LEFT JOIN
-      (SELECT lumber_list_id AS id FROM
-      (SELECT lumber_list_item_id AS id FROM 
-      lumber_list_bids LEFT JOIN lumber_list_bid_items 
+    // const { rows: projects } = await Database.raw(
+    //   `SELECT * FROM project Inner
+    //   `)
+
+    const { rows: bidedProjects } = await Database.raw(
+      `SELECT projects.* FROM lumber_list_bids
+      INNER JOIN lumber_list_bid_items
       ON lumber_list_bid_items.lumber_list_bid_id = lumber_list_bids.id
-      WHERE lumber_list_bids.supplier_id = ?) AS lumber_list_item
-      RIGHT JOIN lumber_list_items 
-      ON lumber_list_item.id = lumber_list_items.id) AS lumber_list
-      ON lumber_list.id = lumber_lists.id) AS project
-      ON project.id = projects.id WHERE projects.status = ?`,
+      INNER JOIN lumber_list_items
+      ON lumber_list_items.id = lumber_list_bid_items.lumber_list_item_id
+      INNER JOIN lumber_lists
+      ON lumber_list_items.lumber_list_id = lumber_lists.id
+      INNER JOIN projects
+      ON projects.id = lumber_lists.project_id
+      WHERE supplier_id = ? AND projects.status != ?`,
       [supplier.id, Project.STATUS.open]
     )
 
     return {
       success: true,
       data: {
-        projects
+        bidedProjects
       }
     }
   }
