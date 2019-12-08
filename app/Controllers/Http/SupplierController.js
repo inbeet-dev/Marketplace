@@ -9,12 +9,12 @@ class SupplierController {
     await authenticate.admin(response, auth)
 
     const inReviewOrActvieSupplier = await User.query().whereRaw(
-      'role = ? and (status = ? or status = ?)',
+      'role = ? and status in (?, ?)',
       [User.ROLES.supplier, User.STATUS.active, User.STATUS.inReview]
     )
 
     const cancelledOrPausedSupplier = await User.query().whereRaw(
-      'role = ? and (status = ? or status = ?)',
+      'role = ? and status in (?, ?)',
       [User.ROLES.supplier, User.STATUS.cancelled, User.STATUS.paused]
     )
 
