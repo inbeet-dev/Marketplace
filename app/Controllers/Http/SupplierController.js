@@ -11,7 +11,7 @@ class SupplierController {
       name,
       email,
       password,
-      phonenumber,
+      phoneNumber,
       lat,
       long,
       accountType
@@ -21,7 +21,7 @@ class SupplierController {
       email: 'required|email',
       name: 'required',
       password: 'required',
-      phonenumber: 'required',
+      phoneNumber: 'required',
       lat: 'required',
       long: 'required',
       accountType: 'required'
@@ -38,7 +38,7 @@ class SupplierController {
     )
       throw new ServerException('Invalid role', 400)
 
-    const meta = { phoneNumber: phonenumber, lat, long, accountType }
+    const meta = { phoneNumber: phoneNumber, lat, long, accountType }
 
     const user = new User()
 
