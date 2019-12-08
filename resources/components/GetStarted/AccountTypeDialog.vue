@@ -59,7 +59,6 @@ export default {
       (newValue) => {
         this.dialog = newValue === 'AccountTypeDialog'
         this.role = this.$store.getters['Dialog/getData']
-        console.log(this.role)
       }
     )
   },
