@@ -179,7 +179,6 @@ export default {
         }
       })
       .then((data) => {
-        console.log(data.data.data.lumberLists)
         this.bids = data.data.data.bids
         this.suppliers = data.data.data.suppliers
         this.customers = data.data.data.customers
