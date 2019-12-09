@@ -83,7 +83,8 @@ import TextField from '../components/Shared/TextField'
 export const DASHBOARDS = {
   customer: '/customer',
   estimator: '/estimator',
-  admin: '/admin'
+  admin: '/admin',
+  supplier: '/supplier'
 }
 export default {
   components: {

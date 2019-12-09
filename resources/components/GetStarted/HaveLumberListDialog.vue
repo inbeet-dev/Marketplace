@@ -15,7 +15,10 @@
               color="green darken-1"
               text
               @click.stop="
-                $store.dispatch('Dialog/show', 'AccountTypeDialog')
+                $store.dispatch('Dialog/show', {
+                  name: 'AccountTypeDialog',
+                  data: 'User'
+                })
                 dialog = false
                 setUploadType('LUMBER_LIST')
               "
