@@ -56,7 +56,10 @@
                       color="green darken-1"
                       text
                       @click.stop="
-                        $store.dispatch('Dialog/show', 'AccountTypeDialog')
+                        $store.dispatch('Dialog/show', {
+                          name: 'AccountTypeDialog',
+                          data: 'Supplier'
+                        })
                         selectRoleDialog = false
                       "
                       >supplier</v-btn
@@ -68,7 +71,10 @@
                       color="green darken-1"
                       text
                       @click.stop="
-                        $store.dispatch('Dialog/show', 'HaveLumberListDialog')
+                        $store.dispatch('Dialog/show', {
+                          name: 'HaveLumberListDialog',
+                          data: 'User'
+                        })
                         selectRoleDialog = false
                       "
                       >customer</v-btn
@@ -88,6 +94,7 @@
       <architectural-drawing-dialog />
       <draw-type-dialog />
       <email-dialog />
+      <supplier-register-dialog />
     </v-row>
   </v-container>
 </template>
@@ -101,6 +108,7 @@ import UploadFileDialog from '../components/GetStarted/UploadFileDialog.vue'
 import ArchitecturalDrawingDialog from '../components/GetStarted/ArchitecturalDrawingDialog.vue'
 import DrawTypeDialog from '../components/GetStarted/DrawTypeDialog.vue'
 import EmailDialog from '../components/GetStarted/EmailDialog.vue'
+import SupplierRegisterDialog from '../components/GetStarted/SupplierRegisterDialog.vue'
 export default {
   components: {
     LumberHeader,
@@ -111,7 +119,8 @@ export default {
     ArchitecturalDrawingDialog,
     DrawTypeDialog,
     EmailDialog,
-    UploadFileDialog
+    UploadFileDialog,
+    SupplierRegisterDialog
   },
   data: () => ({
     videoDialog: false,
