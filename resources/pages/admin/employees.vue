@@ -78,7 +78,7 @@
                     class="form-field"
                   >
                     <text-field
-                      type="password"
+                      type="text"
                       placeholder="Enter Address"
                       label="Address"
                       important
@@ -139,6 +139,7 @@
                       name="email"
                       message="Email is required and must be valid"
                       v-model="newEmployee.email"
+                      @input="toLowerCase"
                     />
                   </v-col>
                   <v-col
@@ -235,6 +236,9 @@ export default {
       })
   },
   methods: {
+    toLowerCase(value) {
+      this.newEmployee.email = value.toLowerCase()
+    },
     async submit() {
       await this.$store.restored
       this.$axios
