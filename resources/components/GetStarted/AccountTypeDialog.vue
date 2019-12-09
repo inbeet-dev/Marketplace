@@ -15,7 +15,7 @@
               text
               @click.stop="
                 $store.dispatch('Dialog/show', {
-                  name: 'UserRegisterDialog',
+                  name: role + 'RegisterDialog',
                   data: 'Company'
                 })
                 dialog = false
@@ -30,7 +30,7 @@
               text
               @click.stop="
                 $store.dispatch('Dialog/show', {
-                  name: 'UserRegisterDialog',
+                  name: role + 'RegisterDialog',
                   data: 'Individual'
                 })
                 dialog = false
@@ -48,16 +48,17 @@
 export default {
   data() {
     return {
-      dialog: false
+      dialog: false,
+      role: ''
     }
   },
   mounted() {
-    console.log(this.dialog)
     this.dialog = this.$store.getters['Dialog/active'] === 'AccountTypeDialog'
     this.$store.watch(
       (state, getters) => getters['Dialog/active'],
       (newValue) => {
         this.dialog = newValue === 'AccountTypeDialog'
+        this.role = this.$store.getters['Dialog/getData']
       }
     )
   },
