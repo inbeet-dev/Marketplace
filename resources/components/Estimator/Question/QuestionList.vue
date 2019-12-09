@@ -13,6 +13,7 @@
             v-model="questions[index]"
             @save="save(index)"
             class="component"
+            :disabled="question.id > 0"
           />
         </v-col>
       </v-row>
@@ -57,9 +58,6 @@
 </template>
 
 <script>
-// import MultiChoiceQuestion from '../../Questions/MultiChoiceQuestion.vue'
-// import YesNoQuestion from '../../Questions/YesNoQuestion.vue'
-// import GeneralQuestion from '../../Questions/GeneralQuestion.vue'
 import YesNoQuestionCreate, {
   YesNoQuestionCreateSchema
 } from './QuestionCreateTypes/YesNoQuestion'
@@ -69,6 +67,10 @@ import MultiChoiceQuestionCreate, {
 import GeneralQuestionCreate, {
   GeneralQuestionCreateSchema
 } from './QuestionCreateTypes/GeneralQuestion'
+import MultiChoiceQuestion from '@/components/Questions/MultiChoiceQuestion.vue'
+import YesNoQuestion from '@/components/Questions/YesNoQuestion.vue'
+import GeneralQuestion from '@/components/Questions/GeneralQuestion.vue'
+
 export default {
   data() {
     return {
@@ -77,10 +79,10 @@ export default {
       components: {
         'yes-no-create': YesNoQuestionCreate,
         'multi-choice-create': MultiChoiceQuestionCreate,
-        'general-create': GeneralQuestionCreate
-        // 'yes-no': YesNoQuestion,
-        // 'multi-choice': MultiChoiceQuestion,
-        // general: GeneralQuestion
+        'general-create': GeneralQuestionCreate,
+        'yes-no': YesNoQuestion,
+        'multi-choice': MultiChoiceQuestion,
+        general: GeneralQuestion
       },
       schemas: {
         'yes-no-create': YesNoQuestionCreateSchema,
@@ -100,16 +102,17 @@ export default {
   props: {
     value: { type: Boolean, default: false }
   },
-  mounted() {
+  async mounted() {
+    await this.$store.restored
+
     this.$axios
-      .get('api/v1/project/question/1', {
+      .get('/api/v1/project/question/' + this.$route.params.id, {
         headers: {
           Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
         }
       })
       .then((data) => {
         this.questions = data.data.question
-        console.log(data.data.question)
       })
   },
   methods: {
@@ -124,7 +127,7 @@ export default {
         .post(
           '/api/v1/project/question/create',
           {
-            projectId: 1,
+            projectId: this.$route.params.id,
             type: this.questions[index].type.replace('-create', ''),
             question: this.questions[index].question
           },
@@ -134,7 +137,10 @@ export default {
             }
           }
         )
-        .then(() => {
+        .then((data) => {
+          const questions = this.questions
+          questions[index] = data.data.data.projectQuestion
+          this.$set(this.questions, questions)
           this.$store.dispatch(
             'SnackBar/show',
             'Your question successfully saved'

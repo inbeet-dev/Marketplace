@@ -2,6 +2,8 @@
 
 const Auth = use('App/Utils/authenticate')
 const authenticate = new Auth()
+const ServerException = use('App/Exceptions/ServerException')
+const User = use('App/Models/User')
 
 class EstimatorController {
   async dashboard({ response, auth }) {
@@ -9,11 +11,19 @@ class EstimatorController {
 
     const user = await auth.getUser()
 
-    await user.load('estimates.project')
+    if (user.role !== User.ROLES.estimator)
+      throw new ServerException('User has no access', 403)
+
+    const estimates = await user.estimates().fetch()
+    const projects = await user.estimatedProject().fetch()
 
     return {
       success: true,
-      user
+      data: {
+        user,
+        estimates,
+        projects
+      }
     }
   }
 }
