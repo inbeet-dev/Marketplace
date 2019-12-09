@@ -345,6 +345,17 @@ export default {
   color: #948ebb;
 }
 @media only screen and (max-width: 1100px) {
+  .header .header__right-side-profile {
+    right: 20px;
+    position: absolute;
+    right: 10px;
+  }
+  .header
+    .header__right-side-profile
+    .header__right-side-profile__profile-detail {
+    max-height: 45px;
+    margin: 9.5px auto;
+  }
   .header {
     height: 64px;
   }

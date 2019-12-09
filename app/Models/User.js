@@ -84,4 +84,9 @@ User.STATUS = {
   inReview: 'in review'
 }
 
+User.ACCOUNT_TYPES = {
+  company: 'company',
+  individual: 'individual'
+}
+
 module.exports = User
