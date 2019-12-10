@@ -1,13 +1,78 @@
 'use strict'
 
-const { validate } = use('Validator')
-const ServerException = use('App/Exceptions/ServerException')
+const Auth = use('App/Utils/authenticate')
+const authenticate = new Auth()
+const Database = use('Database')
+const Project = use('App/Models/Project')
 const User = use('App/Models/User')
+const { validate } = use('Validator')
 const { save } = use('App/Utils/dbFunctions')
 const Auth = use('App/Utils/authenticate')
 const authenticate = new Auth()
 
 class SupplierController {
+  async dashboard({ request, response, auth }) {
+    await authenticate.supplier(response, auth)
+
+    const supplier = await auth.getUser()
+
+    const { rows: bidedProjects } = await Database.raw(
+      `SELECT projects.* FROM lumber_list_bids
+      INNER JOIN lumber_list_bid_items
+      ON lumber_list_bid_items.lumber_list_bid_id = lumber_list_bids.id
+      INNER JOIN lumber_list_items
+      ON lumber_list_items.id = lumber_list_bid_items.lumber_list_item_id
+      INNER JOIN lumber_lists
+      ON lumber_list_items.lumber_list_id = lumber_lists.id
+      INNER JOIN projects
+      ON projects.id = lumber_lists.project_id
+      WHERE supplier_id = ? AND projects.status != ?`,
+      [supplier.id, Project.STATUS.open]
+    )
+
+    const { rows: notBiddedProjects } = await Database.raw(
+      `SELECT projects.* FROM lumber_list_bids
+      INNER JOIN lumber_list_bid_items
+      ON lumber_list_bid_items.lumber_list_bid_id = lumber_list_bids.id
+      INNER JOIN lumber_list_items
+      ON lumber_list_items.id = lumber_list_bid_items.lumber_list_item_id
+      INNER JOIN lumber_lists
+      ON lumber_list_items.lumber_list_id = lumber_lists.id
+      INNER JOIN projects
+      ON projects.id = lumber_lists.project_id
+      WHERE supplier_id != 8 AND projects.status = 'Lumber List open'`
+    )
+    
+    return {
+      success: true,
+      data: {
+        bidedProjects,
+        notBiddedProjects
+      }
+    }
+
+  async getSuppliers({ response, auth }) {
+    await authenticate.admin(response, auth)
+
+    const inReviewOrActvieSupplier = await Database.from('users')
+      .where('role', User.ROLES.supplier)
+      .whereIn('status', [User.STATUS.active, User.STATUS.inReview])
+
+    const cancelledOrPausedSupplier = await Database.from('users')
+      .where('role', User.ROLES.supplier)
+      .whereIn('status', [User.STATUS.cancelled, User.STATUS.paused])
+     
+    return {
+      success: true,
+      data: {
+        suppliers: {
+          inReviewOrActive: inReviewOrActvieSupplier,
+          cancelledOrPaused: cancelledOrPausedSupplier
+        }
+      }
+    }
+  }
+
   async register({ request, response, auth }) {
     const {
       name,
