@@ -20,7 +20,6 @@
                 <th class="text-left">Address</th>
                 <th class="text-left">Email</th>
                 <th class="text-left">Phone</th>
-                <th class="text-left">Contact</th>
                 <th class="text-left">Data created</th>
                 <th class="text-left">Costomer Rating</th>
                 <th class="text-left">#bids Accepted</th>
@@ -30,23 +29,24 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(item, index) in suppliers" :key="index">
-                <td class="item">{{ item.supplier }}</td>
-                <td class="item">{{ item.address }}</td>
+              <tr v-for="(item, index) in inReviewOrActive" :key="index">
+                <td class="item">{{ item.name }}</td>
+                <td class="item"></td>
                 <td class="item">{{ item.email }}</td>
-                <td class="item">{{ item.phone }}</td>
-                <td class="item">{{ item.contact }}</td>
+                <td class="item">{{ item.meta.phoneNumber }}</td>
                 <td class="item">
-                  <!-- {{ moment(item.dataCreated).format('DD MMMM YYYY') }} -->
+                  {{ moment(item.created_at).format('DD MMMM YYYY') }}
                 </td>
-                <td class="item">{{ item.rate }}</td>
-                <td class="item">{{ item.accepted }}</td>
-                <td class="item">{{ item.resTime }}</td>
+                <td class="item"></td>
+                <td class="item"></td>
+                <td class="item"></td>
                 <td class="item status">
                   <v-select
-                    v-model="suppliers[index].status"
+                    v-model="inReviewOrActive[index].status"
                     :items="items"
-                    :background-color="statuses[suppliers[index].status].color"
+                    :background-color="
+                      statuses[inReviewOrActive[index].status].color
+                    "
                   ></v-select>
                 </td>
 
@@ -55,7 +55,7 @@
                     @click.stop="
                       $store.dispatch('Dialog/show', {
                         name: 'SupplierListEditDialog',
-                        data: suppliers[index]
+                        data: inReviewOrActive[index]
                       })
                     "
                     >mdi-pencil-outline</v-icon
@@ -83,11 +83,11 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(item, index) in suppliers" :key="index">
-                <td class="item">{{ item.supplier }}</td>
-                <td class="item">{{ item.address }}</td>
-                <td class="item">{{ item.email }}</td>
-                <td class="item">{{ item.phone }}</td>
+              <tr v-for="(item, index) in inActive" :key="index">
+                <td class="item">{{ item }}</td>
+                <td class="item">{{ item }}</td>
+                <td class="item">{{ item }}</td>
+                <td class="item">{{ item }}</td>
                 <td class="item account-status">
                   <v-select
                     :items="activity"
@@ -104,7 +104,7 @@
                     @click.stop="
                       $store.dispatch('Dialog/show', {
                         name: 'SupplierListEditDialog',
-                        data: suppliers[index]
+                        data: inActive[index]
                       })
                     "
                     >mdi-pencil-outline</v-icon
@@ -121,7 +121,7 @@
 </template>
 
 <script>
-// import * as moment from 'moment'
+import * as moment from 'moment'
 import LumberHeader from '../../components/Header.vue'
 import SupplierListEditDialog from '../../components/Supplier/SupplierListEditDialog'
 export default {
@@ -131,33 +131,25 @@ export default {
   },
   data() {
     return {
-      suppliers: [
-        {
-          supplier: 'name',
-          address: 'address',
-          email: 'email',
-          phone: '09216615806',
-          dataCreated: '22/10/77',
-          status: 'Active',
-          rate: 'rate',
-          accepted: '28',
-          resTime: '22/123/2'
-        }
-      ],
+      inReviewOrActive: [],
+      inActive: [],
       statuses: {
-        Active: {
+        active: {
           name: 'Active',
           class: 'active',
           color: '#3ce057'
         },
-        InActive: {
+        inactive: {
           name: 'InActive',
           class: 'active',
           color: '#f85b5b'
         }
       },
       activity: ['Remove', 'Pause', 'Cancel'],
-      items: ['Active', 'InActive']
+      items: [
+        { text: 'Active', value: 'active' },
+        { text: 'InActive', value: 'inactive' }
+      ]
     }
   },
   async mounted() {
@@ -169,26 +161,20 @@ export default {
         }
       })
       .then((data) => {
-        console.log(data.data.data)
-        // this.name = data.data.data.user.name
-        // this.phoneNumber = data.data.data.user.meta.phoneNumber
-        // // this.address = data.data.data.user.projects[0].address
-        // this.createdAt = this.time = moment(
-        //   data.data.data.user.created_at
-        // ).format('DD MMMM YYYY')
-
-        // this.projects = data.data.data.user.projects
-
-        // this.$store.dispatch('User/setUser', {
-        //   name: data.data.data.user.name,
-        //   role: data.data.data.user.role
-        // })
+        console.log(data.data.data.suppliers)
+        this.inActive = data.data.data.suppliers.cancelledOrPaused
+        this.inReviewOrActive = data.data.data.suppliers.inReviewOrActive
       })
       .catch((data) => {
-        // if (data.response.data.error.status === 401) {
-        //   this.$router.push('/login')
-        // }
+        if (data.response.data.error.status === 401) {
+          this.$router.push('/login')
+        }
       })
+  },
+  methods: {
+    moment(...arg) {
+      return moment(...arg)
+    }
   }
 }
 </script>

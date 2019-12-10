@@ -4,13 +4,13 @@
       <v-icon class="close" @click="dialog = false">mdi-close</v-icon>
       <v-row style="margin:20px 0 0" justify="center">
         <v-col cols="12" class="item">
-          <text-field v-model="supplier.supplier" label="Name" />
+          <text-field v-model="supplier.name" label="Name" />
         </v-col>
         <v-col cols="12" class="item"
-          ><text-field v-model="supplier.address" label="Address"
+          ><text-field v-model="supplier.meta.address" label="Address"
         /></v-col>
         <v-col class="item">
-          <text-field v-model="supplier.phone" label="Phone" />
+          <text-field v-model="supplier.meta.phoneNumber" label="Phone" />
         </v-col>
         <v-col cols="12" class="item">
           <text-field v-model="supplier.email" label="Email" />
@@ -38,7 +38,14 @@ export default {
   data() {
     return {
       dialog: false,
-      supplier: ''
+      supplier: {
+        name: '',
+        meta: {
+          phoneNumber: '',
+          address: ''
+        },
+        email: ''
+      }
     }
   },
   mounted() {
@@ -54,6 +61,8 @@ export default {
           this.supplier = JSON.parse(
             JSON.stringify(this.$store.getters['Dialog/getData'])
           )
+          console.log(this.supplier)
+          this.supplier.supplierId = this.supplier.id
         }
       }
     )
