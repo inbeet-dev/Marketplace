@@ -1,11 +1,36 @@
 'use strict'
 
-const { validate } = use('Validator')
-const ServerException = use('App/Exceptions/ServerException')
+const Auth = use('App/Utils/authenticate')
+const authenticate = new Auth()
 const User = use('App/Models/User')
+const Database = use('Database')
+const { validate } = use('Validator')
 const { save } = use('App/Utils/dbFunctions')
 
+
 class SupplierController {
+  async getSuppliers({ response, auth }) {
+    await authenticate.admin(response, auth)
+
+    const inReviewOrActvieSupplier = await Database.from('users')
+      .where('role', User.ROLES.supplier)
+      .whereIn('status', [User.STATUS.active, User.STATUS.inReview])
+
+    const cancelledOrPausedSupplier = await Database.from('users')
+      .where('role', User.ROLES.supplier)
+      .whereIn('status', [User.STATUS.cancelled, User.STATUS.paused])
+     
+    return {
+      success: true,
+      data: {
+        suppliers: {
+          inReviewOrActive: inReviewOrActvieSupplier,
+          cancelledOrPaused: cancelledOrPausedSupplier
+        }
+      }
+    }
+  }
+
   async register({ request, response, auth }) {
     const {
       name,
