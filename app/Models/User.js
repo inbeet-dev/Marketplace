@@ -70,9 +70,17 @@ User.ROLES = {
 
 User.STATUS = {
   active: 'active',
-  deActive: 'de-active',
+  deActive: 'inactive',
   terminated: 'terminated',
-  inReview: 'in review'
+  inReview: 'in review',
+  paused: 'paused',
+  removed: 'removed',
+  cancelled: 'cancelled'
+}
+
+User.ACCOUNT_TYPES = {
+  company: 'company',
+  individual: 'individual'
 }
 
 module.exports = User

@@ -51,11 +51,12 @@ Route.group(() => {
 }).prefix('api/v1/project/question')
 
 Route.group(() => {
-  Route.post('register', 'SupplierController.regiter')
+  Route.post('register', 'SupplierController.register')
   Route.post('bid', 'SupplierController.submitBid')
   Route.get('dashboard', 'SupplierController.dashboard')
   Route.get('', 'SupplierController.getSuppliers')
   Route.put('', 'SupplierController.changeStatus')
+  Route.put('edit', 'SupplierController.editSupplier')
 }).prefix('api/v1/supplier')
 
 Route.group(() => {
