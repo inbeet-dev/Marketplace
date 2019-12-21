@@ -8,6 +8,7 @@ const User = use('App/Models/User')
 const { save } = use('App/Utils/dbFunctions')
 const Database = use('Database')
 const Project = use('App/Models/Project')
+const LumberListBid = use('App/Models/LumberListBid')
 
 class SupplierController {
   async changeStatus({ response, request, auth }) {
@@ -168,6 +169,20 @@ class SupplierController {
 
   async submitBid({ response, request, auth }) {
     await authenticate.supplier(response, auth)
+
+    const { shipping, tax } = request.all()
+
+    const lumberListBid = new LumberListBid()
+
+    const user = await auth.getUser()
+
+    lumberListBid.shipping_cost = shipping
+    lumberListBid.tax = tax
+    lumberListBid.supplier_id = user.id
+    lumberListBid.status = LumberListBid.STATUS.open
+
+    await save(lumberListBid, response)
+
     return {
       success: true
     }
