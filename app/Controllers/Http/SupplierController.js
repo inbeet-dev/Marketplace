@@ -165,6 +165,13 @@ class SupplierController {
       }
     }
   }
+
+  async submitBid({ response, request, auth }) {
+    await authenticate.supplier(response, auth)
+    return {
+      success: true
+    }
+  }
 }
 
 module.exports = SupplierController
