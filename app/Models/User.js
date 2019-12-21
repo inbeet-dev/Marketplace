@@ -78,4 +78,9 @@ User.STATUS = {
   cancelled: 'cancelled'
 }
 
+User.ACCOUNT_TYPES = {
+  company: 'company',
+  individual: 'individual'
+}
+
 module.exports = User
