@@ -165,6 +165,12 @@ class SupplierController {
       }
     }
   }
+
+  getBidPage({ response, request, auth }) {
+    return {
+      success: true
+    }
+  }
 }
 
 module.exports = SupplierController
