@@ -6,8 +6,6 @@ const { validate } = use('Validator')
 const ServerException = use('App/Exceptions/ServerException')
 const User = use('App/Models/User')
 const { save } = use('App/Utils/dbFunctions')
-const Auth = use('App/Utils/authenticate')
-const authenticate = new Auth()
 const Database = use('Database')
 const Project = use('App/Models/Project')
 
