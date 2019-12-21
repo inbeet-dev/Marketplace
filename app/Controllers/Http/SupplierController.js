@@ -34,7 +34,7 @@ class SupplierController {
         User.STATUS.cancelled
       ].includes(status)
     )
-      throw new ServerException('Role is invalid', 400)
+      throw new ServerException('Status is invalid', 400)
 
     const supplier = await User.find(supplierId)
     if (!supplier) throw new ServerException('Supplier not found', 404)
