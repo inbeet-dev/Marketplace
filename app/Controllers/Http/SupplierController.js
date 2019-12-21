@@ -166,7 +166,8 @@ class SupplierController {
     }
   }
 
-  getBidPage({ response, request, auth }) {
+  async getBidPage({ response, request, auth }) {
+    await authenticate.supplier(response, auth)
     return {
       success: true
     }
