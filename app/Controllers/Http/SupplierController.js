@@ -171,6 +171,17 @@ class SupplierController {
   async submitBid({ response, request, auth }) {
     await authenticate.supplier(response, auth)
 
+    const rules = {
+      shipping: 'required',
+      tax: 'required',
+      items: 'required'
+    }
+
+    const validation = await validate(request.all(), rules)
+
+    if (validation.fails())
+      throw new ServerException(validation.messages(), 400)
+
     const { shipping, tax, items } = request.all()
 
     const user = await auth.getUser()
