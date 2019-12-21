@@ -2,15 +2,53 @@
 
 const Auth = use('App/Utils/authenticate')
 const authenticate = new Auth()
-const Database = use('Database')
-const Project = use('App/Models/Project')
-const User = use('App/Models/User')
 const { validate } = use('Validator')
+const ServerException = use('App/Exceptions/ServerException')
+const User = use('App/Models/User')
 const { save } = use('App/Utils/dbFunctions')
 const Auth = use('App/Utils/authenticate')
 const authenticate = new Auth()
+const Database = use('Database')
+const Project = use('App/Models/Project')
 
 class SupplierController {
+  async changeStatus({ response, request, auth }) {
+    await authenticate.admin(response, auth)
+
+    const validation = await validate(request.all(), {
+      supplierId: 'required',
+      status: 'required'
+    })
+
+    const { status, supplierId } = request.all()
+
+    if (validation.fails())
+      throw new ServerException(validation.messages(), 400)
+
+    if (
+      ![
+        User.STATUS.active,
+        User.STATUS.deActive,
+        User.STATUS.terminated,
+        User.STATUS.inReview,
+        User.STATUS.paused,
+        User.STATUS.removed,
+        User.STATUS.cancelled
+      ].includes(status)
+    )
+      throw new ServerException('Status is invalid', 400)
+
+    const supplier = await User.find(supplierId)
+    if (!supplier) throw new ServerException('Supplier not found', 404)
+
+    supplier.status = status
+    await save(supplier, response)
+
+    return {
+      success: true
+    }
+  }
+
   async dashboard({ request, response, auth }) {
     await authenticate.supplier(response, auth)
 
@@ -42,7 +80,7 @@ class SupplierController {
       ON projects.id = lumber_lists.project_id
       WHERE supplier_id != 8 AND projects.status = 'Lumber List open'`
     )
-    
+
     return {
       success: true,
       data: {
@@ -50,6 +88,7 @@ class SupplierController {
         notBiddedProjects
       }
     }
+  }
 
   async getSuppliers({ response, auth }) {
     await authenticate.admin(response, auth)
@@ -61,7 +100,7 @@ class SupplierController {
     const cancelledOrPausedSupplier = await Database.from('users')
       .where('role', User.ROLES.supplier)
       .whereIn('status', [User.STATUS.cancelled, User.STATUS.paused])
-     
+
     return {
       success: true,
       data: {
@@ -105,7 +144,7 @@ class SupplierController {
     )
       throw new ServerException('Invalid role', 400)
 
-    const meta = { phoneNumber: phoneNumber, lat, long, accountType }
+    const meta = { phoneNumber, lat, long, accountType }
 
     const user = new User()
 
