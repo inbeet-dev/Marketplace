@@ -6,6 +6,7 @@ const { validate } = use('Validator')
 const Auth = use('App/Utils/authenticate')
 const authenticate = new Auth()
 const ServerException = use('App/Exceptions/ServerException')
+const Mail = use('Mail')
 
 class UserController {
   async login({ request, response, auth }) {
@@ -67,6 +68,13 @@ class UserController {
     user.meta = meta
 
     await save(user, response)
+
+    await Mail.send('emails.welcome', { memberNumber: user.id }, (message) => {
+      message
+        .to(email)
+        .from('no-reply@lumber.webcentriq.com', 'Lumber Click')
+        .subject('Welcome to Lumber Click')
+    })
 
     const { token, refreshToken } = await auth
       .withRefreshToken()
