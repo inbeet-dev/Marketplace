@@ -10,6 +10,7 @@ const Database = use('Database')
 const Project = use('App/Models/Project')
 const LumberListBid = use('App/Models/LumberListBid')
 const LumberListBidItem = use('App/Models/LumberListBidItem')
+const LumberListItem = use('App/Models/LumberListItem')
 
 class SupplierController {
   async changeStatus({ response, request, auth }) {
@@ -196,10 +197,10 @@ class SupplierController {
     await save(lumberListBid, response)
 
     items.forEach(async (item) => {
-      const lumberListItem = await Database.from('lumber_list_items').where(
-        'lumber_list_id',
-        item.lumber_list_id
-      )
+      const lumberListItem = await LumberListItem.find(item.lumber_list_item_id)
+
+      if (!lumberListItem)
+        throw new ServerException('Lumber list item not found', 404)
 
       const lumberListBidItem = new LumberListBidItem()
 
