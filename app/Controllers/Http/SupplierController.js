@@ -166,10 +166,17 @@ class SupplierController {
     }
   }
 
-  async getBidPage({ response, request, auth }) {
-    await authenticate.supplier(response, auth)
+  async getBidPage({ response, auth, params }) {
+    // await authenticate.supplier(response, auth)
+
+    const project = await Project.find(params.id)
+    const lumberListItems = await project.lumberListItems().fetch()
+
     return {
-      success: true
+      success: true,
+      data: {
+        lumberListItems
+      }
     }
   }
 }
