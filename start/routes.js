@@ -55,6 +55,8 @@ Route.group(() => {
   Route.post('bid', 'SupplierController.submitBid')
   Route.get('dashboard', 'SupplierController.dashboard')
   Route.get('', 'SupplierController.getSuppliers')
+  Route.put('', 'SupplierController.changeStatus')
+  Route.put('edit', 'SupplierController.editSupplier')
   Route.put('status', 'SupplierController.changeStatus')
   Route.get('projects/:id', 'SupplierController.getBidPage')
 }).prefix('api/v1/supplier')

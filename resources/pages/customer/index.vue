@@ -7,7 +7,7 @@
       ]"
       :user="$store.getters['User/getUser']"
     />
-    <v-row justify="center">
+    <v-row justify="center" style="margin:0">
       <v-col md="8" sm="10" cols="12">
         <v-card class="profile">
           <v-row>
@@ -41,14 +41,16 @@
               >: 46
             </v-col>
             <v-col class="edit" sm="4" cols="12">
-              <v-btn
-                depressed
-                width="100%"
-                color="#f1f4f8"
-                class="edit__button"
-              >
-                Edit Profile
-              </v-btn>
+              <a href="/customer/edit-profile">
+                <v-btn
+                  depressed
+                  width="100%"
+                  color="#f1f4f8"
+                  class="edit__button"
+                >
+                  Edit Profile
+                </v-btn>
+              </a>
             </v-col>
           </v-row>
         </v-card>

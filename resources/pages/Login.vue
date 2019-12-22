@@ -30,6 +30,8 @@
                       icon="mdi-email-outline"
                       label="email"
                       name="email"
+                      v-model="email"
+                      @input="toLowerCase"
                     />
                   </v-col>
                   <v-col cols="12">
@@ -80,14 +82,24 @@ import LumberHeader from '../components/Header.vue'
 import TextField from '../components/Shared/TextField'
 export const DASHBOARDS = {
   customer: '/customer',
-  estimator: '/estimator'
+  estimator: '/estimator',
+  admin: '/admin',
+  supplier: '/supplier'
 }
 export default {
   components: {
     TextField,
     LumberHeader
   },
+  data() {
+    return {
+      email: ''
+    }
+  },
   methods: {
+    toLowerCase(value) {
+      this.email = value.toLowerCase()
+    },
     login() {
       const formData = new FormData(this.$refs.loginForm)
       this.$axios
