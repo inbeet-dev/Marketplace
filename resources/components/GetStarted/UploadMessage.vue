@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <div class="text-center">
-        <v-dialog v-model="uploadFileDialog" width="500">
+        <v-dialog v-model="dialog" width="500">
           <v-card>
             <v-card-text class="content">
               <h1>
@@ -32,18 +32,26 @@
 export default {
   data() {
     return {
-      uploadFileDialog: false
+      dialog: false
     }
   },
-  props: {
-    value: { type: Boolean, default: false }
+  mounted() {
+    this.dialog = this.$store.getters['Dialog/active'] === 'UploadFileDialog'
+    this.$store.watch(
+      (state, getters) => getters['Dialog/active'],
+      (newValue) => {
+        this.dialog = newValue === 'UploadFileDialog'
+      }
+    )
   },
   watch: {
-    value() {
-      this.uploadFileDialog = this.value
-    },
-    uploadFileDialog() {
-      this.$emit('input', this.uploadFileDialog)
+    dialog() {
+      if (
+        this.dialog === false &&
+        this.$store.getters['Dialog/active'] === 'UploadFileDialog'
+      ) {
+        this.$store.dispatch('Dialog/show', '')
+      }
     }
   }
 }

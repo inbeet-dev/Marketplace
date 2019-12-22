@@ -6,6 +6,8 @@ const { validate } = use('Validator')
 const ServerException = use('App/Exceptions/ServerException')
 const User = use('App/Models/User')
 const { save } = use('App/Utils/dbFunctions')
+const Auth = use('App/Utils/authenticate')
+const authenticate = new Auth()
 const Database = use('Database')
 const Project = use('App/Models/Project')
 const LumberListBid = use('App/Models/LumberListBid')
@@ -210,6 +212,53 @@ class SupplierController {
 
       await save(lumberListBidItem, response)
     })
+    
+    return {
+      success: true
+    }
+  }
+
+  async getBidPage({ response, auth, params }) {
+    // await authenticate.supplier(response, auth)
+
+    const project = await Project.find(params.id)
+    const lumberListItems = await project.lumberListItems().fetch()
+
+    return {
+      success: true,
+      data: {
+        lumberListItems
+      }
+    }
+  }
+
+  async editSupplier({ response, request, auth }) {
+    await authenticate.admin(response, auth)
+
+    const validation = await validate(request.all(), {
+      email: 'email',
+      supplierId: 'required'
+    })
+    if (validation.fails())
+      throw new ServerException(validation.messages(), 400)
+
+    const {
+      name,
+      address,
+      email,
+      phone: phoneNumber,
+      supplierId
+    } = request.all()
+
+    const supplier = await User.find(supplierId)
+    if (!supplier) throw new ServerException('Supplier not found')
+
+    if (name) supplier.name = name
+    if (address) supplier.meta = { ...supplier.meta, address }
+    if (email) supplier.meta = { ...supplier.meta, email }
+    if (phoneNumber) supplier.meta = { ...supplier.meta, phoneNumber }
+
+    await save(supplier, response)
 
     return {
       success: true
