@@ -165,6 +165,20 @@ class SupplierController {
       }
     }
   }
+
+  async getBidPage({ response, auth, params }) {
+    // await authenticate.supplier(response, auth)
+
+    const project = await Project.find(params.id)
+    const lumberListItems = await project.lumberListItems().fetch()
+
+    return {
+      success: true,
+      data: {
+        lumberListItems
+      }
+    }
+  }
 }
 
 module.exports = SupplierController
