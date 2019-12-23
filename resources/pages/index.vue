@@ -21,7 +21,7 @@
           forward quotations, you choose your supplier, we help you purchase you
           lumber
         </h3>
-        <h2>ITS ALL FREE!!!</h2>
+        <h2>IT'S ALL FREE!!!</h2>
         <br />
         <a href="#" class="link" @click.stop="videoDialog = true"
           >watch video <v-icon>mdi-chevron-right</v-icon></a

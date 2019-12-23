@@ -8,6 +8,9 @@ const User = use('App/Models/User')
 const { save } = use('App/Utils/dbFunctions')
 const Database = use('Database')
 const Project = use('App/Models/Project')
+const LumberListBid = use('App/Models/LumberListBid')
+const LumberListBidItem = use('App/Models/LumberListBidItem')
+const LumberListItem = use('App/Models/LumberListItem')
 
 class SupplierController {
   async changeStatus({ response, request, auth }) {
@@ -163,6 +166,53 @@ class SupplierController {
         name,
         role: user.role
       }
+    }
+  }
+
+  async submitBid({ response, request, auth }) {
+    await authenticate.supplier(response, auth)
+
+    const rules = {
+      shipping: 'required',
+      tax: 'required',
+      items: 'required'
+    }
+
+    const validation = await validate(request.all(), rules)
+
+    if (validation.fails())
+      throw new ServerException(validation.messages(), 400)
+
+    const { shipping, tax, items } = request.all()
+
+    const user = await auth.getUser()
+
+    const lumberListBid = new LumberListBid()
+
+    lumberListBid.shipping_cost = shipping
+    lumberListBid.tax = tax
+    lumberListBid.supplier_id = user.id
+    lumberListBid.status = LumberListBid.STATUS.open
+
+    await save(lumberListBid, response)
+
+    items.forEach(async (item) => {
+      const lumberListItem = await LumberListItem.find(item.lumber_list_item_id)
+
+      if (!lumberListItem)
+        throw new ServerException('Lumber list item not found', 404)
+
+      const lumberListBidItem = new LumberListBidItem()
+
+      lumberListBidItem.amount = item.price
+      lumberListBidItem.lumber_list_bid_id = lumberListBid.id
+      lumberListBidItem.lumber_list_item_id = lumberListItem.id
+
+      await save(lumberListBidItem, response)
+    })
+    
+    return {
+      success: true
     }
   }
 
