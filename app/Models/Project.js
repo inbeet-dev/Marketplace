@@ -27,6 +27,10 @@ class Project extends Model {
       'supplier_id'
     ).pivotTable('project_suppliers')
   }
+
+  lumberListItems() {
+    return this.manyThrough('App/Models/LumberList', 'items')
+  }
 }
 
 Project.STATUS = {
