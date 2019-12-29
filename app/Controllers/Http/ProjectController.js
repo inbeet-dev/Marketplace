@@ -10,7 +10,6 @@ const LumberList = use('App/Models/LumberList')
 const Knex = require('knex')
 const KnexPostgis = require('knex-postgis')
 const Database = use('Database')
-const Mail = use('Mail')
 const Notification = use('App/Utils/notifyValidation')
 const Auth = use('App/Utils/authenticate')
 const authenticate = new Auth()
@@ -80,13 +79,6 @@ class ProjectController {
       projectSupplier.project_id = projectId[0]
       projectSupplier.supplier_id = suppliers[i].id
       await save(projectSupplier, response)
-
-      await Mail.send('emails.welcome', {}, (message) => {
-        message
-          .to(suppliers[i].email)
-          .from('noreplay@gmail.com', 'Lumber Click')
-          .subject('Welcome Subject')
-      })
     }
 
     return {
