@@ -394,7 +394,6 @@ class ProjectController {
     if (!estimator) throw new ServerException('Estimator not found', 404)
 
     lumberList.estimator_id = estimator.id
-    // console.log(lumberList)
     await save(lumberList, response)
 
     return {
