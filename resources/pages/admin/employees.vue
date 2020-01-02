@@ -7,7 +7,6 @@
         { name: 'employee profililes', link: 'employee-profile', active: true },
         { name: 'messages', link: 'message' }
       ]"
-      :user="$store.getters['User/getUser']"
     />
     <v-row justify="center" style="margin:0">
       <v-col md="11" sm="10" cols="12" style="margin:100px 0;">

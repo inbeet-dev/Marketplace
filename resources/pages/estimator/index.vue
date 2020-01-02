@@ -8,7 +8,6 @@
         { name: 'blog', link: 'blog' },
         { name: 'contact us', link: 'contact' }
       ]"
-      :user="$store.getters['User/getUser']"
     />
     <v-row justify="center">
       <v-col md="8" sm="10" cols="12" style="margin-top:150px;">

@@ -21,16 +21,16 @@
               </p>
             </v-col>
             <v-col cols="12" sm="12" md="12" lg="8" xl="8" class="login">
-              <form action="" ref="loginForm">
+              <form ref="loginForm">
                 <v-row>
                   <v-col cols="12">
                     <text-field
+                      v-model="email"
                       type="text"
                       placeholder="Enter Email"
                       icon="mdi-email-outline"
                       label="email"
                       name="email"
-                      v-model="email"
                       @input="toLowerCase"
                     />
                   </v-col>

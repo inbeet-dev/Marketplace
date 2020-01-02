@@ -223,6 +223,10 @@ export default {
       this.$axios
         .post('/api/v1/supplier/register', formData, {})
         .then((data) => {
+          this.$store.dispatch('User/setUser', {
+            name: this.name,
+            role: 'Supplier'
+          })
           this.$store
             .dispatch('Auth/store', {
               refreshToken: data.data.refreshToken,
