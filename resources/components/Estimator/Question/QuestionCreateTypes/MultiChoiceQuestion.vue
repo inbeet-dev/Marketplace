@@ -11,6 +11,7 @@
         v-model="text"
         label="MultiChoice Question"
         class="multi-choice-question-create-row__text-filed"
+        placeholder="Question Text"
       />
     </v-col>
     <v-col

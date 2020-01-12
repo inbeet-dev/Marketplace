@@ -13,6 +13,7 @@
             v-model="questions[index]"
             :index="index"
             class="component"
+            :disabled="question.answered_at"
           />
         </v-col>
       </v-row>
@@ -52,9 +53,11 @@ export default {
       this.$emit('input', this.questionList)
     }
   },
-  mounted() {
+  async mounted() {
+    await this.$store.restored
+
     this.$axios
-      .get('api/v1/project/question/1', {
+      .get('/api/v1/project/question/' + this.$route.params.id, {
         headers: {
           Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
         }
