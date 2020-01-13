@@ -8,6 +8,10 @@ class LumberList extends Model {
     return this.hasMany('App/Models/LumberListItem')
   }
 
+  bids() {
+    return this.hasMany('App/Models/LumberListBid')
+  }
+
   bidItems() {
     return this.manyThrough('App/Models/LumberListItem', 'bidItems')
   }
