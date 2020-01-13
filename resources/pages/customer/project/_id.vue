@@ -103,7 +103,7 @@
 
 <script>
 import moment from 'moment'
-import PlansDialog from '@/components/PlansDialog.vue'
+import PlansDialog from '@/components/Shared/PlansDialog.vue'
 import QuestionList from '@/components/Customer/QuestionList.vue'
 import LumberHeader from '@/components/Header.vue'
 
@@ -126,6 +126,11 @@ export default {
       ]
     }
   },
+  computed: {
+    dueDate() {
+      return moment(this.project.due_date).format('DD MMMM YYYY')
+    }
+  },
   async mounted() {
     await this.$store.restored
     const project = await this.$axios.get(
@@ -144,11 +149,6 @@ export default {
       if (status.name.toLowerCase() === this.project.status.toLowerCase()) {
         className = 'status-card__list__item--todo'
       }
-    }
-  },
-  computed: {
-    dueDate() {
-      return moment(this.project.due_date).format('DD MMMM YYYY')
     }
   }
 }

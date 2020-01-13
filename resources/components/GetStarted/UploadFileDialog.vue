@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" width="900" persistent>
     <v-card class="mx-auto box" outlined elevation raised width="100%">
-      <h1>Upload your{{ type }}</h1>
+      <h1>Upload your {{ type }}</h1>
       <v-icon class="close-icon" @click="dialog = false">
         mdi-close
       </v-icon>
@@ -62,14 +62,39 @@ export default {
     return {
       files: [],
       dialog: false,
-      type: 'sadasd'
+      type: 'files'
     }
+  },
+  watch: {
+    dialog() {
+      if (
+        this.dialog === false &&
+        this.$store.getters['Dialog/active'] === 'UploadFileDialog'
+      ) {
+        this.$store.dispatch('Dialog/show', '')
+      }
+    }
+  },
+  mounted() {
+    this.dialog = this.$store.getters['Dialog/active'] === 'UploadFileDialog'
+    this.$store.watch(
+      (state, getters) => getters['Dialog/active'],
+      (newValue) => {
+        this.dialog = newValue === 'UploadFileDialog'
+      }
+    )
   },
   methods: {
     submitFile() {
       const formData = new FormData()
-      formData.append('type', this.$store.getters['UploadType/getUplaodType'])
-      formData.append('projectId', this.$store.getters['Project/getId'])
+      formData.append(
+        'type',
+        this.$store.getters['UploadType/getUplaodType'] || 'files'
+      )
+      formData.append(
+        'projectId',
+        this.$store.getters['Project/getId'] || this.$route.params.id
+      )
       for (let i = 0; i < this.files.length; i++) {
         formData.append('files[]', this.files[i])
       }
@@ -96,26 +121,6 @@ export default {
     },
     remove(index) {
       this.files.splice(index, 1)
-    }
-  },
-  mounted() {
-    console.log(this.$store.getters['UploadType/getUploadType'])
-    this.dialog = this.$store.getters['Dialog/active'] === 'UploadFileDialog'
-    this.$store.watch(
-      (state, getters) => getters['Dialog/active'],
-      (newValue) => {
-        this.dialog = newValue === 'UploadFileDialog'
-      }
-    )
-  },
-  watch: {
-    dialog() {
-      if (
-        this.dialog === false &&
-        this.$store.getters['Dialog/active'] === 'UploadFileDialog'
-      ) {
-        this.$store.dispatch('Dialog/show', '')
-      }
     }
   }
 }

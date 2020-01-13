@@ -117,12 +117,20 @@ class ProjectController {
     if (project.user_id !== user.id)
       throw new ServerException('User has no access', 403)
 
-    files.moveAll(Helpers.publicPath('uploads/projectFiles'))
+    await files.moveAll(Helpers.publicPath('uploads/projectFiles'), (file) => {
+      const name = `${new Date().getTime()} - ${Math.round(
+        Math.random() * 1000
+      )} - ${file._clientName}`
 
-    for (let i = 0, file; (file = files.all()[i]); i++) {
+      return {
+        name
+      }
+    })
+
+    for (let i = 0, file; (file = files.movedList()[i]); i++) {
       const projectFile = new ProjectFile()
       projectFile.project_id = projectId
-      projectFile.path = `${new Date().getTime()} - ${i} - ${file._clientName}`
+      projectFile.path = `/uploads/projectFiles/${file.fileName}`
       projectFile.type = type
 
       await projectFile.save()

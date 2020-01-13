@@ -37,17 +37,17 @@
           <h3 class="status-card__title">Project Process</h3>
           <ul class="status-card__list">
             <li
-              v-for="status in statuses"
-              :key="status.name"
+              v-for="item in statuses"
+              :key="item.name"
               class="status-card__list__item"
-              :class="status.class"
+              :class="item.class"
             >
               <v-icon
-                v-if="status.class == 'status-card__list__item--completed'"
+                v-if="item.class == 'status-card__list__item--completed'"
                 class="status-card__list__item__icon"
                 >mdi-check</v-icon
               >
-              {{ status.name }}
+              {{ item.name }}
             </li>
           </ul>
         </v-card>
@@ -111,7 +111,7 @@
 <script>
 import moment from 'moment'
 import LumberHeader from '@/components/Header.vue'
-import PlansDialog from '@/components/PlansDialog.vue'
+import PlansDialog from '@/components/Shared/PlansDialog.vue'
 import QuestionList from '@/components/Estimator/Question/QuestionList.vue'
 import LumberListDialog from '@/components/Estimator/LumberList/LumberListDialog.vue'
 
@@ -136,6 +136,11 @@ export default {
       ]
     }
   },
+  computed: {
+    dueDate() {
+      return moment(this.project.due_date).format('DD MMMM YYYY')
+    }
+  },
   async mounted() {
     await this.$store.restored
     const project = await this.$axios.get(
@@ -156,11 +161,6 @@ export default {
       if (status.name.toLowerCase() === this.project.status.toLowerCase()) {
         className = 'status-card__list__item--todo'
       }
-    }
-  },
-  computed: {
-    dueDate() {
-      return moment(this.project.due_date).format('DD MMMM YYYY')
     }
   },
   methods: {
