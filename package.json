@@ -46,7 +46,8 @@
     "pg": "^7.12.1",
     "vue2-leaflet": "^2.2.1",
     "vuelidate": "^0.7.4",
-    "vuex-persist": "^2.1.0"
+    "vuex-persist": "^2.1.0",
+    "wkx": "^0.4.8"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^1.0.1",

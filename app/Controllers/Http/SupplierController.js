@@ -12,6 +12,7 @@ const LumberList = use('App/Models/LumberList')
 const LumberListBid = use('App/Models/LumberListBid')
 const LumberListBidItem = use('App/Models/LumberListBidItem')
 const LumberListItem = use('App/Models/LumberListItem')
+const WKX = require('wkx')
 
 class SupplierController {
   async changeStatus({ response, request, auth }) {
@@ -66,41 +67,32 @@ class SupplierController {
         .fetch()
     ).toJSON()
 
-    const closedOrWonProjectsData = (
-      await supplier
-        .projects()
-        .whereNot('status', Project.STATUS.openForBids)
-        .with('lumberLists')
-        .fetch()
-    ).toJSON()
-
     const projectsAcceptingBids = []
+    const closedOrWonProjects = []
+
     for (const project of projectsAcceptingBidsData) {
       if (project.lumberLists.length !== 1)
         throw new ServerException('Incompatible lumberlist data')
 
-      projectsAcceptingBids.push({
-        address: project.address,
-        dateCreated: project.created_at,
-        estimatedPrice: project.lumberLists[0].estimated_price,
-        location: project.location,
-        bidsReceived: project.lumberLists[0].__meta__.bids_count,
-        dateCloses: project.bid_due_date
-      })
-    }
-
-    const closedOrWonProjects = []
-    for (const project of closedOrWonProjectsData) {
-      if (project.lumberLists.length !== 1)
-        throw new ServerException('Incompatible lumberlist data')
-
-      projectsAcceptingBids.push({
-        address: project.address,
-        dateCreated: project.created_at,
-        estimatedPrice: project.lumberLists[0].estimated_price,
-        location: project.location,
-        status: project.status
-      })
+      let location = WKX.Geometry.parse(Buffer.from(project.location, 'hex'))
+      location = { lat: location.x, long: location.y }
+      if (project.status === Project.STATUS.openForBids)
+        projectsAcceptingBids.push({
+          address: project.address,
+          dateCreated: project.created_at,
+          estimatedPrice: project.lumberLists[0].estimated_price,
+          location,
+          bidsReceived: project.lumberLists[0].__meta__.bids_count,
+          dateCloses: project.bid_due_date
+        })
+      else
+        closedOrWonProjects.push({
+          address: project.address,
+          dateCreated: project.created_at,
+          estimatedPrice: project.lumberLists[0].estimated_price,
+          location,
+          status: project.status
+        })
     }
 
     return { projectsAcceptingBids, closedOrWonProjects }

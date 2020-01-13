@@ -4,16 +4,16 @@
       <v-icon class="close-icon" @click="dialog = false">
         mdi-close
       </v-icon>
-      <form action="" ref="registerForm" class="registerForm">
+      <form ref="registerForm" class="registerForm">
         <v-row style="margin:0">
           <v-col xl="3" lg="3" md="6" sm="6" cols="12">
             <h5>Project Name</h5>
             <text-field
+              v-model.trim="$v.name.$model"
               type="text"
               placeholder="Enter Project Name"
               name="name"
               message="Name is required"
-              v-model.trim="$v.name.$model"
               :error="$v.name.$error"
             />
           </v-col>
@@ -28,29 +28,29 @@
           >
             <h5>Address</h5>
             <text-field
+              v-model.trim="$v.address.$model"
               type="text"
               placeholder="Enter Address"
               name="address"
               message="Address is required"
-              v-model.trim="$v.address.$model"
               :error="$v.address.$error"
             />
           </v-col>
           <v-col xl="3" lg="3" md="6" sm="6" cols="12">
             <h5>Postal code</h5>
             <text-field
+              v-model.trim="$v.zipCode.$model"
               type="text"
               placeholder="Postal code"
               name="zipCode"
               message="Postal code must be valid"
-              v-model.trim="$v.zipCode.$model"
               :error="$v.zipCode.$error"
             />
           </v-col>
         </v-row>
         <v-row style="margin:0">
           <v-col xl="12" lg="12 " md="12" sm="12" cols="12">
-            <my-awesome-map style="height:400px;100%" v-model="position" />
+            <ProjectLocation v-model="position" style="height:400px;100%" />
           </v-col>
         </v-row>
         <v-row style="padding:0px 10px;margin:0" justify="center">
@@ -77,7 +77,7 @@
 <script>
 import { required, numeric } from 'vuelidate/lib/validators'
 import TextField from '../Shared/TextField'
-import MyAwesomeMap from './ProjectLocation'
+import ProjectLocation from './ProjectLocation'
 export default {
   validations: {
     name: {
@@ -91,6 +91,10 @@ export default {
       numeric
     }
   },
+  components: {
+    TextField,
+    ProjectLocation
+  },
   data() {
     return {
       position: null,
@@ -100,9 +104,25 @@ export default {
       zipCode: ''
     }
   },
-  components: {
-    TextField,
-    MyAwesomeMap
+  watch: {
+    dialog() {
+      if (
+        this.dialog === false &&
+        this.$store.getters['Dialog/active'] === 'ProjectRegisterDialog'
+      ) {
+        this.$store.dispatch('Dialog/show', '')
+      }
+    }
+  },
+  mounted() {
+    this.dialog =
+      this.$store.getters['Dialog/active'] === 'ProjectRegisterDialog'
+    this.$store.watch(
+      (state, getters) => getters['Dialog/active'],
+      (newValue) => {
+        this.dialog = newValue === 'ProjectRegisterDialog'
+      }
+    )
   },
   methods: {
     register() {
@@ -133,26 +153,6 @@ export default {
             })
         })
         .catch(function(e) {})
-    }
-  },
-  mounted() {
-    this.dialog =
-      this.$store.getters['Dialog/active'] === 'ProjectRegisterDialog'
-    this.$store.watch(
-      (state, getters) => getters['Dialog/active'],
-      (newValue) => {
-        this.dialog = newValue === 'ProjectRegisterDialog'
-      }
-    )
-  },
-  watch: {
-    dialog() {
-      if (
-        this.dialog === false &&
-        this.$store.getters['Dialog/active'] === 'ProjectRegisterDialog'
-      ) {
-        this.$store.dispatch('Dialog/show', '')
-      }
     }
   }
 }
