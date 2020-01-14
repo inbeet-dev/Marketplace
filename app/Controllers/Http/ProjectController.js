@@ -118,9 +118,9 @@ class ProjectController {
       throw new ServerException('User has no access', 403)
 
     await files.moveAll(Helpers.publicPath('uploads/projectFiles'), (file) => {
-      const name = `${new Date().getTime()} - ${Math.round(
+      const name = `${new Date().getTime()}-${Math.round(
         Math.random() * 1000
-      )} - ${file._clientName}`
+      )}-${file._clientName}`
 
       return {
         name

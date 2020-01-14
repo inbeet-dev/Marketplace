@@ -2,16 +2,16 @@
   <v-row justify="center">
     <v-dialog v-model="dialog" max-width="500px">
       <v-card class="main">
-        <v-card-title class="headline">plan</v-card-title>
+        <v-card-title class="headline">Plans</v-card-title>
         <v-card-text>
           <v-row justify="center">
             <v-col>
               <v-simple-table>
                 <thead>
                   <tr>
-                    <th class="text-left">type</th>
-                    <th class="text-left">name</th>
-                    <th class="text-left" center>download</th>
+                    <th class="text-left">Type</th>
+                    <th class="text-left">Name</th>
+                    <th class="text-left" center>Download</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -28,11 +28,16 @@
               </v-simple-table>
             </v-col>
           </v-row>
-          <v-row justify="center">
+          <v-row v-if="canUpload" justify="center">
             <v-btn
               color="#f78f1e"
               dark
-              @click="$store.dispatch('Dialog/show', 'UploadFileDialog')"
+              @click="
+                $store.dispatch('Dialog/show', {
+                  name: 'UploadFileDialog',
+                  data: { action: loadPlans }
+                })
+              "
             >
               Upload New Files
             </v-btn>
@@ -51,7 +56,11 @@ export default {
     UploadFileDialog
   },
   props: {
-    value: { type: Boolean, default: false }
+    value: { type: Boolean, default: false },
+    canUpload: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -69,19 +78,27 @@ export default {
   },
   async mounted() {
     await this.$store.restored
-
-    this.plans = (
-      await this.$axios.get(`/api/v1/project/${this.$route.params.id}/plans`, {
-        headers: {
-          Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
-        }
-      })
-    ).data.data
+    await this.loadPlans()
   },
   methods: {
     getName(path) {
-      const splited = path.split('/')
-      return splited[splited.length - 1]
+      return path
+        .split('/')
+        .pop()
+        .split('-')
+        .pop()
+    },
+    async loadPlans() {
+      this.plans = (
+        await this.$axios.get(
+          `/api/v1/project/${this.$route.params.id}/plans`,
+          {
+            headers: {
+              Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
+            }
+          }
+        )
+      ).data.data
     }
   }
 }

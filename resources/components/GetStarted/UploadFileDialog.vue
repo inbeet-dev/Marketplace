@@ -62,7 +62,8 @@ export default {
     return {
       files: [],
       dialog: false,
-      type: 'files'
+      type: 'files',
+      data: null
     }
   },
   watch: {
@@ -77,10 +78,13 @@ export default {
   },
   mounted() {
     this.dialog = this.$store.getters['Dialog/active'] === 'UploadFileDialog'
+    if (this.dialog) this.data = this.$store.getters['Dialog/getData']
+
     this.$store.watch(
       (state, getters) => getters['Dialog/active'],
       (newValue) => {
         this.dialog = newValue === 'UploadFileDialog'
+        if (this.dialog) this.data = this.$store.getters['Dialog/getData']
       }
     )
   },
@@ -107,7 +111,8 @@ export default {
         })
         .then(() => {
           this.dialog = false
-          this.$store.dispatch('Dialog/show', 'UploadMessage')
+          if (this.data.action) this.data.action()
+          else this.$store.dispatch('Dialog/show', 'UploadMessage')
         })
         .catch(function() {})
     },

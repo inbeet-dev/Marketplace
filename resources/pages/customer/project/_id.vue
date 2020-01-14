@@ -70,7 +70,7 @@
               >
                 view plans
               </v-btn>
-              <plans-dialog v-model="dialog" />
+              <plans-dialog v-model="dialog" :can-upload="true" />
             </v-col>
             <v-col xl="4" lg="4" md="4" sm="8" cols="8" style="padding:5px;">
               <v-btn
