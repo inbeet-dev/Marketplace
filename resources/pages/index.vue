@@ -1,5 +1,6 @@
 <template>
   <v-container fluid>
+    <div class="backgound"></div>
     <lumber-header
       :items="[
         { name: 'home', link: '/' },
@@ -10,7 +11,10 @@
       ]"
       :login="{ name: 'login', link: 'login' }"
     />
-    <v-row justify="center">
+    <v-row
+      justify="center"
+      style="z-index: 2; position: absolute; width: 100vw"
+    >
       <v-col class="text" xl="8" lg="10" md="12" sm="12" cols="12">
         <h1>
           Not sure what lumber to buy where to get it?
@@ -129,6 +133,20 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.backgound {
+  background-image: url(/lumber-background.jpg);
+  filter: brightness(60%);
+  filter: brightness(60%);
+  position: fixed;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin: 0px;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+}
+
 .get-start {
   text-align: center;
   line-height: 70px;
