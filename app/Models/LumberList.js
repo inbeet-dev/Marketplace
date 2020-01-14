@@ -12,6 +12,10 @@ class LumberList extends Model {
     return this.hasMany('App/Models/LumberListBid')
   }
 
+  estimator() {
+    return this.belongsTo('App/Models/User', 'estimator_id')
+  }
+
   bidItems() {
     return this.manyThrough('App/Models/LumberListItem', 'bidItems')
   }
@@ -22,11 +26,12 @@ class LumberList extends Model {
 }
 
 LumberList.STATUS = {
+  open: 'open',
   inReview: 'In Review',
   received: 'Received',
   complete: 'Complete',
-  Awaiting: 'Awaiting Customer Approval',
-  awaitingForAdmin: 'Awaiting Admin Approval'
+  awaitingCustomerApproval: 'Awaiting Customer Approval',
+  awaitingAdminApproval: 'Awaiting Admin Approval'
 }
 
 module.exports = LumberList

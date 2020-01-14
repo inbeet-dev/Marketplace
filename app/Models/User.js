@@ -81,7 +81,8 @@ User.ROLES = {
   customer: 'customer',
   supplier: 'supplier',
   estimator: 'estimator',
-  supportCustomer: 'customer support',
+  estimatorAdmin: 'estimator-admin',
+  customerSupport: 'customer-support',
   admin: 'admin'
 }
 

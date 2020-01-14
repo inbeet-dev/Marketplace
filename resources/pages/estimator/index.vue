@@ -143,8 +143,8 @@ export default {
           icon: 'mdi-clock',
           color: '#f78f1e'
         },
-        'Awaiting Manager Approval': {
-          text: 'Awaiting Manager Approval',
+        'Awaiting Admin Approval': {
+          text: 'Awaiting Admin Approval',
           icon: 'mdi-clock',
           color: '#f78f1e'
         },

@@ -131,7 +131,7 @@ export default {
       statuses: [
         { name: 'Lumber list open', class: 'active' },
         { name: 'lumber list completed', class: 'active' },
-        { name: 'Awaiting Manager Approval', class: 'active' },
+        { name: 'Awaiting Admin Approval', class: 'active' },
         { name: 'project completed', class: 'active' }
       ]
     }
@@ -165,13 +165,7 @@ export default {
   },
   methods: {
     showLumberListDialog() {
-      if (this.status !== 'Awaiting Manager Approval')
-        this.$store.dispatch('Dialog/show', 'LumberListDialog')
-      else
-        this.$store.dispatch(
-          'SnackBar/show',
-          'Manager approval is still in progress'
-        )
+      this.$store.dispatch('Dialog/show', 'LumberListDialog')
     }
   }
 }

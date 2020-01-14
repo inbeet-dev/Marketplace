@@ -37,7 +37,7 @@ Project.STATUS = {
   open: 'Lumber List open',
   LumberListComplete: 'Lumber List Complete',
   openForBids: 'Open For Bids',
-  awating: 'Awaiting Manager Approval',
+  awatingAdminApproval: 'Awaiting Admin Approval',
   complete: 'Project Complete',
   canceled: 'Project Canceled',
   onHold: 'Project On Hold'

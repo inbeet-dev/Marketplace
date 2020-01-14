@@ -50,8 +50,7 @@ export default {
       }
     )
   },
-  errorCaptured(error) {
-    console.log(error)
+  errorCaptured() {
     return false
   }
 }

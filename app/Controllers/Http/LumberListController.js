@@ -56,6 +56,9 @@ class LumberListController {
     if (!lumberList)
       throw new ServerException('lumber list of project not found')
 
+    if (lumberList.status !== LumberList.STATUS.open)
+      throw new ServerException('User has no access', 403)
+
     await LumberListItem.query()
       .where('lumber_list_id', lumberList.id)
       .delete()

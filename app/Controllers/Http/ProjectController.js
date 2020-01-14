@@ -215,30 +215,6 @@ class ProjectController {
     }
   }
 
-  async setStatusApproval({ request, response, auth }) {
-    await authenticate.allUser(response, auth)
-
-    const rules = {
-      projectId: 'required'
-    }
-
-    const validation = await validate(request.all(), rules)
-    if (validation.fails())
-      throw new ServerException(validation.messages(), 400)
-
-    const { projectId } = request.all()
-
-    const project = await Project.find(projectId)
-    if (!project) throw new ServerException('Project not found', 404)
-
-    project.status = Project.STATUS.awating
-
-    await save(project, response)
-    return {
-      success: true
-    }
-  }
-
   async changeNotification({ request, response, auth }) {
     await authenticate.allUser(response, auth)
 
