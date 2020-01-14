@@ -8,9 +8,11 @@ const User = use('App/Models/User')
 const { save } = use('App/Utils/dbFunctions')
 const Database = use('Database')
 const Project = use('App/Models/Project')
+const LumberList = use('App/Models/LumberList')
 const LumberListBid = use('App/Models/LumberListBid')
 const LumberListBidItem = use('App/Models/LumberListBidItem')
 const LumberListItem = use('App/Models/LumberListItem')
+const WKX = require('wkx')
 
 class SupplierController {
   async changeStatus({ response, request, auth }) {
@@ -55,40 +57,45 @@ class SupplierController {
 
     const supplier = await auth.getUser()
 
-    const { rows: bidedProjects } = await Database.raw(
-      `SELECT projects.* FROM lumber_list_bids
-      INNER JOIN lumber_list_bid_items
-      ON lumber_list_bid_items.lumber_list_bid_id = lumber_list_bids.id
-      INNER JOIN lumber_list_items
-      ON lumber_list_items.id = lumber_list_bid_items.lumber_list_item_id
-      INNER JOIN lumber_lists
-      ON lumber_list_items.lumber_list_id = lumber_lists.id
-      INNER JOIN projects
-      ON projects.id = lumber_lists.project_id
-      WHERE supplier_id = ? AND projects.status != ?`,
-      [supplier.id, Project.STATUS.open]
-    )
+    const projectsAcceptingBidsData = (
+      await supplier
+        .projects()
+        .with('lumberLists', (builder) => {
+          builder.where('status', LumberList.STATUS.complete)
+          builder.withCount('bids')
+        })
+        .fetch()
+    ).toJSON()
 
-    const { rows: notBiddedProjects } = await Database.raw(
-      `SELECT projects.* FROM lumber_list_bids
-      INNER JOIN lumber_list_bid_items
-      ON lumber_list_bid_items.lumber_list_bid_id = lumber_list_bids.id
-      INNER JOIN lumber_list_items
-      ON lumber_list_items.id = lumber_list_bid_items.lumber_list_item_id
-      INNER JOIN lumber_lists
-      ON lumber_list_items.lumber_list_id = lumber_lists.id
-      INNER JOIN projects
-      ON projects.id = lumber_lists.project_id
-      WHERE supplier_id != 8 AND projects.status = 'Lumber List open'`
-    )
+    const projectsAcceptingBids = []
+    const closedOrWonProjects = []
 
-    return {
-      success: true,
-      data: {
-        bidedProjects,
-        notBiddedProjects
-      }
+    for (const project of projectsAcceptingBidsData) {
+      if (project.lumberLists.length !== 1)
+        throw new ServerException('Incompatible lumberlist data')
+
+      let location = WKX.Geometry.parse(Buffer.from(project.location, 'hex'))
+      location = { lat: location.x, long: location.y }
+      if (project.status === Project.STATUS.openForBids)
+        projectsAcceptingBids.push({
+          address: project.address,
+          dateCreated: project.created_at,
+          estimatedPrice: project.lumberLists[0].estimated_price,
+          location,
+          bidsReceived: project.lumberLists[0].__meta__.bids_count,
+          dateCloses: project.bid_due_date
+        })
+      else
+        closedOrWonProjects.push({
+          address: project.address,
+          dateCreated: project.created_at,
+          estimatedPrice: project.lumberLists[0].estimated_price,
+          location,
+          status: project.status
+        })
     }
+
+    return { projectsAcceptingBids, closedOrWonProjects }
   }
 
   async getSuppliers({ response, auth }) {
@@ -210,7 +217,7 @@ class SupplierController {
 
       await save(lumberListBidItem, response)
     })
-    
+
     return {
       success: true
     }

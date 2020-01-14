@@ -2,10 +2,10 @@
   <div>
     <no-ssr>
       <l-map
+        ref="lmap"
         :zoom="8"
         :center="[56.9914044, -111.3603927]"
-        @move="ali"
-        ref="lmap"
+        @move="move"
       >
         <l-tile-layer
           url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
@@ -18,24 +18,22 @@
 
 <script>
 export default {
-  data() {
-    return {
-      latlng: [0, 0]
-    }
-  },
   props: {
     value: {
       default: null,
       type: Object
     }
   },
-  name: 'MyAwesomeMap',
+  data() {
+    return {
+      latlng: [0, 0]
+    }
+  },
   methods: {
-    ali(center) {
-      // console.log(this.$refs.lmap.mapObject.getCenter(), center)
-      const middle = this.$refs.lmap.mapObject.getCenter()
-      this.latlng = [middle.lat, middle.lng]
-      this.$emit('input', { lat: middle.lat, lng: middle.lng })
+    move() {
+      const center = this.$refs.lmap.mapObject.getCenter()
+      this.latlng = [center.lat, center.lng]
+      this.$emit('input', { lat: center.lat, lng: center.lng })
     }
   }
 }

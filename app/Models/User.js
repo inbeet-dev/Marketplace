@@ -35,6 +35,14 @@ class User extends Model {
   }
 
   projects() {
+    if (this.role === User.ROLES.supplier) {
+      return this.manyThrough(
+        'App/Models/ProjectSupplier',
+        'project',
+        'id',
+        'supplier_id'
+      )
+    }
     return this.hasMany('App/Models/Project')
   }
 
@@ -73,7 +81,8 @@ User.ROLES = {
   customer: 'customer',
   supplier: 'supplier',
   estimator: 'estimator',
-  supportCustomer: 'customer support',
+  estimatorAdmin: 'estimator-admin',
+  customerSupport: 'customer-support',
   admin: 'admin'
 }
 

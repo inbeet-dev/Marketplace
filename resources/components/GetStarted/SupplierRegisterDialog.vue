@@ -78,7 +78,7 @@
           <v-row style="margin:0">
             <v-col xl="12" lg="12 " md="12" sm="12" cols="12">
               <span>Location</span>
-              <my-awesome-map style="height:400px;100%" v-model="position" />
+              <ProjectLocation v-model="position" style="height:400px;100%" />
             </v-col>
           </v-row>
           <v-row style="padding:0px 10px;margin:0" justify="center">
@@ -122,8 +122,8 @@
               <v-col xl="6" lg="6" md="12" sm="12" cols="12">
                 <button
                   class="signup"
-                  @click.stop.prevent="submit()"
                   :disabled="!checkBox"
+                  @click.stop.prevent="submit()"
                 >
                   SIGN UP
                 </button>
@@ -149,7 +149,7 @@
 <script>
 import { required, sameAs, email, numeric } from 'vuelidate/lib/validators'
 import TextField from '../Shared/TextField'
-import MyAwesomeMap from './ProjectLocation'
+import ProjectLocation from './ProjectLocation'
 
 export default {
   data() {
@@ -193,7 +193,7 @@ export default {
 
   components: {
     TextField,
-    MyAwesomeMap
+    ProjectLocation
   },
 
   name: 'RegisterDialog',

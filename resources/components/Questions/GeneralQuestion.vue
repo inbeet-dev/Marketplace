@@ -2,9 +2,9 @@
   <v-row justify="center" align-content="center" align="center" no-gutters>
     <v-col cols="12">
       <text-field
+        v-model="text"
         :label="value.question.text"
         placeholder="Respond here"
-        v-model="text"
         :disabled="disabled"
       />
     </v-col>
