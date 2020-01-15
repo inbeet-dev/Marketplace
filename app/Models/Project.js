@@ -35,7 +35,7 @@ class Project extends Model {
 
 Project.STATUS = {
   open: 'Lumber List open',
-  LumberListComplete: 'Lumber List Complete',
+  lumberListCompleted: 'Lumber List Completed',
   openForBids: 'Open For Bids',
   awatingAdminApproval: 'Awaiting Admin Approval',
   complete: 'Project Complete',

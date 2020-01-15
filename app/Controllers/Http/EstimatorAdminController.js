@@ -3,6 +3,7 @@
 const Auth = use('App/Utils/authenticate')
 const authenticate = new Auth()
 const LumberList = use('App/Models/LumberList')
+const Project = use('App/Models/Project')
 const Mail = use('Mail')
 const Env = use('Env')
 
@@ -43,6 +44,11 @@ class EstimatorAdminController {
 
     lumberList.status = LumberList.STATUS.complete
     await lumberList.save()
+
+    const project = await lumberList.project()
+    project.status = Project.STATUS.lumberListCompleted
+
+    await project.save()
 
     const estimatorEmail = (await lumberList.estimator()).email
 
