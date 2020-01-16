@@ -45,23 +45,25 @@ class EstimatorAdminController {
     lumberList.status = LumberList.STATUS.complete
     await lumberList.save()
 
-    const project = await lumberList.project()
+    const project = await lumberList.project().first()
     project.status = Project.STATUS.lumberListCompleted
 
     await project.save()
 
-    const estimatorEmail = (await lumberList.estimator()).email
+    const estimatorEmail = (await lumberList.estimator().first()).email
 
-    await Mail.send('emails.lumber-list.approved', (message) => {
+    await Mail.send('emails.lumber-list.approved', {}, (message) => {
       message
         .to(estimatorEmail)
         .from(Env.get('MAIL_FROM'), 'Lumber Click')
         .subject('Lumber List Approved')
     })
 
-    const customerEmail = (await lumberList.project().customer()).email
+    const customerEmail = (
+      await (await lumberList.project().first()).customer().first()
+    ).email
 
-    await Mail.send('emails.lumber-list.finished', (message) => {
+    await Mail.send('emails.lumber-list.finished', {}, (message) => {
       message
         .to(customerEmail)
         .from(Env.get('MAIL_FROM'), 'Lumber Click')
@@ -83,7 +85,7 @@ class EstimatorAdminController {
     lumberList.status = LumberList.STATUS.open
     await lumberList.save()
 
-    const email = (await lumberList.estimator()).email
+    const email = (await lumberList.estimator().first()).email
 
     await Mail.send('emails.lumber-list.rejected', {}, (message) => {
       message
