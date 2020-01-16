@@ -195,7 +195,6 @@ export default {
         })
       })
       .catch((data) => {
-        console.log(data)
         if (data.response.data.error.status === 401) {
           this.$router.push('/login')
         }
