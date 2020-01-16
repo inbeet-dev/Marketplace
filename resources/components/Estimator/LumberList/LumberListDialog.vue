@@ -165,7 +165,7 @@ export default {
   },
   methods: {
     add() {
-      this.datas.push({
+      this.lumberList.items.push({
         type: 'HRDW/FRAME',
         meta: { unit: 'EA' }
       })
