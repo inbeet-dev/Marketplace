@@ -171,13 +171,13 @@ export default {
       })
     },
     remove(index) {
-      this.datas.splice(index, 1)
+      this.lumberList.items.splice(index, 1)
     },
     async save() {
       await this.$store.restored
       const list = {
         projectId: this.$route.params.id,
-        items: this.datas
+        items: this.lumberList.items
       }
       this.$axios
         .put('/api/v1/lumberlist/items', list, {
