@@ -21,7 +21,7 @@ class LumberList extends Model {
   }
 
   project() {
-    return this.hasOne('App/Models/Project', 'project_id', 'id')
+    return this.belongsTo('App/Models/Project')
   }
 }
 
