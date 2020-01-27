@@ -59,13 +59,13 @@
                     class="form-field"
                   >
                     <text-field
+                      v-model="newEmployee.name"
                       type="text"
                       placeholder="Enter Name"
                       label="name"
                       important
                       name="name"
                       message="Name is required"
-                      v-model="newEmployee.name"
                     />
                   </v-col>
                   <v-col
@@ -77,12 +77,12 @@
                     class="form-field"
                   >
                     <text-field
+                      v-model="newEmployee.address"
                       type="text"
                       placeholder="Enter Address"
                       label="Address"
                       important
                       name="Address"
-                      v-model="newEmployee.address"
                     />
                   </v-col>
 
@@ -95,13 +95,13 @@
                     class="form-field"
                   >
                     <text-field
+                      v-model="newEmployee.password"
                       type="password"
                       placeholder="Enter Password"
                       label="password"
                       important
                       name="password"
                       message="Password is required"
-                      v-model="newEmployee.password"
                     />
                   </v-col>
 
@@ -114,12 +114,12 @@
                     class="form-field"
                   >
                     <text-field
+                      v-model="newEmployee.phone"
                       type="tel"
                       placeholder="Enter Phone"
                       label="Phone"
                       name="Phone"
                       message="Phone number is required"
-                      v-model="newEmployee.phone"
                     />
                   </v-col>
                   <v-col
@@ -131,13 +131,13 @@
                     class="form-field"
                   >
                     <text-field
+                      v-model="newEmployee.email"
                       type="email"
                       placeholder="Enter Email"
                       label="email"
                       important
                       name="email"
                       message="Email is required and must be valid"
-                      v-model="newEmployee.email"
                       @input="toLowerCase"
                     />
                   </v-col>
@@ -151,11 +151,11 @@
                   >
                     <label class="label">Postion</label>
                     <v-select
+                      v-model="newEmployee.role"
                       background-color="#f1f4f8"
                       solo
                       style="min-width:100%"
                       :items="positions"
-                      v-model="newEmployee.role"
                     ></v-select>
                   </v-col>
                 </v-row>
@@ -199,8 +199,9 @@ export default {
       ],
       positions: [
         { text: 'Admin', value: 'admin' },
-        { text: 'Customer Support', value: 'customer support' },
-        { text: 'Estimator', value: 'estimator' }
+        { text: 'Customer Support', value: 'customer-support' },
+        { text: 'Estimator', value: 'estimator' },
+        { text: 'Estimator Admin', value: 'estimator-admin' }
       ],
       newEmployee: {
         name: '',

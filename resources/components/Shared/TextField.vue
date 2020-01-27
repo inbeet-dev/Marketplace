@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'form-group--error': error }">
+  <div :class="{ 'form-group--error': error, dense: dense }">
     <label v-if="label" class="label"
       >{{ label }}
       <div v-if="important" class="important-star">*</div>
@@ -19,7 +19,9 @@
         :placeholder="placeholder"
         :name="name"
         class="input"
-        :style="{ 'padding-left': icon ? '43px' : '12px' }"
+        :style="{
+          'padding-left': icon ? '43px' : '12px'
+        }"
         :disabled="disabled"
       />
       <v-icon v-if="icon">{{ icon }}</v-icon>
@@ -37,7 +39,7 @@ export default {
     },
     placeholder: {
       type: String,
-      default: 'placeholder'
+      default: ''
     },
     icon: {
       type: String,
@@ -72,6 +74,10 @@ export default {
       default: false
     },
     disabled: {
+      type: Boolean,
+      default: false
+    },
+    dense: {
       type: Boolean,
       default: false
     }
@@ -120,6 +126,17 @@ export default {
 .main {
   margin-bottom: 10px;
   height: 50px;
+}
+
+.dense {
+  .main {
+    margin-bottom: 0;
+    height: 40px;
+  }
+
+  .input {
+    height: 40px !important;
+  }
 }
 .main .input {
   height: 48px;

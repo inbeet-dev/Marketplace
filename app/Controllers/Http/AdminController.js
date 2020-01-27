@@ -22,8 +22,9 @@ class AdminController {
       .where('id', '!=', admin.id)
       .whereIn('role', [
         User.ROLES.admin,
-        User.ROLES.supportCustomer,
-        User.ROLES.estimator
+        User.ROLES.customerSupport,
+        User.ROLES.estimator,
+        User.ROLES.estimatorAdmin
       ])
       .fetch()
 
@@ -59,6 +60,7 @@ class AdminController {
     if (
       ![
         User.ROLES.estimator,
+        User.ROLES.estimatorAdmin,
         User.ROLES.supportCustomer,
         User.ROLES.admin
       ].includes(role)

@@ -69,7 +69,7 @@
               >
                 view plans
               </v-btn>
-              <plans-dialog v-model="dialog" />
+              <plans-dialog v-model="dialog" :can-upload="true" />
             </v-col>
             <v-col xl="4" lg="4" md="4" sm="8" cols="8" style="padding:5px;">
               <v-btn
@@ -102,7 +102,7 @@
 
 <script>
 import moment from 'moment'
-import PlansDialog from '@/components/PlansDialog.vue'
+import PlansDialog from '@/components/Shared/PlansDialog.vue'
 import QuestionList from '@/components/Customer/QuestionList.vue'
 import LumberHeader from '@/components/Header.vue'
 
@@ -125,6 +125,11 @@ export default {
       ]
     }
   },
+  computed: {
+    dueDate() {
+      return moment(this.project.due_date).format('DD MMMM YYYY')
+    }
+  },
   async mounted() {
     await this.$store.restored
     const project = await this.$axios.get(
@@ -143,11 +148,6 @@ export default {
       if (status.name.toLowerCase() === this.project.status.toLowerCase()) {
         className = 'status-card__list__item--todo'
       }
-    }
-  },
-  computed: {
-    dueDate() {
-      return moment(this.project.due_date).format('DD MMMM YYYY')
     }
   }
 }

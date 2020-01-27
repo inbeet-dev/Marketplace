@@ -7,6 +7,7 @@ const Auth = use('App/Utils/authenticate')
 const authenticate = new Auth()
 const ServerException = use('App/Exceptions/ServerException')
 const Mail = use('Mail')
+const Env = use('Env')
 
 class UserController {
   async login({ request, response, auth }) {
@@ -72,7 +73,7 @@ class UserController {
     await Mail.send('emails.welcome', { memberNumber: user.id }, (message) => {
       message
         .to(email)
-        .from('no-reply@lumber.webcentriq.com', 'Lumber Click')
+        .from(Env.get('MAIL_FROM'), 'Lumber Click')
         .subject('Welcome to Lumber Click')
     })
 

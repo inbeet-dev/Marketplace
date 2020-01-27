@@ -12,7 +12,7 @@ class Project extends Model {
     return this.hasMany('App/Models/ProjectQuestion')
   }
 
-  lists() {
+  lumberLists() {
     return this.hasMany('App/Models/LumberList')
   }
 
@@ -35,8 +35,9 @@ class Project extends Model {
 
 Project.STATUS = {
   open: 'Lumber List open',
-  LumberListComplete: 'Lumber List Complete',
-  awating: 'Awaiting Manager Approval',
+  lumberListCompleted: 'Lumber List Completed',
+  openForBids: 'Open For Bids',
+  awatingAdminApproval: 'Awaiting Admin Approval',
   complete: 'Project Complete',
   canceled: 'Project Canceled',
   onHold: 'Project On Hold'

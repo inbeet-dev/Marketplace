@@ -36,17 +36,17 @@
           <h3 class="status-card__title">Project Process</h3>
           <ul class="status-card__list">
             <li
-              v-for="status in statuses"
-              :key="status.name"
+              v-for="item in statuses"
+              :key="item.name"
               class="status-card__list__item"
-              :class="status.class"
+              :class="item.class"
             >
               <v-icon
-                v-if="status.class == 'status-card__list__item--completed'"
+                v-if="item.class == 'status-card__list__item--completed'"
                 class="status-card__list__item__icon"
                 >mdi-check</v-icon
               >
-              {{ status.name }}
+              {{ item.name }}
             </li>
           </ul>
         </v-card>
@@ -110,7 +110,7 @@
 <script>
 import moment from 'moment'
 import LumberHeader from '@/components/Header.vue'
-import PlansDialog from '@/components/PlansDialog.vue'
+import PlansDialog from '@/components/Shared/PlansDialog.vue'
 import QuestionList from '@/components/Estimator/Question/QuestionList.vue'
 import LumberListDialog from '@/components/Estimator/LumberList/LumberListDialog.vue'
 
@@ -130,9 +130,14 @@ export default {
       statuses: [
         { name: 'Lumber list open', class: 'active' },
         { name: 'lumber list completed', class: 'active' },
-        { name: 'Awaiting Manager Approval', class: 'active' },
+        { name: 'Awaiting Admin Approval', class: 'active' },
         { name: 'project completed', class: 'active' }
       ]
+    }
+  },
+  computed: {
+    dueDate() {
+      return moment(this.project.due_date).format('DD MMMM YYYY')
     }
   },
   async mounted() {
@@ -157,20 +162,9 @@ export default {
       }
     }
   },
-  computed: {
-    dueDate() {
-      return moment(this.project.due_date).format('DD MMMM YYYY')
-    }
-  },
   methods: {
     showLumberListDialog() {
-      if (this.status !== 'Awaiting Manager Approval')
-        this.$store.dispatch('Dialog/show', 'LumberListDialog')
-      else
-        this.$store.dispatch(
-          'SnackBar/show',
-          'Manager approval is still in progress'
-        )
+      this.$store.dispatch('Dialog/show', 'LumberListDialog')
     }
   }
 }

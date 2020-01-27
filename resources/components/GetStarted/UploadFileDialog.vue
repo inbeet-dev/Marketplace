@@ -62,7 +62,8 @@ export default {
     return {
       files: [],
       dialog: false,
-      type: ''
+      type: 'files',
+      data: null
     }
   },
   watch: {
@@ -77,6 +78,8 @@ export default {
   },
   mounted() {
     this.dialog = this.$store.getters['Dialog/active'] === 'UploadFileDialog'
+    if (this.dialog) this.data = this.$store.getters['Dialog/getData']
+
     this.$store.watch(
       (state, getters) => getters['Dialog/active'],
       (newValue) => {
@@ -86,14 +89,21 @@ export default {
         } else {
           this.type = 'lumber list'
         }
+        if (this.dialog) this.data = this.$store.getters['Dialog/getData']
       }
     )
   },
   methods: {
     submitFile() {
       const formData = new FormData()
-      formData.append('type', this.$store.getters['UploadType/getUploadType'])
-      formData.append('projectId', this.$store.getters['Project/getId'])
+      formData.append(
+        'type',
+        this.$store.getters['UploadType/getUplaodType'] || 'files'
+      )
+      formData.append(
+        'projectId',
+        this.$store.getters['Project/getId'] || this.$route.params.id
+      )
       for (let i = 0; i < this.files.length; i++) {
         formData.append('files[]', this.files[i])
       }
@@ -106,7 +116,8 @@ export default {
         })
         .then(() => {
           this.dialog = false
-          this.$store.dispatch('Dialog/show', 'UploadMessage')
+          if (this.data.action) this.data.action()
+          else this.$store.dispatch('Dialog/show', 'UploadMessage')
         })
         .catch(function() {})
     },

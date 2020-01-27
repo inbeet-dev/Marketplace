@@ -50,7 +50,7 @@
         </v-row>
         <v-row style="margin:0">
           <v-col xl="12" lg="12 " md="12" sm="12" cols="12">
-            <my-awesome-map v-model="position" style="height:400px;100%" />
+            <ProjectLocation v-model="position" style="height:400px;100%" />
           </v-col>
         </v-row>
         <v-row style="padding:0px 10px;margin:0" justify="center">
@@ -77,7 +77,7 @@
 <script>
 import { required, numeric } from 'vuelidate/lib/validators'
 import TextField from '../Shared/TextField'
-import MyAwesomeMap from './ProjectLocation'
+import ProjectLocation from './ProjectLocation'
 export default {
   validations: {
     name: {
@@ -93,7 +93,7 @@ export default {
   },
   components: {
     TextField,
-    MyAwesomeMap
+    ProjectLocation
   },
   data() {
     return {
@@ -103,6 +103,26 @@ export default {
       address: '',
       zipCode: ''
     }
+  },
+  watch: {
+    dialog() {
+      if (
+        this.dialog === false &&
+        this.$store.getters['Dialog/active'] === 'ProjectRegisterDialog'
+      ) {
+        this.$store.dispatch('Dialog/show', '')
+      }
+    }
+  },
+  mounted() {
+    this.dialog =
+      this.$store.getters['Dialog/active'] === 'ProjectRegisterDialog'
+    this.$store.watch(
+      (state, getters) => getters['Dialog/active'],
+      (newValue) => {
+        this.dialog = newValue === 'ProjectRegisterDialog'
+      }
+    )
   },
   methods: {
     register() {
@@ -133,26 +153,6 @@ export default {
             })
         })
         .catch(function(e) {})
-    }
-  },
-  mounted() {
-    this.dialog =
-      this.$store.getters['Dialog/active'] === 'ProjectRegisterDialog'
-    this.$store.watch(
-      (state, getters) => getters['Dialog/active'],
-      (newValue) => {
-        this.dialog = newValue === 'ProjectRegisterDialog'
-      }
-    )
-  },
-  watch: {
-    dialog() {
-      if (
-        this.dialog === false &&
-        this.$store.getters['Dialog/active'] === 'ProjectRegisterDialog'
-      ) {
-        this.$store.dispatch('Dialog/show', '')
-      }
     }
   }
 }

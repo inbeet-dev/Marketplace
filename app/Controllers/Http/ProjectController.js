@@ -117,12 +117,20 @@ class ProjectController {
     if (project.user_id !== user.id)
       throw new ServerException('User has no access', 403)
 
-    files.moveAll(Helpers.publicPath('uploads/projectFiles'))
+    await files.moveAll(Helpers.publicPath('uploads/projectFiles'), (file) => {
+      const name = `${new Date().getTime()}-${Math.round(
+        Math.random() * 1000
+      )}-${file._clientName}`
 
-    for (let i = 0, file; (file = files.all()[i]); i++) {
+      return {
+        name
+      }
+    })
+
+    for (let i = 0, file; (file = files.movedList()[i]); i++) {
       const projectFile = new ProjectFile()
       projectFile.project_id = projectId
-      projectFile.path = `${new Date().getTime()} - ${i} - ${file._clientName}`
+      projectFile.path = `/uploads/projectFiles/${file.fileName}`
       projectFile.type = type
 
       await projectFile.save()
@@ -204,30 +212,6 @@ class ProjectController {
     return {
       success: true,
       data: lists
-    }
-  }
-
-  async setStatusApproval({ request, response, auth }) {
-    await authenticate.allUser(response, auth)
-
-    const rules = {
-      projectId: 'required'
-    }
-
-    const validation = await validate(request.all(), rules)
-    if (validation.fails())
-      throw new ServerException(validation.messages(), 400)
-
-    const { projectId } = request.all()
-
-    const project = await Project.find(projectId)
-    if (!project) throw new ServerException('Project not found', 404)
-
-    project.status = Project.STATUS.awating
-
-    await save(project, response)
-    return {
-      success: true
     }
   }
 

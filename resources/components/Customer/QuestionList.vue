@@ -10,9 +10,10 @@
             :is="typeToComponent(question.type)"
             v-for="(question, index) in questions"
             :key="index"
-            :index="index"
             v-model="questions[index]"
+            :index="index"
             class="component"
+            :disabled="question.answered_at"
           />
         </v-col>
       </v-row>
@@ -30,6 +31,9 @@ import MultiChoiceQuestion from '../Questions/MultiChoiceQuestion.vue'
 import YesNoQuestion from '../Questions/YesNoQuestion.vue'
 import GeneralQuestion from '../Questions/GeneralQuestion.vue'
 export default {
+  props: {
+    value: { type: Boolean, default: false }
+  },
   data() {
     return {
       questionList: false,
@@ -49,12 +53,11 @@ export default {
       this.$emit('input', this.questionList)
     }
   },
-  props: {
-    value: { type: Boolean, default: false }
-  },
-  mounted() {
+  async mounted() {
+    await this.$store.restored
+
     this.$axios
-      .get('api/v1/project/question/1', {
+      .get('/api/v1/project/question/' + this.$route.params.id, {
         headers: {
           Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
         }
