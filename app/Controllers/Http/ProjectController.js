@@ -383,8 +383,8 @@ class ProjectController {
 
     const { projectId, estimatorId } = request.all()
 
-    const lumberList = await LumberList.findBy('project_id', projectId)
-    if (!lumberList) throw new ServerException('Project not found', 404)
+    const project = await Project.find(projectId)
+    if (!project) throw new ServerException('Project not found', 404)
 
     const estimator = await User.findBy({
       id: estimatorId,
@@ -393,7 +393,11 @@ class ProjectController {
 
     if (!estimator) throw new ServerException('Estimator not found', 404)
 
+    const lumberList = new LumberList()
+    lumberList.project_id = projectId
+    lumberList.status = LumberList.STATUS.inReview
     lumberList.estimator_id = estimator.id
+
     await save(lumberList, response)
 
     return {
