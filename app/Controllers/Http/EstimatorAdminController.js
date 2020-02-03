@@ -4,6 +4,7 @@ const Auth = use('App/Utils/authenticate')
 const authenticate = new Auth()
 const LumberList = use('App/Models/LumberList')
 const Project = use('App/Models/Project')
+const User = use('App/Models/User')
 const Mail = use('Mail')
 const Env = use('Env')
 
@@ -95,6 +96,14 @@ class EstimatorAdminController {
     return {
       success: true
     }
+  }
+
+  async estimators() {
+    const estiamtors = await User.query()
+      .where('role', User.ROLES.estimator)
+      .fetch()
+
+    return estiamtors
   }
 }
 
