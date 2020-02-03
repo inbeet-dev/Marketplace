@@ -98,7 +98,9 @@ class EstimatorAdminController {
     }
   }
 
-  async estimators() {
+  async estimators({ response, auth }) {
+    await authenticate.estimatorAdmin(response, auth)
+
     const estiamtors = await User.query()
       .where('role', User.ROLES.estimator)
       .fetch()
