@@ -98,7 +98,7 @@ class EstimatorAdminController {
   }
 
   async projects({ response, auth }) {
-    // await authenticate.estimatorAdmin(response, auth)
+    await authenticate.estimatorAdmin(response, auth)
 
     const projectsData = (await Project.query()
       .with('customer', (builder) => {
