@@ -379,7 +379,7 @@ class ProjectController {
   }
 
   async assignEstimator({ response, request, auth }) {
-    await authenticate.admin(response, auth)
+    await authenticate.estimatorAdmin(response, auth)
 
     const { projectId, estimatorId } = request.all()
 
