@@ -6,6 +6,8 @@ const { validate } = use('Validator')
 const Auth = use('App/Utils/authenticate')
 const authenticate = new Auth()
 const ServerException = use('App/Exceptions/ServerException')
+const Mail = use('Mail')
+const Env = use('Env')
 
 class UserController {
   async login({ request, response, auth }) {
@@ -67,6 +69,13 @@ class UserController {
     user.meta = meta
 
     await save(user, response)
+
+    await Mail.send('emails.welcome', { memberNumber: user.id }, (message) => {
+      message
+        .to(email)
+        .from(Env.get('MAIL_FROM'), 'Lumber Click')
+        .subject('Welcome to Lumber Click')
+    })
 
     const { token, refreshToken } = await auth
       .withRefreshToken()

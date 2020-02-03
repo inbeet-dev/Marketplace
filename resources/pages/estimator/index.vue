@@ -70,6 +70,7 @@
                     <th class="text-left">Date Assigned</th>
                     <th class="text-left">Date Due</th>
                     <th class="text-left">Time Remaining</th>
+                    <th class="text-left"></th>
                   </tr>
                 </thead>
                 <tbody v-for="(project, index) in projects" :key="index">
@@ -87,7 +88,8 @@
                     </td>
                     <td>{{ dateConvert(project.created_at) }}</td>
                     <td>{{ dateConvert(project.due_date) }}</td>
-                    <td>6 Days</td>
+                    <td>{{ remainingTime(project.due_date) }}</td>
+                    <td><v-icon color="#9ca2c3">mdi-eye-circle</v-icon></td>
                   </tr>
                 </tbody>
               </v-simple-table>
@@ -111,16 +113,7 @@
                     <th class="text-left">Manager Rating</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td>asd</td>
-                    <td>asd</td>
-                    <td>asd</td>
-                    <td>sdad</td>
-                    <td>6 Days</td>
-                    <td>6 Days</td>
-                  </tr>
-                </tbody>
+                <tbody></tbody>
               </v-simple-table>
             </v-card>
           </v-col>
@@ -150,8 +143,8 @@ export default {
           icon: 'mdi-clock',
           color: '#f78f1e'
         },
-        'Awaiting Manager Approval': {
-          text: 'Awaiting Manager Approval',
+        'Awaiting Admin Approval': {
+          text: 'Awaiting Admin Approval',
           icon: 'mdi-clock',
           color: '#f78f1e'
         },
@@ -188,15 +181,13 @@ export default {
         }
       })
       .then((data) => {
-        this.name = data.data.user.name
-        this.phoneNumber = data.data.user.meta.phoneNumber
-        this.createdAt = this.time = moment(data.data.user.created_at).format(
-          'DD MMMM YYYY'
-        )
+        this.name = data.data.data.user.name
+        this.phoneNumber = data.data.data.user.meta.phoneNumber
+        this.createdAt = this.time = moment(
+          data.data.data.user.created_at
+        ).format('DD MMMM YYYY')
 
-        this.projects = data.data.user.estimates.map((estimate) => {
-          return estimate.project
-        })
+        this.projects = data.data.data.projects
 
         this.$store.dispatch('User/setUser', {
           name: data.data.user.name,
@@ -204,7 +195,6 @@ export default {
         })
       })
       .catch((data) => {
-        console.log(data)
         if (data.response.data.error.status === 401) {
           this.$router.push('/login')
         }
@@ -216,6 +206,9 @@ export default {
     },
     projectProcess(id) {
       this.$router.push('/estimator/project/' + id)
+    },
+    remainingTime(date) {
+      return moment(date).fromNow()
     }
   }
 }

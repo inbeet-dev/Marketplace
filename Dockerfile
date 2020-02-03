@@ -1,6 +1,6 @@
 # TODO: multistage build for nuxt
 
-FROM node:alpine AS nuxt-build
+FROM node:12-alpine AS nuxt-build
 
 WORKDIR /usr/src
 
@@ -18,7 +18,7 @@ ENV ENV_SILENT=true
 
 RUN npm run build
 
-FROM node
+FROM node:12
 
 RUN useradd -ms /bin/bash adonis
 

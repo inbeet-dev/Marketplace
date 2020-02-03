@@ -7,7 +7,11 @@
     class="general-question-create-row"
   >
     <v-col cols="12" sm="8">
-      <textfield v-model="text" label="GeneralQuestion" />
+      <textfield
+        v-model="text"
+        label="GeneralQuestion"
+        placeholder="Question Text"
+      />
     </v-col>
     <v-col cols="12" sm="4" class="general-question-create__actions">
       <v-btn icon color="red"><v-icon>mdi-delete</v-icon></v-btn>

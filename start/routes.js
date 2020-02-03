@@ -69,7 +69,21 @@ Route.group(() => {
 
 Route.group(() => {
   Route.get('dashboard', 'EstimatorController.dashboard')
+  Route.post(
+    'lumber-list-admin-approval',
+    'EstimatorController.lumberListAdminApproval'
+  )
+  Route.get('lumber-list/:projectId', 'EstimatorController.lumberList')
 }).prefix('api/v1/estimator')
+
+Route.group(() => {
+  Route.get('lumber-lists', 'EstimatorAdminController.lumberLists')
+  Route.post(
+    'lumber-list-approve',
+    'EstimatorAdminController.lumberListApprove'
+  )
+  Route.post('lumber-list-reject', 'EstimatorAdminController.lumberListReject')
+}).prefix('api/v1/estimator-admin')
 
 Route.group(() => {
   Route.get('dashboard', 'AdminController.dashboard')
