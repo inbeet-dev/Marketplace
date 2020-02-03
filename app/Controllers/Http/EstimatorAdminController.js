@@ -11,15 +11,13 @@ class EstimatorAdminController {
   async lumberLists({ response, auth }) {
     await authenticate.estimatorAdmin(response, auth)
 
-    const lumberListsData = (
-      await LumberList.query()
-        .where('status', LumberList.STATUS.awaitingAdminApproval)
-        .with('project', (builder) => {
-          builder.with('customer')
-        })
-        .with('items')
-        .fetch()
-    ).toJSON()
+    const lumberListsData = (await LumberList.query()
+      .where('status', LumberList.STATUS.awaitingAdminApproval)
+      .with('project', (builder) => {
+        builder.with('customer')
+      })
+      .with('items')
+      .fetch()).toJSON()
 
     const lumberLists = []
 
@@ -59,9 +57,9 @@ class EstimatorAdminController {
         .subject('Lumber List Approved')
     })
 
-    const customerEmail = (
-      await (await lumberList.project().first()).customer().first()
-    ).email
+    const customerEmail = (await (await lumberList.project().first())
+      .customer()
+      .first()).email
 
     await Mail.send('emails.lumber-list.finished', {}, (message) => {
       message
@@ -97,6 +95,10 @@ class EstimatorAdminController {
     return {
       success: true
     }
+  }
+
+  async projects({ response, auth }) {
+    await authenticate.estimatorAdmin(response, auth)
   }
 }
 
