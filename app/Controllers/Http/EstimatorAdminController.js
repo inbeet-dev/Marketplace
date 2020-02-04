@@ -6,6 +6,9 @@ const LumberList = use('App/Models/LumberList')
 const Project = use('App/Models/Project')
 const Mail = use('Mail')
 const Env = use('Env')
+const ServerException = use('App/Exceptions/ServerException')
+const moment = require('moment')
+const { save } = use('App/Utils/dbFunctions')
 
 class EstimatorAdminController {
   async lumberLists({ response, auth }) {
@@ -91,6 +94,28 @@ class EstimatorAdminController {
         .from(Env.get('MAIL_FROM'), 'Lumber Click')
         .subject('Lumber List Rejected')
     })
+
+    return {
+      success: true
+    }
+  }
+
+  async setDueDate({ request, response, auth }) {
+    const { projectId, dueDate } = request.all()
+
+    const project = await Project.find(projectId)
+    if (!project) throw new ServerException('Project not found', 404)
+
+    if (!moment(dueDate).isValid())
+      throw new ServerException('DueDate is not Date')
+
+    const difference = moment(dueDate).diff(moment(project.created_at))
+
+    if (difference < 0)
+      throw new ServerException('Project is created after due date', 403)
+
+    project.due_date = moment(dueDate)
+    await save(project, response)
 
     return {
       success: true
