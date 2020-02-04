@@ -83,7 +83,7 @@ Route.group(() => {
     'EstimatorAdminController.lumberListApprove'
   )
   Route.post('lumber-list-reject', 'EstimatorAdminController.lumberListReject')
-  Route.put('due-date', 'EstimatorController.setDueDate')
+  Route.put('due-date', 'EstimatorAdminController.setDueDate')
 }).prefix('api/v1/estimator-admin')
 
 Route.group(() => {
