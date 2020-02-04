@@ -101,6 +101,8 @@ class EstimatorAdminController {
   }
 
   async setDueDate({ request, response, auth }) {
+    await authenticate.estimatorAdmin(response, auth)
+
     const { projectId, dueDate } = request.all()
 
     const project = await Project.find(projectId)
