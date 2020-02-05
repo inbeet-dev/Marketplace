@@ -101,6 +101,38 @@ class EstimatorAdminController {
     }
   }
 
+  async projects({ response, auth }) {
+    await authenticate.estimatorAdmin(response, auth)
+
+    const projectsData = (await Project.query()
+      .with('customer')
+      .with('lumberLists', (builder) =>
+        builder.where('status', '!=', LumberList.STATUS.cancelled)
+      )
+      .fetch()).toJSON()
+
+    const projects = []
+
+    for (const project of projectsData) {
+      if (project.lumberLists.length !== 0) {
+        projects.push({
+          user: {
+            name: project.customer.name
+          },
+          project: {
+            id: project.id,
+            address: project.address,
+            dueDate: project.due_date,
+            status: project.status
+          },
+          estimatorId: project.lumberLists[0].estimator_id
+        })
+      }
+    }
+
+    return projects
+  }
+
   async setDueDate({ request, response, auth }) {
     await authenticate.estimatorAdmin(response, auth)
 

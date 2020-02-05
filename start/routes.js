@@ -83,6 +83,7 @@ Route.group(() => {
     'EstimatorAdminController.lumberListApprove'
   )
   Route.post('lumber-list-reject', 'EstimatorAdminController.lumberListReject')
+  Route.get('projects', 'EstimatorAdminController.projects')
   Route.put('due-date', 'EstimatorAdminController.setDueDate')
   Route.get('files', 'EstimatorAdminController.files')
   Route.get('estimators', 'EstimatorAdminController.estimators')
