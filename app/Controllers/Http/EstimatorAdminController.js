@@ -98,6 +98,23 @@ class EstimatorAdminController {
     }
   }
 
+  async files({ request }) {
+    const { projectsId } = request.all()
+
+    const files = []
+
+    for (const id of projectsId) {
+      const projectFiles = await (await Project.find(id)).files()
+      if (projectFiles) {
+        for (const file of projectFiles) {
+          files.push(file)
+        }
+      }
+    }
+
+    return files
+  }
+
   async estimators({ response, auth }) {
     await authenticate.estimatorAdmin(response, auth)
 
