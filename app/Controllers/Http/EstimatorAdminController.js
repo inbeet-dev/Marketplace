@@ -4,8 +4,12 @@ const Auth = use('App/Utils/authenticate')
 const authenticate = new Auth()
 const LumberList = use('App/Models/LumberList')
 const Project = use('App/Models/Project')
+const User = use('App/Models/User')
 const Mail = use('Mail')
 const Env = use('Env')
+const ServerException = use('App/Exceptions/ServerException')
+const moment = require('moment')
+const { save } = use('App/Utils/dbFunctions')
 
 class EstimatorAdminController {
   async lumberLists({ response, auth }) {
@@ -127,6 +131,57 @@ class EstimatorAdminController {
     }
 
     return projects
+  }
+
+  async setDueDate({ request, response, auth }) {
+    await authenticate.estimatorAdmin(response, auth)
+
+    const { projectId, dueDate } = request.all()
+
+    const project = await Project.find(projectId)
+    if (!project) throw new ServerException('Project not found', 404)
+
+    if (!moment(dueDate).isValid())
+      throw new ServerException('DueDate is not Date')
+
+    const difference = moment(dueDate).diff(moment(project.created_at))
+
+    if (difference < 0)
+      throw new ServerException('Project is created after due date', 403)
+
+    project.due_date = moment(dueDate)
+    await save(project, response)
+
+    return {
+      success: true
+    }
+  }
+
+  async files({ request }) {
+    const { projectsId } = request.all()
+
+    const files = []
+
+    for (const id of projectsId) {
+      const projectFiles = await (await Project.find(id)).files()
+      if (projectFiles) {
+        for (const file of projectFiles) {
+          files.push(file)
+        }
+      }
+    }
+
+    return files
+  }
+
+  async estimators({ response, auth }) {
+    await authenticate.estimatorAdmin(response, auth)
+
+    const estiamtors = await User.query()
+      .where('role', User.ROLES.estimator)
+      .fetch()
+
+    return estiamtors
   }
 }
 
