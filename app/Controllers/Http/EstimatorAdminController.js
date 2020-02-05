@@ -101,31 +101,29 @@ class EstimatorAdminController {
     await authenticate.estimatorAdmin(response, auth)
 
     const projectsData = (await Project.query()
-      .with('customer', (builder) => {
-        return builder.name
-      })
+      .with('customer')
       .with('lumberList', (builder) => {
-        return builder.map((item) => {
-          return { estimator_id: item.estimator_id }
-        })
+        builder.where('status', '!=', LumberList.STATUS.cancelled)
       })
       .fetch()).toJSON()
 
     const projects = []
 
     for (const project of projectsData) {
-      projects.push({
-        user: {
-          name: project.customer.name
-        },
-        project: {
-          id: project.id,
-          address: project.address,
-          dueDate: project.due_date,
-          status: project.status
-        },
-        estimatorId: project.lumberList.estimator_id
-      })
+      if (project.lumberList) {
+        projects.push({
+          user: {
+            name: project.customer.name
+          },
+          project: {
+            id: project.id,
+            address: project.address,
+            dueDate: project.due_date,
+            status: project.status
+          },
+          estimatorId: project.lumberList.estimator_id
+        })
+      }
     }
 
     return projects
