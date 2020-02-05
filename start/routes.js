@@ -84,6 +84,7 @@ Route.group(() => {
   )
   Route.post('lumber-list-reject', 'EstimatorAdminController.lumberListReject')
   Route.get('files', 'EstimatorAdminController.files')
+  Route.get('estimators', 'EstimatorAdminController.estimators')
 }).prefix('api/v1/estimator-admin')
 
 Route.group(() => {
