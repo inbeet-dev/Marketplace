@@ -102,15 +102,15 @@ class EstimatorAdminController {
 
     const projectsData = (await Project.query()
       .with('customer')
-      .with('lumberList', (builder) => {
+      .with('lumberLists', (builder) =>
         builder.where('status', '!=', LumberList.STATUS.cancelled)
-      })
+      )
       .fetch()).toJSON()
 
     const projects = []
 
     for (const project of projectsData) {
-      if (project.lumberList) {
+      if (project.lumberLists.length !== 0) {
         projects.push({
           user: {
             name: project.customer.name
@@ -121,7 +121,7 @@ class EstimatorAdminController {
             dueDate: project.due_date,
             status: project.status
           },
-          estimatorId: project.lumberList.estimator_id
+          estimatorId: project.lumberLists[0].estimator_id
         })
       }
     }
