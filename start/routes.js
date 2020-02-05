@@ -58,7 +58,7 @@ Route.group(() => {
   Route.put('', 'SupplierController.changeStatus')
   Route.put('edit', 'SupplierController.editSupplier')
   Route.put('status', 'SupplierController.changeStatus')
-  Route.get('projects/:id', 'SupplierController.getBidPage')
+  Route.get('project/:id', 'SupplierController.getBidPage')
 }).prefix('api/v1/supplier')
 
 Route.group(() => {
