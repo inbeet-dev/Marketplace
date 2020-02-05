@@ -4,6 +4,7 @@ const Auth = use('App/Utils/authenticate')
 const authenticate = new Auth()
 const LumberList = use('App/Models/LumberList')
 const Project = use('App/Models/Project')
+const User = use('App/Models/User')
 const Mail = use('Mail')
 const Env = use('Env')
 const ServerException = use('App/Exceptions/ServerException')
@@ -122,6 +123,33 @@ class EstimatorAdminController {
     return {
       success: true
     }
+  }
+
+  async files({ request }) {
+    const { projectsId } = request.all()
+
+    const files = []
+
+    for (const id of projectsId) {
+      const projectFiles = await (await Project.find(id)).files()
+      if (projectFiles) {
+        for (const file of projectFiles) {
+          files.push(file)
+        }
+      }
+    }
+
+    return files
+  }
+
+  async estimators({ response, auth }) {
+    await authenticate.estimatorAdmin(response, auth)
+
+    const estiamtors = await User.query()
+      .where('role', User.ROLES.estimator)
+      .fetch()
+
+    return estiamtors
   }
 }
 
