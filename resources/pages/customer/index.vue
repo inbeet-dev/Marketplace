@@ -99,6 +99,9 @@
 import * as moment from 'moment'
 import LumberHeader from '@/components/Header.vue'
 export default {
+  components: {
+    LumberHeader
+  },
   data() {
     return {
       STATUS: {
@@ -116,6 +119,11 @@ export default {
           text: 'Awaiting Manager Approval',
           icon: 'mdi-clock',
           color: '#f78f1e'
+        },
+        'Open For Bids': {
+          text: 'Open For Bids',
+          icon: 'mdi-clock',
+          color: '#7e7e7e'
         },
         'Project Complete': {
           text: 'Project Complete',
@@ -139,17 +147,6 @@ export default {
       createdAt: '',
       time: '',
       projects: null
-    }
-  },
-  components: {
-    LumberHeader
-  },
-  methods: {
-    dateConvert(date) {
-      return moment(date).format('DD MMMM YYYY')
-    },
-    projectProcess(id) {
-      this.$router.push('/customer/project/' + id)
     }
   },
   async mounted() {
@@ -180,6 +177,14 @@ export default {
           this.$router.push('/login')
         }
       })
+  },
+  methods: {
+    dateConvert(date) {
+      return moment(date).format('DD MMMM YYYY')
+    },
+    projectProcess(id) {
+      this.$router.push('/customer/project/' + id)
+    }
   }
 }
 </script>
