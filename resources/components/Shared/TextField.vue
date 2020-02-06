@@ -25,7 +25,7 @@
         :disabled="disabled"
       />
       <v-icon v-if="icon">{{ icon }}</v-icon>
-      <span class="main__error" v-if="message">{{ message }}</span>
+      <span v-if="message" class="main__error">{{ message }}</span>
     </div>
   </div>
 </template>

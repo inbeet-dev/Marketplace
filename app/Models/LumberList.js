@@ -31,7 +31,8 @@ LumberList.STATUS = {
   received: 'Received',
   complete: 'Complete',
   awaitingCustomerApproval: 'Awaiting Customer Approval',
-  awaitingAdminApproval: 'Awaiting Admin Approval'
+  awaitingAdminApproval: 'Awaiting Admin Approval',
+  cancelled: 'Cancelled'
 }
 
 module.exports = LumberList

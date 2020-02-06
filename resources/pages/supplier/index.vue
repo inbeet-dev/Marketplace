@@ -3,9 +3,9 @@
     <lumber-header
       :items="[
         { name: 'home', link: '/' },
-        { name: 'account profile', link: '/' },
-        { name: 'employee profiles', link: '/' },
-        { name: 'messages', link: 'message' }
+        { name: 'projects', link: '/' },
+        { name: 'bids', link: '/' },
+        { name: 'messages', link: '/' }
       ]"
       :user="$store.getters['User/getUser']"
     />
@@ -22,6 +22,7 @@
                 <th class="text-left">Location</th>
                 <th class="text-left">Bids Received</th>
                 <th class="text-left">Date Closes</th>
+                <th class="text-left"></th>
               </tr>
             </thead>
             <tbody>
@@ -36,6 +37,11 @@
                 </td>
                 <td class="item">{{ item.bidsReceived }}</td>
                 <td class="item">{{ item.dateCloses }}</td>
+                <td>
+                  <v-btn text fab @click="goToProject(item.id)"
+                    ><v-icon color="#9ca2c3">mdi-eye-circle</v-icon></v-btn
+                  >
+                </td>
               </tr>
             </tbody>
           </v-simple-table>
@@ -52,6 +58,7 @@
                 <th class="text-left">Estimated $</th>
                 <th class="text-left">Location</th>
                 <th class="text-left">Status</th>
+                <th class="text-left"></th>
               </tr>
             </thead>
             <tbody>
@@ -65,6 +72,11 @@
                   <v-icon @click="openMap(item.location)">mdi-map</v-icon>
                 </td>
                 <td class="item">{{ item.status }}</td>
+                <td>
+                  <v-btn text fab @click="goToProject(item.id)"
+                    ><v-icon color="#9ca2c3">mdi-eye-circle</v-icon></v-btn
+                  >
+                </td>
               </tr>
             </tbody>
           </v-simple-table>
@@ -114,6 +126,9 @@ export default {
         name: 'ProjectLocationDialog',
         data: [location.lat, location.long]
       })
+    },
+    goToProject(id) {
+      this.$router.push(`/supplier/project/${id}`)
     }
   }
 }
