@@ -16,6 +16,10 @@ class Project extends Model {
     return this.hasMany('App/Models/LumberList')
   }
 
+  lumberList() {
+    return this.hasOne('App/Models/LumberList', 'id', 'project_id')
+  }
+
   customer() {
     return this.hasOne('App/Models/User', 'user_id', 'id')
   }
