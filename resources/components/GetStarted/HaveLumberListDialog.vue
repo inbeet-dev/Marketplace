@@ -48,10 +48,14 @@ export default {
   data: () => ({
     dialog: false
   }),
-  name: 'HaveLumberListDialog',
-  methods: {
-    setUploadType(type) {
-      this.$store.dispatch('UploadType/store', type)
+  watch: {
+    dialog() {
+      if (
+        this.dialog === false &&
+        this.$store.getters['Dialog/active'] === 'HaveLumberListDialog'
+      ) {
+        this.$store.dispatch('Dialog/show', '')
+      }
     }
   },
   mounted() {
@@ -64,14 +68,9 @@ export default {
       }
     )
   },
-  watch: {
-    dialog() {
-      if (
-        this.dialog === false &&
-        this.$store.getters['Dialog/active'] === 'HaveLumberListDialog'
-      ) {
-        this.$store.dispatch('Dialog/show', '')
-      }
+  methods: {
+    setUploadType(type) {
+      this.$store.dispatch('UploadType/store', type)
     }
   }
 }

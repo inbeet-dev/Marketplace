@@ -207,6 +207,10 @@ export default {
             .then(() => {
               this.$store.dispatch('Dialog/show', 'ProjectRegisterDialog')
               this.dialog = false
+              this.$store.dispatch('User/setUser', {
+                name: this.name,
+                role: 'Customer'
+              })
             })
         })
         .catch((e) => {

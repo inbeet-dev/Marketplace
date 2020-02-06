@@ -2,7 +2,7 @@
   <div class="header">
     <v-row class="header__row">
       <div class="header__icon">
-        <v-icon @click="active = !active" class="header__icon__mdi-menu"
+        <v-icon class="header__icon__mdi-menu" @click="active = !active"
           >mdi-menu</v-icon
         >
       </div>
@@ -26,7 +26,7 @@
           </a>
         </li>
       </ul>
-      <div v-if="login" class="header__right-side">
+      <div v-if="login && !userData.name" class="header__right-side">
         <a class="header__right-side__call" href="tel:+1818595904">
           <v-icon class="header__right-side__call__icon"
             >mdi-phone-in-talk</v-icon
@@ -42,7 +42,7 @@
           <v-icon class="header__right-side__login__icon">mdi-login</v-icon>
         </a>
       </div>
-      <div v-if="user" class="header__right-side-profile">
+      <div v-if="userData.name" class="header__right-side-profile">
         <div class="header__right-side-profile__profile-detail">
           <img
             src="/profile.jpeg"
@@ -53,13 +53,29 @@
             <p
               class="header__right-side-profile__profile-detail___detail__name"
             >
-              {{ user.name }}
+              {{ userData.name }}
             </p>
             <p
               class="header__right-side-profile__profile-detail___detail__role"
             >
-              {{ user.role }}
+              {{ userData.role }}
             </p>
+          </div>
+          <div class="header__right-side-profile__profile-detail__drop-down">
+            <v-menu offset-y>
+              <template v-slot:activator="{ on }">
+                <v-btn color="transparent" depressed v-on="on">
+                  <v-icon color="#807c9c">mdi-chevron-down</v-icon>
+                </v-btn>
+              </template>
+              <v-list>
+                <button @click="logout">
+                  <v-list-item>
+                    <v-list-item-title>Logout</v-list-item-title>
+                  </v-list-item>
+                </button>
+              </v-list>
+            </v-menu>
           </div>
         </div>
       </div>
@@ -97,12 +113,34 @@ export default {
   name: 'LumberHeader',
   props: {
     items: { type: Array, default: null },
-    login: { type: Object, default: null },
-    user: { type: Object, default: null }
+    login: { type: Object, default: null }
   },
   data() {
     return {
-      active: false
+      active: false,
+      userData: ''
+    }
+  },
+  mounted() {
+    this.userData = this.$store.getters['User/getUser']
+    this.$store.watch(
+      (state, getters) => getters['User/getUser'],
+      (newValue) => {
+        this.userData = newValue
+      }
+    )
+  },
+  methods: {
+    logout() {
+      this.$store.dispatch('User/setUser', {
+        name: '',
+        role: ''
+      })
+      this.$store.dispatch('Auth/store', {
+        refreshToken: '',
+        token: ''
+      })
+      this.$router.push(' ')
     }
   }
 }
@@ -318,6 +356,12 @@ export default {
   .header__right-side-profile__profile-detail__detail
   p {
   margin: 0 0 0 10px;
+}
+.header
+  .header__right-side-profile
+  .header__right-side-profile__profile-detail
+  .header__right-side-profile__profile-detail__drop-down {
+  display: inline-block;
 }
 .header
   .header__right-side-profile

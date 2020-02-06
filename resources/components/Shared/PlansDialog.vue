@@ -89,16 +89,14 @@ export default {
         .pop()
     },
     async loadPlans() {
-      this.plans = (
-        await this.$axios.get(
-          `/api/v1/project/${this.$route.params.id}/plans`,
-          {
-            headers: {
-              Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
-            }
+      this.plans = (await this.$axios.get(
+        `/api/v1/project/${this.$route.params.id}/plans`,
+        {
+          headers: {
+            Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
           }
-        )
-      ).data.data
+        }
+      )).data.data
     }
   }
 }

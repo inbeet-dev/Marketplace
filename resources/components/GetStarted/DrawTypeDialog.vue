@@ -27,7 +27,10 @@
             style="color:#ffffff !important"
             @click.stop="
               drawTypeDialog = false
-              $store.dispatch('Dialog/show', 'AccountTypeDialog')
+              $store.dispatch('Dialog/show', {
+                name: 'AccountTypeDialog',
+                data: 'User'
+              })
             "
           >
             E-FILE

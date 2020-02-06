@@ -84,6 +84,11 @@ export default {
       (state, getters) => getters['Dialog/active'],
       (newValue) => {
         this.dialog = newValue === 'UploadFileDialog'
+        if (this.$store.getters['UploadType/getUploadType'] === 'EFILE') {
+          this.type = 'drawing'
+        } else {
+          this.type = 'lumber list'
+        }
         if (this.dialog) this.data = this.$store.getters['Dialog/getData']
       }
     )
