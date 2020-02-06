@@ -74,13 +74,14 @@ export default {
   },
   methods: {
     async loadProjects() {
-      this.projects = (
-        await this.$axios.get('/api/v1/estimator-admin/lumber-lists', {
+      this.projects = (await this.$axios.get(
+        '/api/v1/estimator-admin/lumber-lists',
+        {
           headers: {
             Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
           }
-        })
-      ).data
+        }
+      )).data
     },
     show(index) {
       this.$store.dispatch('Dialog/show', {
