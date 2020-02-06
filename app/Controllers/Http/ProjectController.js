@@ -15,6 +15,7 @@ const Auth = use('App/Utils/authenticate')
 const authenticate = new Auth()
 const ProjectSupplier = use('App/Models/ProjectSupplier')
 const ServerException = use('App/Exceptions/ServerException')
+const User = use('App/Models/User')
 
 class ProjectController {
   async register({ request, response, auth }) {
@@ -350,6 +351,33 @@ class ProjectController {
       data: {
         project
       }
+    }
+  }
+
+  async assignEstimator({ response, request, auth }) {
+    await authenticate.estimatorAdmin(response, auth)
+
+    const { projectId, estimatorId } = request.all()
+
+    const project = await Project.find(projectId)
+    if (!project) throw new ServerException('Project not found', 404)
+
+    const estimator = await User.findBy({
+      id: estimatorId,
+      role: User.ROLES.estimator
+    })
+
+    if (!estimator) throw new ServerException('Estimator not found', 404)
+
+    const lumberList = new LumberList()
+    lumberList.project_id = projectId
+    lumberList.status = LumberList.STATUS.inReview
+    lumberList.estimator_id = estimator.id
+
+    await save(lumberList, response)
+
+    return {
+      success: true
     }
   }
 }

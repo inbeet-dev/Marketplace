@@ -41,6 +41,7 @@ Route.group(() => {
   Route.get(':id/bid', 'ProjectController.getProjectBid')
   Route.put('despoit', 'ProjectController.despoit')
   Route.get(':id/suppliers', 'ProjectController.getSuppliers')
+  Route.put('assign', 'ProjectController.assignEstimator')
 }).prefix('api/v1/project')
 
 Route.group(() => {
@@ -83,6 +84,10 @@ Route.group(() => {
     'EstimatorAdminController.lumberListApprove'
   )
   Route.post('lumber-list-reject', 'EstimatorAdminController.lumberListReject')
+  Route.get('projects', 'EstimatorAdminController.projects')
+  Route.put('due-date', 'EstimatorAdminController.setDueDate')
+  Route.get('files', 'EstimatorAdminController.files')
+  Route.get('estimators', 'EstimatorAdminController.estimators')
 }).prefix('api/v1/estimator-admin')
 
 Route.group(() => {
