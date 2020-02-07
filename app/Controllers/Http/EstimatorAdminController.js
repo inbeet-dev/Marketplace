@@ -131,6 +131,7 @@ class EstimatorAdminController {
         .with('lumberLists', (builder) =>
           builder.whereNot('status', LumberList.STATUS.cancelled)
         )
+        .orderBy('id', 'desc')
         .fetch()
     ).toJSON()
 
