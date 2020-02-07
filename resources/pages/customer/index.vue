@@ -5,7 +5,6 @@
         { name: 'home', link: '/' },
         { name: 'messages', link: 'message' }
       ]"
-      :user="$store.getters['User/getUser']"
     />
     <v-row justify="center" style="margin:0">
       <v-col md="8" sm="10" cols="12">

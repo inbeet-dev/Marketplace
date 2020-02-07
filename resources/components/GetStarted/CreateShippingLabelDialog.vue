@@ -29,16 +29,6 @@ export default {
       dialog: false
     }
   },
-  mounted() {
-    this.dialog =
-      this.$store.getters['Dialog/active'] === 'CreateShippingLabelDialog'
-    this.$store.watch(
-      (state, getters) => getters['Dialog/active'],
-      (newValue) => {
-        this.dialog = newValue === 'CreateShippingLabelDialog'
-      }
-    )
-  },
   watch: {
     dialog() {
       if (
@@ -48,6 +38,16 @@ export default {
         this.$store.dispatch('Dialog/show', '')
       }
     }
+  },
+  mounted() {
+    this.dialog =
+      this.$store.getters['Dialog/active'] === 'CreateShippingLabelDialog'
+    this.$store.watch(
+      (state, getters) => getters['Dialog/active'],
+      (newValue) => {
+        this.dialog = newValue === 'CreateShippingLabelDialog'
+      }
+    )
   }
 }
 </script>

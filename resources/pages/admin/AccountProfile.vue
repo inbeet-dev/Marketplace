@@ -3,11 +3,11 @@
     <lumber-header
       :items="[
         { name: 'home', link: '/' },
-        { name: 'account profile', link: '/' },
+        { name: 'account profile', link: '/admin/accountprofile' },
         { name: 'employee profiles', link: '/' },
         { name: 'messages', link: 'message' }
       ]"
-      :user="$store.getters['User/getUser']"
+      :login="{ name: 'login', link: 'login' }"
     />
     <v-row justify="center" style="margin:0;">
       <v-col cols="11" style="margin-top:150px;">
@@ -21,7 +21,7 @@
                 <th class="text-left">Email</th>
                 <th class="text-left">Phone</th>
                 <th class="text-left">Data created</th>
-                <th class="text-left">Costomer Rating</th>
+                <th class="text-left">Customer Rating</th>
                 <th class="text-left">#bids Accepted</th>
                 <th class="text-left">Respose Time</th>
                 <th class="text-left">Status</th>
@@ -161,7 +161,6 @@ export default {
         }
       })
       .then((data) => {
-        console.log(data.data.data.suppliers)
         this.inActive = data.data.data.suppliers.cancelledOrPaused
         this.inReviewOrActive = data.data.data.suppliers.inReviewOrActive
       })

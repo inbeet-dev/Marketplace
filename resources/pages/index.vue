@@ -99,6 +99,7 @@
       <draw-type-dialog />
       <email-dialog />
       <supplier-register-dialog />
+      <create-shipping-label-dialog />
     </v-row>
   </v-container>
 </template>
@@ -113,6 +114,7 @@ import ArchitecturalDrawingDialog from '../components/GetStarted/ArchitecturalDr
 import DrawTypeDialog from '../components/GetStarted/DrawTypeDialog.vue'
 import EmailDialog from '../components/GetStarted/EmailDialog.vue'
 import SupplierRegisterDialog from '../components/GetStarted/SupplierRegisterDialog.vue'
+import CreateShippingLabelDialog from '../components/GetStarted/CreateShippingLabelDialog.vue'
 export default {
   components: {
     LumberHeader,
@@ -124,7 +126,8 @@ export default {
     DrawTypeDialog,
     EmailDialog,
     UploadFileDialog,
-    SupplierRegisterDialog
+    SupplierRegisterDialog,
+    CreateShippingLabelDialog
   },
   data: () => ({
     videoDialog: false,

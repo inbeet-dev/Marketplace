@@ -8,7 +8,6 @@
           { name: 'Projects', link: 'profileprojects' },
           { name: 'Messages', link: 'messages' }
         ]"
-        :user="$store.getters['User/getUser']"
       />
     </v-row>
     <v-row style="margin: 200px 0 0;" justify="center">

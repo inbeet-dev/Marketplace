@@ -8,7 +8,6 @@
           { name: 'Projects', link: 'profileprojects' },
           { name: 'Messages', link: 'messagesg' }
         ]"
-        :user="$store.getters['User/getUser']"
       />
     </v-row>
     <v-row style="margin: 200px 0 0;" justify="center">
@@ -60,7 +59,7 @@
             </v-col>
           </v-row>
           <v-row justify="center">
-            <v-col xl="4" lg="4" md="4" sm="8" cols="8" style="padding:5px;">
+            <v-col xl="3" lg="3" md="3" sm="8" cols="8" style="padding:5px;">
               <v-btn
                 color="#f78f1e"
                 width="100%"
@@ -72,7 +71,7 @@
               </v-btn>
               <plans-dialog v-model="dialog" :can-upload="true" />
             </v-col>
-            <v-col xl="4" lg="4" md="4" sm="8" cols="8" style="padding:5px;">
+            <v-col xl="3" lg="3" md="3" sm="8" cols="8" style="padding:5px;">
               <v-btn
                 color="#f78f1e"
                 width="100%"
@@ -82,7 +81,7 @@
                 lumber list
               </v-btn>
             </v-col>
-            <v-col xl="4" lg="4" md="4" sm="8" cols="8" style="padding:5px;">
+            <v-col xl="3" lg="3" md="3" sm="8" cols="8" style="padding:5px;">
               <v-btn
                 color="#f78f1e"
                 width="100%"
@@ -94,6 +93,24 @@
               </v-btn>
               <question-list v-model="questionList" />
             </v-col>
+            <v-col xl="3" lg="3" md="3" sm="8" cols="8" style="padding:5px;">
+              <v-btn
+                color="#f78f1e"
+                width="100%"
+                height="50px"
+                style="color:#ffffff !important"
+                @click.stop="
+                  $store.dispatch('Dialog/show', {
+                    name: 'BidderSelectionDialog',
+                    data: ''
+                  })
+                  selectRoleDialog = false
+                "
+              >
+                bidder selection
+              </v-btn>
+              <bidder-selection-dialog />
+            </v-col>
           </v-row>
         </v-card>
       </v-col>
@@ -103,6 +120,7 @@
 
 <script>
 import moment from 'moment'
+import BidderSelectionDialog from '../../../components/Customer/BidderSelectionDialog'
 import PlansDialog from '@/components/Shared/PlansDialog.vue'
 import QuestionList from '@/components/Customer/QuestionList.vue'
 import LumberHeader from '@/components/Header.vue'
@@ -111,7 +129,8 @@ export default {
   components: {
     LumberHeader,
     PlansDialog,
-    QuestionList
+    QuestionList,
+    BidderSelectionDialog
   },
   data() {
     return {

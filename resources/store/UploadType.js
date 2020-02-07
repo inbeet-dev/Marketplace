@@ -1,10 +1,10 @@
 export const state = () => ({
-  uploadType: null
+  uploadType: ''
 })
 
 export const getters = {
   getUploadType(state) {
-    return state.token
+    return state.uploadType
   }
 }
 
