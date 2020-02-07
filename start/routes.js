@@ -79,6 +79,7 @@ Route.group(() => {
 
 Route.group(() => {
   Route.get('lumber-lists', 'EstimatorAdminController.lumberLists')
+  Route.get('lumber-list/:projectId', 'EstimatorAdminController.lumberList')
   Route.post(
     'lumber-list-approve',
     'EstimatorAdminController.lumberListApprove'
