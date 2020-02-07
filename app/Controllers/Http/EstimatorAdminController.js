@@ -15,13 +15,15 @@ class EstimatorAdminController {
   async lumberLists({ response, auth }) {
     await authenticate.estimatorAdmin(response, auth)
 
-    const lumberListsData = (await LumberList.query()
-      .where('status', LumberList.STATUS.awaitingAdminApproval)
-      .with('project', (builder) => {
-        builder.with('customer')
-      })
-      .with('items')
-      .fetch()).toJSON()
+    const lumberListsData = (
+      await LumberList.query()
+        .where('status', LumberList.STATUS.awaitingAdminApproval)
+        .with('project', (builder) => {
+          builder.with('customer')
+        })
+        .with('items')
+        .fetch()
+    ).toJSON()
 
     const lumberLists = []
 
@@ -35,6 +37,25 @@ class EstimatorAdminController {
     }
 
     return lumberLists
+  }
+
+  async lumberList({ request, response, auth }) {
+    await authenticate.estimatorAdmin(response, auth)
+
+    const lumberList = (
+      await Project.query()
+        .where('id', request.params.id)
+        .with('lumberlists', (builder) => {
+          builder.whereNot('status', LumberList.STATUS.cancelled)
+          builder.with('items')
+        })
+        .first()
+    ).toJSON()
+
+    return {
+      id: lumberList.id,
+      items: lumberList.items
+    }
   }
 
   async lumberListApprove({ request, response, auth }) {
@@ -61,9 +82,9 @@ class EstimatorAdminController {
         .subject('Lumber List Approved')
     })
 
-    const customerEmail = (await (await lumberList.project().first())
-      .customer()
-      .first()).email
+    const customerEmail = (
+      await (await lumberList.project().first()).customer().first()
+    ).email
 
     await Mail.send('emails.lumber-list.finished', {}, (message) => {
       message
@@ -104,30 +125,30 @@ class EstimatorAdminController {
   async projects({ response, auth }) {
     await authenticate.estimatorAdmin(response, auth)
 
-    const projectsData = (await Project.query()
-      .with('customer')
-      .with('lumberLists', (builder) =>
-        builder.whereNot('status', LumberList.STATUS.cancelled)
-      )
-      .fetch()).toJSON()
+    const projectsData = (
+      await Project.query()
+        .with('customer')
+        .with('lumberLists', (builder) =>
+          builder.whereNot('status', LumberList.STATUS.cancelled)
+        )
+        .fetch()
+    ).toJSON()
 
     const projects = []
 
     for (const project of projectsData) {
-      if (project.lumberLists.length !== 0) {
-        projects.push({
-          user: {
-            name: project.customer.name
-          },
-          project: {
-            id: project.id,
-            address: project.address,
-            dueDate: project.due_date,
-            status: project.status
-          },
-          estimatorId: project.lumberLists[0].estimator_id
-        })
-      }
+      projects.push({
+        user: {
+          name: project.customer.name
+        },
+        project: {
+          id: project.id,
+          address: project.address,
+          dueDate: project.due_date,
+          status: project.status
+        },
+        estimatorId: project.lumberLists[0].estimator_id || null
+      })
     }
 
     return projects

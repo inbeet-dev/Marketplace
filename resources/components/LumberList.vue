@@ -19,7 +19,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in lumberList.items" :key="index">
+            <!-- <tr v-for="(item, index) in lumberList.items" :key="index">
               <td>{{ index + 1 }}</td>
               <td>
                 <v-select
@@ -75,55 +75,26 @@
                 />
               </td>
               <td>
-                <v-btn text fab @click="remove(index)"
-                  ><v-icon color="red">mdi-delete</v-icon></v-btn
-                >
+                <v-btn text fab><v-icon color="red">mdi-delete</v-icon></v-btn>
               </td>
-            </tr>
+            </tr> -->
           </tbody>
         </template>
       </v-simple-table>
-      <v-row style="margin:0" justify="center"
-        ><v-col lg="6" cols="12">
-          <v-btn width="100%" color="#f1f4f8" class="add" @click="add"
-            >Add</v-btn
-          >
-        </v-col></v-row
-      >
-      <v-row justify="end" style="margin:0">
-        <v-col lg="2" md="12"
-          ><v-btn
-            width="100%"
-            color="#f1f4f8"
-            class="save"
-            :disabled="lumberList.status !== 'open'"
-            @click="save()"
-            >Save List</v-btn
-          ></v-col
-        >
-        <v-col lg="5" md="12"
-          ><v-btn
-            width="100%"
-            color="#f78f1e"
-            class="submit"
-            :disabled="lumberList.status !== 'open'"
-            @click="submitForApproval()"
-            >Sumbit For Manager Approval</v-btn
-          ></v-col
-        >
-      </v-row>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
-import TextField from '../../Shared/TextField.vue'
+/* eslint-disable */
+import TextField from './Shared/TextField.vue'
 export default {
   components: {
     TextField
   },
   data() {
     return {
+      dialog: false,
       headers: [
         '#Item',
         'CATEGORY',
@@ -133,104 +104,27 @@ export default {
         'LF',
         'BF',
         'SF'
-      ],
-      units: ['EA', 'BF', 'SF', 'LF'],
-      dialog: false,
-      lumberList: { items: [] },
-      categories: ['HRDW/FRAME', 'LUMBER', 'LUMBER/ENG', 'SHEATHING']
+      ]
     }
   },
   watch: {
     dialog() {
       if (
         this.dialog === false &&
-        this.$store.getters['Dialog/active'] === 'LumberListDialog'
+        this.$store.getters['Dialog/active'] === 'LumberList'
       ) {
         this.$store.dispatch('Dialog/show', '')
       }
     }
   },
-  async mounted() {
-    await this.$store.restored
-
-    this.loadLumberList()
-
-    this.dialog = this.$store.getters['Dialog/active'] === 'LumberListDialog'
+  mounted() {
+    this.dialog = this.$store.getters['Dialog/active'] === 'LumberList'
     this.$store.watch(
       (state, getters) => getters['Dialog/active'],
       (newValue) => {
-        this.dialog = newValue === 'LumberListDialog'
+        this.dialog = newValue === 'LumberList'
       }
     )
-  },
-  methods: {
-    add() {
-      this.lumberList.items.push({
-        type: 'HRDW/FRAME',
-        meta: { unit: 'EA' }
-      })
-    },
-    remove(index) {
-      this.lumberList.items.splice(index, 1)
-    },
-    async save() {
-      await this.$store.restored
-      const list = {
-        projectId: this.$route.params.id,
-        items: this.lumberList.items
-      }
-      this.$axios
-        .put('/api/v1/lumberlist/items', list, {
-          headers: {
-            Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
-          }
-        })
-        .then((data) => {
-          this.$store.dispatch(
-            'SnackBar/show',
-            'Lumber List successfully saved'
-          )
-          this.loadLumberList()
-        })
-        .catch((data) => {
-          this.$store.dispatch('SnackBar/show', 'an error occured')
-        })
-    },
-    submitForApproval() {
-      this.$axios
-        .post(
-          '/api/v1/estimator/lumber-list-admin-approval',
-          {
-            lumberListId: this.$route.params.id
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
-            }
-          }
-        )
-        .then((data) => {
-          this.$store.dispatch(
-            'SnackBar/show',
-            'Lumber List sended for approval'
-          )
-          this.$store.dispatch('Dialog/show', '')
-          this.loadLumberList()
-        })
-        .catch((data) => {
-          this.$store.dispatch('SnackBar/show', 'an error occured')
-        })
-    },
-    async loadLumberList() {
-      this.lumberList = (await this.$axios.get(
-        '/api/v1/estimator/lumber-list/' + this.$route.params.id,
-        {
-          headers: {
-            Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
-          }
-        }
-      )).data
-    }
   }
 }
 </script>

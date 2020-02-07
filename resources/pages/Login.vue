@@ -22,7 +22,7 @@
               </p>
             </v-col>
             <v-col cols="12" sm="12" md="12" lg="8" xl="8" class="login">
-              <form ref="loginForm" action="">
+              <form ref="loginForm">
                 <v-row>
                   <v-col cols="12">
                     <text-field
