@@ -107,7 +107,7 @@ class EstimatorAdminController {
     const projectsData = (await Project.query()
       .with('customer')
       .with('lumberLists', (builder) =>
-        builder.where('status', '!=', LumberList.STATUS.cancelled)
+        builder.whereNot('status', LumberList.STATUS.cancelled)
       )
       .fetch()).toJSON()
 
