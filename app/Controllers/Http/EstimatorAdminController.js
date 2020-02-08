@@ -39,22 +39,24 @@ class EstimatorAdminController {
     return lumberLists
   }
 
-  async lumberList({ request, response, auth }) {
+  async lumberList({ params, response, auth }) {
     await authenticate.estimatorAdmin(response, auth)
 
-    const lumberList = (
+    const project = (
       await Project.query()
-        .where('id', request.params.id)
-        .with('lumberlists', (builder) => {
+        .where('id', params.projectId)
+        .with('lumberLists', (builder) => {
           builder.whereNot('status', LumberList.STATUS.cancelled)
-          builder.with('items')
+          builder.with('items', (builder) => {
+            builder.orderBy('id')
+          })
         })
         .first()
     ).toJSON()
 
     return {
-      id: lumberList.id,
-      items: lumberList.items
+      id: project.lumberLists[0].id,
+      items: project.lumberLists[0].items
     }
   }
 

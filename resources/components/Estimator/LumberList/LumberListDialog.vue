@@ -222,14 +222,16 @@ export default {
         })
     },
     async loadLumberList() {
-      this.lumberList = (await this.$axios.get(
-        '/api/v1/estimator/lumber-list/' + this.$route.params.id,
-        {
-          headers: {
-            Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
+      this.lumberList = (
+        await this.$axios.get(
+          '/api/v1/estimator/lumber-list/' + this.$route.params.id,
+          {
+            headers: {
+              Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
+            }
           }
-        }
-      )).data
+        )
+      ).data
     }
   }
 }

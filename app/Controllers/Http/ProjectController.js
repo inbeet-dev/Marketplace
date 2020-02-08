@@ -345,7 +345,7 @@ class ProjectController {
 
     await LumberList.query()
       .where('project_id', projectId)
-      .update({ status: LumberList.STATUS.canceled })
+      .update({ status: LumberList.STATUS.cancelled })
 
     const lumberList = new LumberList()
     lumberList.project_id = projectId

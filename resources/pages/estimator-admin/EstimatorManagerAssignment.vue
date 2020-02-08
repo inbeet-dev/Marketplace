@@ -148,30 +148,30 @@ export default {
   }),
   async mounted() {
     await this.$store.restored
-    this.data = (await this.$axios.get('/api/v1/estimator-admin/projects', {
-      headers: {
-        Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
-      }
-    })).data
-    const estimators = (await this.$axios.get(
-      '/api/v1/estimator-admin/estimators',
-      {
+    this.data = (
+      await this.$axios.get('/api/v1/estimator-admin/projects', {
         headers: {
           Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
         }
-      }
-    )).data
+      })
+    ).data
+    const estimators = (
+      await this.$axios.get('/api/v1/estimator-admin/estimators', {
+        headers: {
+          Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
+        }
+      })
+    ).data
     estimators.forEach((element) => {
       this.estimators.push({ text: element.name, value: element.id })
     })
-    this.plans = (await this.$axios.get(
-      '/api/v1/estimator-admin/files?projectsId[]=1',
-      {
+    this.plans = (
+      await this.$axios.get('/api/v1/estimator-admin/files?projectsId[]=1', {
         headers: {
           Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
         }
-      }
-    )).data
+      })
+    ).data
   },
   methods: {
     save($event, index) {
