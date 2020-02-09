@@ -118,4 +118,6 @@ Route.group(() => {
   Route.get('vendors', 'CustomerSupportController.vendors')
 }).prefix('api/v1/customer-support')
 
+Route.post('api/v1/location', 'AddressController.getLocation')
+
 Route.any('*', 'NuxtController.render')
