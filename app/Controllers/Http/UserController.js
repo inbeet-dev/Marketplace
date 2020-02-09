@@ -39,14 +39,14 @@ class UserController {
   }
 
   async register({ request, response, auth }) {
-    const { name, email, password, phoneNumber, role } = request.all()
+    const { name, email, password, phoneNumber, accountType } = request.all()
 
     const rules = {
       email: 'required|email',
       name: 'required',
       password: 'required',
       phoneNumber: 'required',
-      role: 'required'
+      accoutType: 'required'
     }
 
     const validation = await validate(request.all(), rules)
@@ -55,20 +55,16 @@ class UserController {
       throw new ServerException(validation.messages(), 400)
 
     if (
-      ![
-        User.ROLES.customer,
-        User.ROLES.supplier,
-        User.ROLES.estimator,
-        User.ROLES.supportCustomer,
-        User.ROLES.admin
-      ].includes(role)
+      ![User.ACCOUNT_TYPES.company, User.ACCOUNT_TYPES.individual].includes(
+        accountType
+      )
     )
       throw new ServerException('Invalid role', 400)
 
     const findUser = await User.findBy('email', email)
     if (findUser) throw new ServerException('Email exists', 403)
 
-    const meta = { phoneNumber }
+    const meta = { phoneNumber, accountType }
 
     const user = new User()
 
