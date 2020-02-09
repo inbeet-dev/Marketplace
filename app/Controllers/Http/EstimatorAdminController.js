@@ -150,7 +150,9 @@ class EstimatorAdminController {
           dueDate: project.due_date,
           status: project.status
         },
-        estimatorId: project.lumberLists[0].estimator_id || null
+        estimatorId: project.lumberLists[0]
+          ? project.lumberLists[0].estimator_id
+          : null
       })
     }
 
