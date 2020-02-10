@@ -1,5 +1,6 @@
 <template>
   <v-container fluid>
+    <div class="backgound"></div>
     <lumber-header
       :items="[
         { name: 'home', link: '/' },
@@ -21,16 +22,16 @@
               </p>
             </v-col>
             <v-col cols="12" sm="12" md="12" lg="8" xl="8" class="login">
-              <form action="" ref="loginForm">
+              <form ref="loginForm">
                 <v-row>
                   <v-col cols="12">
                     <text-field
+                      v-model="email"
                       type="text"
                       placeholder="Enter Email"
                       icon="mdi-email-outline"
                       label="email"
                       name="email"
-                      v-model="email"
                       @input="toLowerCase"
                     />
                   </v-col>
@@ -83,6 +84,7 @@ import TextField from '../components/Shared/TextField'
 export const DASHBOARDS = {
   customer: '/customer',
   estimator: '/estimator',
+  'estimator-admin': '/estimator-admin',
   admin: '/admin',
   supplier: '/supplier'
 }
@@ -127,8 +129,24 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.backgound {
+  background-image: url(/lumber-background.jpg);
+  filter: brightness(60%);
+  filter: brightness(60%);
+  position: fixed;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin: 0px;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+}
 .container .login-row {
   padding-bottom: 40px;
+  z-index: 2;
+  position: absolute;
+  width: 100vw;
 }
 .container .login-row .main .login-title {
   text-transform: uppercase;

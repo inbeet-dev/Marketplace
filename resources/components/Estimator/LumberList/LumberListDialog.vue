@@ -8,37 +8,76 @@
         <template v-slot:default>
           <thead>
             <tr>
-              <th class="text-left" v-for="(item, index) in items" :key="index">
-                {{ item }}
+              <th
+                v-for="(header, index) in headers"
+                :key="index"
+                class="text-left"
+              >
+                {{ header }}
               </th>
+              <th class="text-left" style="width: 50px"></th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(data, index) in datas" :key="index">
+            <tr v-for="(item, index) in lumberList.items" :key="index">
               <td>{{ index + 1 }}</td>
               <td>
+                <v-select
+                  v-model="lumberList.items[index].type"
+                  :items="categories"
+                  class="select"
+                  dense
+                  outlined
+                ></v-select>
+              </td>
+              <td>
                 <text-field
+                  v-model="lumberList.items[index].meta.quantity"
+                  dense
                   class="text-field"
-                  v-model="datas[index].meta.name"
+                />
+              </td>
+              <td>
+                <v-select
+                  v-model="lumberList.items[index].meta.unit"
+                  :items="units"
+                  class="select"
+                  dense
+                  outlined
+                ></v-select>
+              </td>
+              <td>
+                <text-field
+                  v-model="lumberList.items[index].meta.description"
+                  dense
+                  class="text-field"
                 />
               </td>
               <td>
                 <text-field
+                  v-model="lumberList.items[index].meta.lf"
+                  dense
                   class="text-field"
-                  v-model="datas[index].meta.count"
                 />
               </td>
               <td>
                 <text-field
+                  v-model="lumberList.items[index].meta.bf"
+                  dense
                   class="text-field"
-                  v-model="datas[index].meta.price"
                 />
               </td>
               <td>
                 <text-field
+                  v-model="lumberList.items[index].meta.sf"
+                  dense
                   class="text-field"
-                  v-model="datas[index].meta.comments"
                 />
+              </td>
+              <td>
+                <v-btn text fab @click="remove(index)"
+                  ><v-icon color="red">mdi-delete</v-icon></v-btn
+                >
               </td>
             </tr>
           </tbody>
@@ -53,7 +92,12 @@
       >
       <v-row justify="end" style="margin:0">
         <v-col lg="2" md="12"
-          ><v-btn width="100%" color="#f1f4f8" class="save" @click="save()"
+          ><v-btn
+            width="100%"
+            color="#f1f4f8"
+            class="save"
+            :disabled="lumberList.status !== 'open'"
+            @click="save()"
             >Save List</v-btn
           ></v-col
         >
@@ -62,6 +106,7 @@
             width="100%"
             color="#f78f1e"
             class="submit"
+            :disabled="lumberList.status !== 'open'"
             @click="submitForApproval()"
             >Sumbit For Manager Approval</v-btn
           ></v-col
@@ -74,28 +119,65 @@
 <script>
 import TextField from '../../Shared/TextField.vue'
 export default {
-  data() {
-    return {
-      items: ['#Item', 'Item', 'Quantity Needed', 'price', 'Comments'],
-      dialog: false,
-      datas: []
-    }
-  },
   components: {
     TextField
   },
+  data() {
+    return {
+      headers: [
+        '#Item',
+        'CATEGORY',
+        'QTY',
+        'UNIT',
+        'DESCRIPTION',
+        'LF',
+        'BF',
+        'SF'
+      ],
+      units: ['EA', 'BF', 'SF', 'LF'],
+      dialog: false,
+      lumberList: { items: [] },
+      categories: ['HRDW/FRAME', 'LUMBER', 'LUMBER/ENG', 'SHEATHING']
+    }
+  },
+  watch: {
+    dialog() {
+      if (
+        this.dialog === false &&
+        this.$store.getters['Dialog/active'] === 'LumberListDialog'
+      ) {
+        this.$store.dispatch('Dialog/show', '')
+      }
+    }
+  },
+  async mounted() {
+    await this.$store.restored
+
+    this.loadLumberList()
+
+    this.dialog = this.$store.getters['Dialog/active'] === 'LumberListDialog'
+    this.$store.watch(
+      (state, getters) => getters['Dialog/active'],
+      (newValue) => {
+        this.dialog = newValue === 'LumberListDialog'
+      }
+    )
+  },
   methods: {
     add() {
-      this.datas.push({
-        type: 'meta',
-        meta: { name: '', count: '', price: '', comments: '' }
+      this.lumberList.items.push({
+        type: 'HRDW/FRAME',
+        meta: { unit: 'EA' }
       })
+    },
+    remove(index) {
+      this.lumberList.items.splice(index, 1)
     },
     async save() {
       await this.$store.restored
       const list = {
         projectId: this.$route.params.id,
-        items: this.datas
+        items: this.lumberList.items
       }
       this.$axios
         .put('/api/v1/lumberlist/items', list, {
@@ -108,6 +190,7 @@ export default {
             'SnackBar/show',
             'Lumber List successfully saved'
           )
+          this.loadLumberList()
         })
         .catch((data) => {
           this.$store.dispatch('SnackBar/show', 'an error occured')
@@ -115,10 +198,10 @@ export default {
     },
     submitForApproval() {
       this.$axios
-        .put(
-          '/api/v1/project/changestatus/approval',
+        .post(
+          '/api/v1/estimator/lumber-list-admin-approval',
           {
-            projectId: this.$route.params.id
+            lumberListId: this.$route.params.id
           },
           {
             headers: {
@@ -132,39 +215,21 @@ export default {
             'Lumber List sended for approval'
           )
           this.$store.dispatch('Dialog/show', '')
+          this.loadLumberList()
         })
         .catch((data) => {
           this.$store.dispatch('SnackBar/show', 'an error occured')
         })
-    }
-  },
-  async mounted() {
-    await this.$store.restored
-    this.$axios
-      .get('/api/v1/lumberlist/' + this.$route.params.id, {
-        headers: {
-          Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
+    },
+    async loadLumberList() {
+      this.lumberList = (await this.$axios.get(
+        '/api/v1/estimator/lumber-list/' + this.$route.params.id,
+        {
+          headers: {
+            Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
+          }
         }
-      })
-      .then((data) => {
-        this.datas = data.data.data.items
-      })
-    this.dialog = this.$store.getters['Dialog/active'] === 'LumberListDialog'
-    this.$store.watch(
-      (state, getters) => getters['Dialog/active'],
-      (newValue) => {
-        this.dialog = newValue === 'LumberListDialog'
-      }
-    )
-  },
-  watch: {
-    dialog() {
-      if (
-        this.dialog === false &&
-        this.$store.getters['Dialog/active'] === 'LumberListDialog'
-      ) {
-        this.$store.dispatch('Dialog/show', '')
-      }
+      )).data
     }
   }
 }
@@ -203,8 +268,6 @@ export default {
       background-color: #fafafa;
     }
     td {
-      max-width: 200px;
-      min-width: 200px;
       border-bottom: 1px solid #f2f2f2;
     }
     td:first-child {
@@ -233,5 +296,16 @@ tr td .v-input::v-deep .v-input__slot {
 }
 .text-field {
   margin: 9px 0px;
+}
+
+.select::v-deep {
+  .v-input__slot {
+    margin: 0 !important;
+  }
+
+  fieldset {
+    border: none;
+    background-color: #f1f4f8;
+  }
 }
 </style>

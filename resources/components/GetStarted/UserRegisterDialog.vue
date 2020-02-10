@@ -19,7 +19,7 @@
                 v-model.trim="$v.name.$model"
                 type="text"
                 placeholder="Enter Name"
-                :label="type + ' name'"
+                :label="(type === 'Company' ? 'Company' : '') + ' name'"
                 important
                 name="name"
                 message="Name is required"
@@ -113,9 +113,9 @@
               ></v-col>
               <v-col xl="6" lg="6" md="12" sm="12" cols="12">
                 <button
+                  :disabled="!checkBox"
                   class="signup"
                   @click.stop.prevent="submit()"
-                  :disabled="!checkBox"
                 >
                   SIGN UP
                 </button>
@@ -207,6 +207,10 @@ export default {
             .then(() => {
               this.$store.dispatch('Dialog/show', 'ProjectRegisterDialog')
               this.dialog = false
+              this.$store.dispatch('User/setUser', {
+                name: this.name,
+                role: 'Customer'
+              })
             })
         })
         .catch((e) => {

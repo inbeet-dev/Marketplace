@@ -28,7 +28,7 @@
     "@adonisjs/fold": "^4.0.5",
     "@adonisjs/framework": "^4.0.27",
     "@adonisjs/ignitor": "^1.0.14",
-    "@adonisjs/lucid": "^4.0.22",
+    "@adonisjs/lucid": "^5.0.2",
     "@adonisjs/mail": "^3.0.9",
     "@adonisjs/session": "^1.0.19",
     "@adonisjs/shield": "^1.0.4",
@@ -41,12 +41,14 @@
     "leaflet": "^1.5.1",
     "material-design-icons": "^3.0.1",
     "moment": "^2.24.0",
+    "node-geocoder": "^3.25.0",
     "nuxt": "^2.0.0",
     "nuxt-leaflet": "0.0.19",
     "pg": "^7.12.1",
     "vue2-leaflet": "^2.2.1",
     "vuelidate": "^0.7.4",
-    "vuex-persist": "^2.1.0"
+    "vuex-persist": "^2.1.0",
+    "wkx": "^0.4.8"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^1.0.1",

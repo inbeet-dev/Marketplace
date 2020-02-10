@@ -1,5 +1,5 @@
 <template>
-  <v-app class="home-page">
+  <v-app>
     <v-content>
       <v-container fluid>
         <nuxt />
@@ -18,16 +18,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.home-page {
-  background-image: url(/lumber-background.png);
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-size: cover;
-  margin: 0px;
-}
-.v-content {
-  background-color: #00000051;
-}
 .container {
   padding: 0;
 }
