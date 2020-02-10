@@ -106,7 +106,6 @@ export default {
       const formData = new FormData(this.$refs.loginForm)
       this.$axios
         .post('/api/v1/user/login', formData, {})
-
         .then((data) => {
           this.$store
             .dispatch('Auth/store', {
@@ -115,6 +114,14 @@ export default {
             })
             .then(() => {
               this.$router.push(DASHBOARDS[data.data.data.role])
+            })
+          this.$store
+            .dispatch('User/setUser', {
+              name: data.data.data.name,
+              role: data.data.data.role
+            })
+            .then(() => {
+              console.log(data)
             })
         })
         .catch((e) => {

@@ -15,86 +15,66 @@
               >
                 {{ header }}
               </th>
-              <th class="text-left" style="width: 50px"></th>
             </tr>
           </thead>
           <tbody>
-            <!-- <tr v-for="(item, index) in lumberList.items" :key="index">
+            <tr v-for="(data, index) in lumberList.items" :key="index">
               <td>{{ index + 1 }}</td>
               <td>
-                <v-select
-                  v-model="lumberList.items[index].type"
-                  :items="categories"
-                  class="select"
-                  dense
-                  outlined
-                ></v-select>
+                {{ data.type }}
               </td>
               <td>
-                <text-field
-                  v-model="lumberList.items[index].meta.quantity"
-                  dense
-                  class="text-field"
-                />
+                {{ data.meta.quantity }}
               </td>
               <td>
-                <v-select
-                  v-model="lumberList.items[index].meta.unit"
-                  :items="units"
-                  class="select"
-                  dense
-                  outlined
-                ></v-select>
+                {{ data.meta.unit }}
               </td>
               <td>
-                <text-field
-                  v-model="lumberList.items[index].meta.description"
-                  dense
-                  class="text-field"
-                />
+                {{ data.meta.description }}
               </td>
               <td>
-                <text-field
-                  v-model="lumberList.items[index].meta.lf"
-                  dense
-                  class="text-field"
-                />
+                {{ data.meta.lf }}
               </td>
               <td>
-                <text-field
-                  v-model="lumberList.items[index].meta.bf"
-                  dense
-                  class="text-field"
-                />
+                {{ data.meta.bf }}
               </td>
               <td>
-                <text-field
-                  v-model="lumberList.items[index].meta.sf"
-                  dense
-                  class="text-field"
-                />
+                {{ data.meta.sf }}
               </td>
-              <td>
-                <v-btn text fab><v-icon color="red">mdi-delete</v-icon></v-btn>
-              </td>
-            </tr> -->
+            </tr>
           </tbody>
         </template>
       </v-simple-table>
+      <v-row class="ma-0 py-4" justify="center">
+        <v-col cols="2"
+          ><button class="button button--green" @click="approve(lumberList.id)">
+            Approve
+          </button></v-col
+        >
+        <v-col cols="2">
+          <button
+            class="button button--red"
+            style="margin-left: 20px"
+            @click="reject(lumberList.id)"
+          >
+            Reject
+          </button>
+        </v-col>
+      </v-row>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
-/* eslint-disable */
-import TextField from './Shared/TextField.vue'
 export default {
-  components: {
-    TextField
+  props: {
+    lumberList: {
+      type: Object,
+      default: () => ({})
+    }
   },
   data() {
     return {
-      dialog: false,
       headers: [
         '#Item',
         'CATEGORY',
@@ -104,7 +84,8 @@ export default {
         'LF',
         'BF',
         'SF'
-      ]
+      ],
+      dialog: false
     }
   },
   watch: {
@@ -117,14 +98,43 @@ export default {
       }
     }
   },
-  mounted() {
+  async mounted() {
+    await this.$store.restored
     this.dialog = this.$store.getters['Dialog/active'] === 'LumberList'
+    if (this.dialog) this.items = this.$store.getters['Dialog/getData']
+
     this.$store.watch(
       (state, getters) => getters['Dialog/active'],
       (newValue) => {
         this.dialog = newValue === 'LumberList'
       }
     )
+  },
+  methods: {
+    async approve(id) {
+      await this.$axios.post(
+        '/api/v1/estimator-admin/lumber-list-approve',
+        { lumberListId: id },
+        {
+          headers: {
+            Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
+          }
+        }
+      )
+      this.$store.dispatch('SnackBar/show', 'Lumber List approved')
+    },
+    async reject(id) {
+      await this.$axios.post(
+        '/api/v1/estimator-admin/lumber-list-reject',
+        { lumberListId: id },
+        {
+          headers: {
+            Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
+          }
+        }
+      )
+      this.$store.dispatch('SnackBar/show', 'Lumber List rejected')
+    }
   }
 }
 </script>
@@ -132,30 +142,15 @@ export default {
 <style lang="scss" scoped>
 .lumber-list-dialog {
   background-color: #ffffff;
-  .submit {
-    color: #ffffff;
-    height: 45px;
-    font-style: italic;
-    box-shadow: none;
-  }
-  .save {
-    color: #7b7da3;
-    height: 45px;
-    font-style: italic;
-    box-shadow: none;
-  }
+
   .header {
     color: #f78f1e;
     padding: 15px 0px 20px 20px;
   }
-  .add {
-    color: #6c8eff;
-    height: 45px;
-    font-style: italic;
-    box-shadow: none;
-  }
+
   .lumber-list-table {
     width: 100%;
+
     .text-left {
       border-bottom: 1px solid #f2f2f2;
       color: #9ea4c4;
@@ -167,39 +162,28 @@ export default {
     td:first-child {
       max-width: 20px;
       min-width: 20px;
-      border-bottom: 1px solid #f2f2f2;
     }
   }
-  .v-input {
-    max-width: 150px;
+}
+.button {
+  padding: 5px 20px;
+  border-radius: 5px;
+  font-size: 15px;
+  min-width: 100px;
+
+  &--grey {
+    background-color: #9ea3c4;
+    color: #ffffff;
   }
 
-  .v-input::v-deep .v-text-field__details {
-    display: none;
-  }
-  .v-input::v-deep .v-label {
-    color: #9ea4c4;
-  }
-  .v-input::v-deep .theme--light.v-icon {
-    color: #9ea4c4;
-  }
-}
-tr td .v-input::v-deep .v-input__slot {
-  margin: 8px 0;
-  box-shadow: none !important;
-}
-.text-field {
-  margin: 9px 0px;
-}
-
-.select::v-deep {
-  .v-input__slot {
-    margin: 0 !important;
+  &--green {
+    background-color: #d8f9dd;
+    color: #3ce057;
   }
 
-  fieldset {
-    border: none;
-    background-color: #f1f4f8;
+  &--red {
+    background-color: #fbd6d6;
+    color: #ec3434;
   }
 }
 </style>
