@@ -136,7 +136,6 @@ class SupplierController {
       email: 'required|email',
       name: 'required',
       password: 'required',
-      phoneNumber: 'required',
       lat: 'required',
       long: 'required',
       accountType: 'required'
