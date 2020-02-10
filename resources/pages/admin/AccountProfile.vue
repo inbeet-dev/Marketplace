@@ -3,8 +3,12 @@
     <lumber-header
       :items="[
         { name: 'home', link: '/' },
-        { name: 'account profile', link: '/admin/accountprofile' },
-        { name: 'employee profiles', link: '/' },
+        {
+          name: 'account profile',
+          link: '/admin/accountprofile',
+          active: true
+        },
+        { name: 'Employee profiles', link: '/admin/employees' },
         { name: 'messages', link: 'message' }
       ]"
       :login="{ name: 'login', link: 'login' }"
@@ -115,6 +119,7 @@
           </v-simple-table>
         </v-card>
       </v-col>
+      <v-col cols="11"><admin-register-supplier /></v-col>
       <supplier-list-edit-dialog />
     </v-row>
   </v-container>
@@ -124,10 +129,12 @@
 import * as moment from 'moment'
 import LumberHeader from '../../components/Header.vue'
 import SupplierListEditDialog from '../../components/Supplier/SupplierListEditDialog'
+import AdminRegisterSupplier from '../../components/Admin/AdminRegisterSupplier'
 export default {
   components: {
     LumberHeader,
-    SupplierListEditDialog
+    SupplierListEditDialog,
+    AdminRegisterSupplier
   },
   data() {
     return {

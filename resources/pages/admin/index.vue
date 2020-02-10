@@ -3,8 +3,8 @@
     <lumber-header
       :items="[
         { name: 'home', link: '/' },
-        { name: 'Account Profile', link: 'AccountProfile' },
-        { name: 'Employee profiles', link: '/admin/employees' },
+        { name: 'Account Profile', link: './admin/accountprofile' },
+        { name: 'Employee profiles', link: './admin/employees' },
         { name: 'messages', link: 'message' }
       ]"
     />
