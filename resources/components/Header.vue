@@ -69,11 +69,16 @@
                 </v-btn>
               </template>
               <v-list>
-                <button @click="logout">
-                  <v-list-item>
+                <v-list-item>
+                  <button @click="logout">
                     <v-list-item-title>Logout</v-list-item-title>
-                  </v-list-item>
-                </button>
+                  </button>
+                </v-list-item>
+                <v-list-item>
+                  <button @click="profile">
+                    <v-list-item-title>Profile</v-list-item-title>
+                  </button>
+                </v-list-item>
               </v-list>
             </v-menu>
           </div>
@@ -121,7 +126,8 @@ export default {
       userData: ''
     }
   },
-  mounted() {
+  async mounted() {
+    await this.$store.restored
     this.userData = this.$store.getters['User/getUser']
     this.$store.watch(
       (state, getters) => getters['User/getUser'],
@@ -140,7 +146,10 @@ export default {
         refreshToken: '',
         token: ''
       })
-      this.$router.push(' ')
+      this.$router.push('/')
+    },
+    profile() {
+      this.$router.push(this.$store.getters['User/getUser'].role)
     }
   }
 }

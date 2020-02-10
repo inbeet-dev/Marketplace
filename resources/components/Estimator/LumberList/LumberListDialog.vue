@@ -96,7 +96,7 @@
             width="100%"
             color="#f1f4f8"
             class="save"
-            :disabled="lumberList.status !== 'open'"
+            :disabled="lumberList.status !== 'In Review'"
             @click="save()"
             >Save List</v-btn
           ></v-col
@@ -106,7 +106,7 @@
             width="100%"
             color="#f78f1e"
             class="submit"
-            :disabled="lumberList.status !== 'open'"
+            :disabled="lumberList.status !== 'In Review'"
             @click="submitForApproval()"
             >Sumbit For Manager Approval</v-btn
           ></v-col
