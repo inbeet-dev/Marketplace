@@ -159,6 +159,21 @@ export default {
     show: '',
     showFilter: []
   }),
+  watch: {
+    show() {
+      this.showFilter = []
+      if (this.show !== 'All') {
+        this.data.forEach((element) => {
+          if (this.show === element.project.status) {
+            this.showFilter.push(element)
+          }
+        })
+      }
+      if (this.show === 'All') {
+        this.showFilter = this.data
+      }
+    }
+  },
   async mounted() {
     await this.$store.restored
     this.data = (await this.$axios.get('/api/v1/estimator-admin/projects', {
@@ -175,7 +190,6 @@ export default {
       this.counts[element.project.status]++
     })
     this.counts = { ...this.counts }
-    console.log(this.counts)
     const estimators = (await this.$axios.get(
       '/api/v1/estimator-admin/estimators',
       {
@@ -188,6 +202,7 @@ export default {
       this.estimators.push({ text: element.name, value: element.id })
     })
   },
+
   methods: {
     save($event, index) {
       this.data[index].date = $event
@@ -251,21 +266,6 @@ export default {
     },
     moment(...arg) {
       return moment(...arg)
-    }
-  },
-  watch: {
-    show() {
-      this.showFilter = []
-      if (this.show !== 'All') {
-        this.data.forEach((element) => {
-          if (this.show === element.project.status) {
-            this.showFilter.push(element)
-          }
-        })
-      }
-      if (this.show === 'All') {
-        this.showFilter = this.data
-      }
     }
   }
 }

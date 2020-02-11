@@ -56,9 +56,17 @@
         <v-row style="padding:0px 10px;margin:0" justify="center">
           <v-col cols="3"></v-col>
           <v-col cols="12" xl="6" lg="6" md="12" sm="12">
-            <button @click.stop.prevent="register()">
+            <v-btn
+              depressed
+              height="56px"
+              width="100%"
+              color="#f48f2e"
+              :disabled="disable"
+              class="submit"
+              @click.stop.prevent="register()"
+            >
               submit
-            </button>
+            </v-btn>
           </v-col>
           <v-col
             cols="12"
@@ -101,7 +109,8 @@ export default {
       dialog: false,
       name: '',
       address: '',
-      zipCode: ''
+      zipCode: '',
+      disable: false
     }
   },
   watch: {
@@ -126,11 +135,13 @@ export default {
   },
   methods: {
     register() {
+      this.disable = true
       if (!this.position) {
         this.$store.dispatch(
           'SnackBar/show',
           'Please set project location on map'
         )
+        this.disable = false
         return
       }
       const formData = new FormData(this.$refs.registerForm)
@@ -152,7 +163,9 @@ export default {
               this.$store.dispatch('Dialog/show', 'UploadFileDialog')
             })
         })
-        .catch(function(e) {})
+        .catch(function(e) {
+          this.disable = false
+        })
     }
   }
 }
@@ -174,10 +187,7 @@ h5 {
   color: #0b3265;
   font-style: italic;
 }
-button {
-  height: 56px;
-  width: 100%;
-  background-color: #f48f2e;
+.submit {
   border-radius: 10px;
   color: #ffffff;
   text-transform: uppercase;

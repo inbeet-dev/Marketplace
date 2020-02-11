@@ -16,7 +16,7 @@
             <br />
             <v-row class="row" justify="center">
               <v-col sm="8" cols="12">
-                <button @click="uploadFileDialog = false" class="submit">
+                <button class="submit" @click="uploadFileDialog = false">
                   OK
                 </button>
               </v-col>
@@ -35,15 +35,6 @@ export default {
       dialog: false
     }
   },
-  mounted() {
-    this.dialog = this.$store.getters['Dialog/active'] === 'UploadFileDialog'
-    this.$store.watch(
-      (state, getters) => getters['Dialog/active'],
-      (newValue) => {
-        this.dialog = newValue === 'UploadFileDialog'
-      }
-    )
-  },
   watch: {
     dialog() {
       if (
@@ -53,6 +44,15 @@ export default {
         this.$store.dispatch('Dialog/show', '')
       }
     }
+  },
+  mounted() {
+    this.dialog = this.$store.getters['Dialog/active'] === 'UploadFileDialog'
+    this.$store.watch(
+      (state, getters) => getters['Dialog/active'],
+      (newValue) => {
+        this.dialog = newValue === 'UploadFileDialog'
+      }
+    )
   }
 }
 </script>

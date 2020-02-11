@@ -47,9 +47,15 @@
               </v-col>
             </form>
           </v-row>
-          <button class="submit" @click.stop.prevent="submitFile()">
+          <v-btn
+            height="56px"
+            color="#f78f1e"
+            class="submit"
+            :disabled="disable"
+            @click.stop.prevent="submitFile()"
+          >
             Upload Lumber List <v-icon>mdi-chevron-right</v-icon>
-          </button>
+          </v-btn>
         </v-col>
       </v-row>
     </v-card>
@@ -63,7 +69,8 @@ export default {
       files: [],
       dialog: false,
       type: 'files',
-      data: null
+      data: null,
+      disable: false
     }
   },
   watch: {
@@ -95,6 +102,7 @@ export default {
   },
   methods: {
     submitFile() {
+      this.disable = true
       const formData = new FormData()
       formData.append(
         'type',
@@ -119,7 +127,9 @@ export default {
           if (this.data.action) this.data.action()
           else this.$store.dispatch('Dialog/show', 'UploadMessage')
         })
-        .catch(function() {})
+        .catch(function() {
+          this.disable = false
+        })
     },
     handleFileUpload() {
       this.files = [...this.files, ...this.$refs.file.files]
@@ -218,7 +228,6 @@ h1 {
 .box .zone .submit {
   display: block;
   color: #ffffff;
-  background-color: #f78f1e;
   padding: 15px 100px;
   font-size: 17px;
   font-weight: 600;

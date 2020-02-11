@@ -108,13 +108,13 @@
         >
           <v-col xl="3" lg="3" md="0" sm="0" cols="3" class="free-div"></v-col>
           <v-col xl="6" lg="6" md="12" sm="12" cols="12">
-            <button
+            <v-btn
               class="signup"
-              :disabled="!checkBox"
+              :disabled="!checkBox || disable"
               @click.stop.prevent="submit()"
             >
               SIGN UP
-            </button>
+            </v-btn>
           </v-col>
           <v-col
             cols="12"
@@ -148,7 +148,8 @@ export default {
       phoneNumber: '',
       checkBox: '',
       type: '',
-      position: null
+      position: null,
+      disable: false
     }
   },
   /* eslint-disable */
@@ -188,15 +189,18 @@ export default {
       this.email = value.toLowerCase()
     },
     submit() {
+      this.disable = false
       if (!this.position) {
         this.$store.dispatch(
           'SnackBar/show',
           'Please set project location on map'
         )
+        this.disable = true
         return
       }
       if (this.$v.$invalid) {
         this.$store.dispatch('SnackBar/show', 'Please input correct values')
+        this.disable = true
         return
       }
       const formData = new FormData(this.$refs.regsiterForm)
@@ -209,6 +213,7 @@ export default {
       this.$axios
         .post('/api/v1/supplier/register', formData, {})
         .then((data) => {
+          this.disable = true
           this.$store.dispatch('User/setUser', {
             name: this.name,
             role: 'Supplier'
@@ -219,6 +224,7 @@ export default {
           })
         })
         .catch((e) => {
+          this.disable = true
           this.$store.dispatch('SnackBar/show', e.response.data.error)
         })
     }

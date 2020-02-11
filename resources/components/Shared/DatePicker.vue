@@ -9,8 +9,11 @@
     <template v-slot:activator="{ on }">
       <v-text-field
         v-model="showDate"
+        class="date-picker-text-field"
         label="Picker in dialog"
         readonly
+        background-color="#f1f4f8"
+        solo
         v-on="on"
       ></v-text-field>
     </template>
@@ -53,4 +56,8 @@ export default {
 }
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.date-picker-text-field {
+  min-width: 160px;
+}
+</style>

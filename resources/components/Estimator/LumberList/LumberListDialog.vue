@@ -96,7 +96,7 @@
             width="100%"
             color="#f1f4f8"
             class="save"
-            :disabled="lumberList.status !== 'In Review'"
+            :disabled="lumberList.status !== 'In Review' || disable"
             @click="save()"
             >Save List</v-btn
           ></v-col
@@ -137,7 +137,8 @@ export default {
       units: ['EA', 'BF', 'SF', 'LF'],
       dialog: false,
       lumberList: { items: [] },
-      categories: ['HRDW/FRAME', 'LUMBER', 'LUMBER/ENG', 'SHEATHING']
+      categories: ['HRDW/FRAME', 'LUMBER', 'LUMBER/ENG', 'SHEATHING'],
+      disable: false
     }
   },
   watch: {
@@ -174,6 +175,7 @@ export default {
       this.lumberList.items.splice(index, 1)
     },
     async save() {
+      this.disable = true
       await this.$store.restored
       const list = {
         projectId: this.$route.params.id,
@@ -186,6 +188,7 @@ export default {
           }
         })
         .then((data) => {
+          this.disable = false
           this.$store.dispatch(
             'SnackBar/show',
             'Lumber List successfully saved'
@@ -194,6 +197,7 @@ export default {
         })
         .catch((data) => {
           this.$store.dispatch('SnackBar/show', 'an error occured')
+          this.disable = false
         })
     },
     submitForApproval() {

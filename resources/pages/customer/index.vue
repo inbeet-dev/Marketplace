@@ -40,16 +40,15 @@
               >: 46
             </v-col>
             <v-col class="edit" sm="4" cols="12">
-              <a href="/customer/edit-profile">
-                <v-btn
-                  depressed
-                  width="100%"
-                  color="#f1f4f8"
-                  class="edit__button"
-                >
-                  Edit Profile
-                </v-btn>
-              </a>
+              <v-btn
+                href="/customer/edit-profile"
+                depressed
+                width="100%"
+                color="#f1f4f8"
+                class="edit__button"
+              >
+                Edit Profile
+              </v-btn>
             </v-col>
           </v-row>
         </v-card>
@@ -162,7 +161,7 @@ export default {
       .then((data) => {
         this.name = data.data.data.user.name
         this.phoneNumber = data.data.data.user.meta.phoneNumber
-        // this.address = data.data.data.user.projects[0].address
+        this.address = data.data.data.user.meta.address
         this.createdAt = this.time = moment(
           data.data.data.user.created_at
         ).format('DD MMMM YYYY')

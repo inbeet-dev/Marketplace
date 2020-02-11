@@ -70,6 +70,7 @@
             </v-col>
             <v-col cols="11">
               <v-btn
+                :disabled="disable"
                 width="100%"
                 color="#f78f1e"
                 height="45px"
@@ -89,6 +90,10 @@
 import LumberHeader from '../../components/Header.vue'
 import TextField from '../../components/Shared/TextField.vue'
 export default {
+  components: {
+    LumberHeader,
+    TextField
+  },
   data() {
     return {
       email: '',
@@ -97,12 +102,9 @@ export default {
         email: '',
         phoneNumber: '',
         address: ''
-      }
+      },
+      disable: false
     }
-  },
-  components: {
-    LumberHeader,
-    TextField
   },
   async mounted() {
     await this.$store.restored
@@ -122,6 +124,7 @@ export default {
   },
   methods: {
     edit() {
+      this.disable = true
       const info = {
         name: this.info.name,
         address: this.info.address,
@@ -137,13 +140,14 @@ export default {
           }
         })
         .then((data) => {
+          this.disable = false
           this.$store.dispatch(
             'SnackBar/show',
             'Your Profile Successfuly Updated'
           )
         })
         .catch((e) => {
-          console.log(e.response)
+          this.disable = false
           if (e.response) {
             this.$store.dispatch(
               'SnackBar/show',

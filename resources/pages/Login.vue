@@ -67,7 +67,7 @@
                     class="login-item"
                     @click.stop.prevent="login"
                   >
-                    <button>login</button>
+                    <v-btn :disabled="disable" depressed>login</v-btn>
                   </v-col>
                 </v-row>
               </form>
@@ -95,7 +95,8 @@ export default {
   },
   data() {
     return {
-      email: ''
+      email: '',
+      disable: false
     }
   },
   methods: {
@@ -103,6 +104,8 @@ export default {
       this.email = value.toLowerCase()
     },
     login() {
+      this.disable = true
+
       const formData = new FormData(this.$refs.loginForm)
       this.$axios
         .post('/api/v1/user/login', formData, {})
@@ -121,10 +124,11 @@ export default {
               role: data.data.data.role
             })
             .then(() => {
-              console.log(data)
+              this.disable = false
             })
         })
         .catch((e) => {
+          this.disable = false
           if (e.response) {
             this.$store.dispatch('SnackBar/show', e.response.data[0].message)
           } else {

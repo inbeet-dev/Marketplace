@@ -71,7 +71,6 @@
                 label="Contact Number"
                 name="phoneNumber"
                 message="Contact number is required"
-                :error="$v.phoneNumber.$error"
               />
             </v-col>
           </v-row>
@@ -120,13 +119,17 @@
                 class="free-div"
               ></v-col>
               <v-col xl="6" lg="6" md="12" sm="12" cols="12">
-                <button
+                <v-btn
                   class="signup"
-                  :disabled="!checkBox"
+                  color="#f48f2e"
+                  :disabled="disable || !checkBox"
+                  depressed
+                  width="100%"
+                  height="56px"
                   @click.stop.prevent="submit()"
                 >
                   SIGN UP
-                </button>
+                </v-btn>
               </v-col>
               <v-col
                 cols="12"
@@ -162,7 +165,8 @@ export default {
       phoneNumber: '',
       checkBox: '',
       type: '',
-      position: null
+      position: null,
+      disable: false
     }
   },
   /* eslint-disable */
@@ -175,7 +179,6 @@ export default {
       email
     },
     phoneNumber: {
-      required,
       numeric
     },
     password: {
@@ -202,15 +205,18 @@ export default {
       this.email = value.toLowerCase()
     },
     submit() {
+      this.disable = true
       if (!this.position) {
         this.$store.dispatch(
           'SnackBar/show',
           'Please set project location on map'
         )
+        this.disable = false
         return
       }
       if (this.$v.$invalid) {
         this.$store.dispatch('SnackBar/show', 'Please input correct values')
+        this.disable = false
         return
       }
       const formData = new FormData(this.$refs.regsiterForm)
@@ -229,8 +235,8 @@ export default {
           })
           this.$store
             .dispatch('Auth/store', {
-              refreshToken: data.data.refreshToken,
-              token: data.data.token
+              refreshToken: data.data.data.refreshToken,
+              token: data.data.data.token
             })
             .then(() => {
               this.dialog = false
@@ -238,7 +244,9 @@ export default {
             })
         })
         .catch((e) => {
+          // console.log(this.type.toLowerCase())
           this.$store.dispatch('SnackBar/show', e.response.data.error)
+          this.disable = false
         })
     }
   },
