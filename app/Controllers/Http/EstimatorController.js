@@ -5,6 +5,7 @@ const authenticate = new Auth()
 const ServerException = use('App/Exceptions/ServerException')
 const User = use('App/Models/User')
 const LumberList = use('App/Models/LumberList')
+const Project = use('App/Models/Project')
 
 class EstimatorController {
   async dashboard({ response, auth }) {
@@ -56,6 +57,14 @@ class EstimatorController {
     return {
       success: true
     }
+  }
+
+  async getProjects({ response, auth }) {
+    await authenticate.estimator(response, auth)
+
+    const projects = await Project.query().orderBy('created_at', 'desc')
+
+    return projects
   }
 }
 
