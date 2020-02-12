@@ -75,7 +75,6 @@ Route.group(() => {
     'EstimatorController.lumberListAdminApproval'
   )
   Route.get('lumber-list/:projectId', 'EstimatorController.lumberList')
-  Route.get('projects', 'EstimatorController.getProjects')
 }).prefix('api/v1/estimator')
 
 Route.group(() => {
