@@ -60,7 +60,7 @@ class SupplierController {
       await supplier
         .projects()
         .with('lumberLists', (builder) => {
-          builder.where('status', LumberList.STATUS.complete)
+          builder.where('status', LumberList.STATUS.COMPLETED)
           builder.withCount('bids')
         })
         .fetch()
@@ -75,7 +75,7 @@ class SupplierController {
 
       let location = WKX.Geometry.parse(Buffer.from(project.location, 'hex'))
       location = { lat: location.x, long: location.y }
-      if (project.status === Project.STATUS.openForBids)
+      if (project.status === Project.STATUS.OPEN_FOR_BIDS)
         projectsAcceptingBids.push({
           id: project.id,
           address: project.address,
@@ -237,7 +237,7 @@ class SupplierController {
         .projects()
         .where('projects.id', params.id)
         .with('lumberLists', (builder) => {
-          builder.where('status', LumberList.STATUS.complete)
+          builder.where('status', LumberList.STATUS.COMPLETED)
           builder.with('items')
         })
         .first()

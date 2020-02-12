@@ -47,7 +47,7 @@ class ProjectController {
       name,
       zip_code: zipCode,
       address,
-      status: Project.STATUS.open,
+      status: Project.STATUS.IN_REVIEW,
       user_id: user.id,
       notify_config: notifyConfig.everyBid,
       due_date: new Date(Date.now() + 7 * 24 * 3600000).toUTCString(),
@@ -236,7 +236,7 @@ class ProjectController {
     const project = await Project.find(projectId)
     if (!project) throw new ServerException('Project not found', 404)
 
-    project.status = Project.STATUS.canceled
+    project.status = Project.STATUS.CANCELLED
     project.close_reason = closeReason
     project.closed_at = new Date()
     await save(project, response)
@@ -260,7 +260,7 @@ class ProjectController {
     const project = await Project.find(projectId)
     if (!project) throw new ServerException('Project not found', 404)
 
-    project.status = Project.STATUS.onHold
+    project.status = Project.STATUS.ON_HOLD
     project.on_hold_at = new Date()
     await save(project, response)
 
@@ -303,7 +303,7 @@ class ProjectController {
     const project = await Project.find(projectId)
     if (!project) throw new ServerException('Project not found', 404)
 
-    project.status = Project.STATUS.complete
+    project.status = Project.STATUS.COMPLETED
     await save(project, response)
 
     return {
@@ -345,11 +345,11 @@ class ProjectController {
 
     await LumberList.query()
       .where('project_id', projectId)
-      .update({ status: LumberList.STATUS.canceled })
+      .update({ status: LumberList.STATUS.CANCELLED })
 
     const lumberList = new LumberList()
     lumberList.project_id = projectId
-    lumberList.status = LumberList.STATUS.inReview
+    lumberList.status = LumberList.STATUS.OPEN
     lumberList.estimator_id = estimator.id
 
     await save(lumberList, response)

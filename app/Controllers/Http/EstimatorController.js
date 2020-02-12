@@ -46,10 +46,10 @@ class EstimatorController {
       request.input('lumberListId')
     )
 
-    if (lumberList.status !== LumberList.STATUS.open)
+    if (lumberList.status !== LumberList.STATUS.OPEN)
       throw new ServerException('User has no access', 403)
 
-    lumberList.status = LumberList.STATUS.awaitingAdminApproval
+    lumberList.status = LumberList.STATUS.AWAITING_MANAGER_APPROVAL
 
     await lumberList.save()
 
