@@ -5,6 +5,7 @@ const authenticate = new Auth()
 const ServerException = use('App/Exceptions/ServerException')
 const User = use('App/Models/User')
 const LumberList = use('App/Models/LumberList')
+const { validate } = use('Validator')
 
 class EstimatorController {
   async dashboard({ response, auth }) {
@@ -58,11 +59,39 @@ class EstimatorController {
     }
   }
 
-  async cancelLumberList({ auth, response }) {
+  async cancelLumberList({ auth, response, request }) {
     await authenticate.estimator(response, auth)
 
+    const rule = {
+      lumberListId: 'required'
+    }
+
+    const validation = await validate(request.all(), rule)
+    if (validation.fails())
+      throw new ServerException(validation.messages(), 400)
+
+    const user = await auth.getUser()
+
+    const lumberList = await LumberList.findBy({
+      id: request.input('lumberListId'),
+      estimator_id: user.id
+    })
+
+    if (!lumberList) throw new ServerException('Lumber list not found', 404)
+
+    lumberList.status = LumberList.STATUS.CANCELLED
+
+    await lumberList.save()
+
+    const estimatorAdmins = (
+      await User.query()
+        .where('role', User.ROLES.estimatorAdmin)
+        .fetch()
+    ).toJSON()
+
     return {
-      success: true
+      success: true,
+      estimatorAdmins
     }
   }
 }
