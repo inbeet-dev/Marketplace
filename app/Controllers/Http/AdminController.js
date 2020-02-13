@@ -236,12 +236,12 @@ class AdminController {
 
     if (
       ![
-        User.STATUS.customer,
-        User.STATUS.supplier,
-        User.STATUS.estimator,
-        User.STATUS.estimatorAdmin,
-        User.STATUS.customerSupport,
-        User.STATUS.admin
+        User.ROLES.customer,
+        User.ROLES.supplier,
+        User.ROLES.estimator,
+        User.ROLES.estimatorAdmin,
+        User.ROLES.customerSupport,
+        User.ROLES.admin
       ].includes(role)
     ) {
       throw new ServerException('Invalid role', 400)
