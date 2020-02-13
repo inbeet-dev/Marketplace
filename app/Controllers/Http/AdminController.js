@@ -227,6 +227,21 @@ class AdminController {
       }
     }
   }
+
+  async changeStatus({ request, response, auth }) {
+    const rules = {
+      userId: 'required',
+      status: 'required'
+    }
+
+    const validation = await validate(request.all(), rules)
+    if (validation.fails())
+      throw new ServerException(validation.messages(), 400)
+
+    return {
+      success: true
+    }
+  }
 }
 
 module.exports = AdminController
