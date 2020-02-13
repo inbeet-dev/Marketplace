@@ -75,6 +75,7 @@ Route.group(() => {
     'EstimatorController.lumberListAdminApproval'
   )
   Route.get('lumber-list/:projectId', 'EstimatorController.lumberList')
+  Route.put('lumber-list/cancel', 'EstimatorController.cancelLumberList')
 }).prefix('api/v1/estimator')
 
 Route.group(() => {

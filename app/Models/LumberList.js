@@ -26,13 +26,11 @@ class LumberList extends Model {
 }
 
 LumberList.STATUS = {
-  open: 'open',
-  inReview: 'In Review',
-  received: 'Received',
-  complete: 'Complete',
-  awaitingCustomerApproval: 'Awaiting Customer Approval',
-  awaitingAdminApproval: 'Awaiting Admin Approval',
-  cancelled: 'Cancelled'
+  OPEN: 'LUMBER_LIST_OPEN',
+  AWAITING_MANAGER_APPROVAL: 'AWAITING_MANAGER_APPROVAL',
+  REJECTED: 'LUMBER_LIST_REJECTED',
+  COMPLETED: 'LUMBER_LIST_COMPLETED',
+  CANCELLED: 'LUMBER_LIST_CANCELLED'
 }
 
 module.exports = LumberList
