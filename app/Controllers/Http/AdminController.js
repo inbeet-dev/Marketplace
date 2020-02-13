@@ -229,6 +229,8 @@ class AdminController {
   }
 
   async changeRole({ request, response, auth }) {
+    await authenticate.admin(response, auth)
+
     const { userId, role } = request.all()
 
     const user = await User.find(userId)
