@@ -6,6 +6,8 @@ const ServerException = use('App/Exceptions/ServerException')
 const User = use('App/Models/User')
 const LumberList = use('App/Models/LumberList')
 const { validate } = use('Validator')
+const Mail = use('Mail')
+const Env = use('Env')
 
 class EstimatorController {
   async dashboard({ response, auth }) {
@@ -89,9 +91,17 @@ class EstimatorController {
         .fetch()
     ).toJSON()
 
+    for (const estimatorAdmin of estimatorAdmins) {
+      await Mail.send('emails.lumber-list.cancelled', {}, (message) => {
+        message
+          .to(estimatorAdmin.email)
+          .from(Env.get('MAIL_FROM'), 'Lumber Click')
+          .subject('Lumber List Cancelled')
+      })
+    }
+
     return {
-      success: true,
-      estimatorAdmins
+      success: true
     }
   }
 }
