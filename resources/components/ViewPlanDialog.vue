@@ -17,7 +17,7 @@
               <tbody>
                 <tr v-for="(item, index) in data" :key="index">
                   <td>{{ item.type }}</td>
-                  <td>{{ item.id }}</td>
+                  <td>{{ getName(item.path) }}</td>
                   <td>
                     <a :href="item.path" target="_blank"
                       ><v-btn icon><v-icon>mdi-download</v-icon></v-btn>
@@ -74,6 +74,15 @@ export default {
         this.dialog = newValue === 'ViewPlanDialog'
       }
     )
+  },
+  methods: {
+    getName(path) {
+      return path
+        .split('/')
+        .pop()
+        .split('-')
+        .pop()
+    }
   }
 }
 </script>

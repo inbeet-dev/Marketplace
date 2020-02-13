@@ -39,22 +39,24 @@ class EstimatorAdminController {
     return lumberLists
   }
 
-  async lumberList({ request, response, auth }) {
+  async lumberList({ params, response, auth }) {
     await authenticate.estimatorAdmin(response, auth)
 
-    const lumberList = (
+    const project = (
       await Project.query()
-        .where('id', request.params.id)
-        .with('lumberlists', (builder) => {
+        .where('id', params.projectId)
+        .with('lumberLists', (builder) => {
           builder.whereNot('status', LumberList.STATUS.CANCELLED)
-          builder.with('items')
+          builder.with('items', (builder) => {
+            builder.orderBy('id')
+          })
         })
         .first()
     ).toJSON()
 
     return {
-      id: lumberList.id,
-      items: lumberList.items
+      id: project.lumberLists[0].id,
+      items: project.lumberLists[0].items
     }
   }
 
@@ -131,6 +133,7 @@ class EstimatorAdminController {
         .with('lumberLists', (builder) =>
           builder.whereNot('status', LumberList.STATUS.CANCELLED)
         )
+        .orderBy('id', 'desc')
         .fetch()
     ).toJSON()
 
@@ -147,7 +150,9 @@ class EstimatorAdminController {
           dueDate: project.due_date,
           status: project.status
         },
-        estimatorId: project.lumberLists[0].estimator_id || null
+        estimatorId: project.lumberLists[0]
+          ? project.lumberLists[0].estimator_id
+          : null
       })
     }
 

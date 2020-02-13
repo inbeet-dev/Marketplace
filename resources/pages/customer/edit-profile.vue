@@ -28,42 +28,42 @@
               <v-row justify="center">
                 <v-col cols="12" md="11">
                   <text-field
+                    v-model="info.name"
                     type="text"
                     placeholder="Enter Name"
                     label="Name"
                     name="name"
                     :value="info.name"
-                    v-model="info.name"
                   />
                 </v-col>
                 <v-col cols="12" md="11">
                   <text-field
+                    v-model="info.email"
                     type="email"
                     placeholder="Enter Email"
                     label="Email"
                     name="email"
                     :value="info.email"
-                    v-model="info.email"
                   />
                 </v-col>
                 <v-col cols="12" md="11">
                   <text-field
+                    v-model="info.phoneNumber"
                     type="tel"
                     placeholder="Enter Contact Number"
                     label="Contact Number"
                     name="phoneNumber"
                     :value="info.phoneNumber"
-                    v-model="info.phoneNumber"
                   />
                 </v-col>
                 <v-col cols="12" md="11">
                   <text-field
+                    v-model="info.address"
                     type="text"
                     placeholder="Enter Address"
                     label="Address"
                     name="address"
                     :value="info.address"
-                    v-model="info.address"
                   />
                 </v-col>
               </v-row>
@@ -89,6 +89,10 @@
 import LumberHeader from '../../components/Header.vue'
 import TextField from '../../components/Shared/TextField.vue'
 export default {
+  components: {
+    LumberHeader,
+    TextField
+  },
   data() {
     return {
       email: '',
@@ -99,10 +103,6 @@ export default {
         address: ''
       }
     }
-  },
-  components: {
-    LumberHeader,
-    TextField
   },
   async mounted() {
     await this.$store.restored
@@ -143,7 +143,6 @@ export default {
           )
         })
         .catch((e) => {
-          console.log(e.response)
           if (e.response) {
             this.$store.dispatch(
               'SnackBar/show',
