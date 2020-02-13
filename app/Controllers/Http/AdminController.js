@@ -229,6 +229,8 @@ class AdminController {
   }
 
   async changeStatus({ request, response, auth }) {
+    await authenticate.admin(response, auth)
+
     const rules = {
       userId: 'required',
       status: 'required'
