@@ -227,6 +227,17 @@ class AdminController {
       }
     }
   }
+
+  async changeRole({ request, response, auth }) {
+    const { userId } = request.all()
+
+    const user = await User.find(userId)
+    if (!user) throw new ServerException('User not found', 404)
+
+    return {
+      success: true
+    }
+  }
 }
 
 module.exports = AdminController
