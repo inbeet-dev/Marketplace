@@ -231,6 +231,15 @@ class AdminController {
   async changeRole({ request, response, auth }) {
     await authenticate.admin(response, auth)
 
+    const rules = {
+      userId: 'required',
+      role: 'required'
+    }
+
+    const validation = await validate(request.all(), rules)
+    if (validation.fails())
+      throw new ServerException(validation.messages(), 400)
+
     const { userId, role } = request.all()
 
     const user = await User.find(userId)
