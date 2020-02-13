@@ -62,7 +62,7 @@ class QuestionController {
     const lumberList = await LumberList.findBy('project_id', project.id)
     const estimator = await User.find(lumberList.estimator_id)
 
-    Mail.send('emails.project.question', { project }, (messages) => {
+    await Mail.send('emails.project.question', { project }, (messages) => {
       messages
         .to(estimator.email)
         .from(Env.get('MAIL_FROM'), 'Lumber Click')
