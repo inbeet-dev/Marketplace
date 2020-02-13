@@ -30,7 +30,7 @@ class LumberListController {
     const user = await auth.getUser()
 
     lumberList.estimator_id = user.id
-    lumberList.status = LumberList.STATUS.awaitingForAdmin
+    lumberList.status = LumberList.STATUS.AWAITING_MANAGER_APPROVAL
     await save(lumberList, response)
 
     for (let i = 0; i < items.length; i++) {
@@ -61,7 +61,7 @@ class LumberListController {
     if (!lumberList)
       throw new ServerException('lumber list of project not found')
 
-    if (lumberList.status !== LumberList.STATUS.open)
+    if (lumberList.status !== LumberList.STATUS.OPEN)
       throw new ServerException('User has no access', 403)
 
     await LumberListItem.query()

@@ -17,7 +17,7 @@ class EstimatorAdminController {
 
     const lumberListsData = (
       await LumberList.query()
-        .where('status', LumberList.STATUS.awaitingAdminApproval)
+        .where('status', LumberList.STATUS.AWAITING_MANAGER_APPROVAL)
         .with('project', (builder) => {
           builder.with('customer')
         })
@@ -46,7 +46,7 @@ class EstimatorAdminController {
       await Project.query()
         .where('id', request.params.id)
         .with('lumberlists', (builder) => {
-          builder.whereNot('status', LumberList.STATUS.cancelled)
+          builder.whereNot('status', LumberList.STATUS.CANCELLED)
           builder.with('items')
         })
         .first()
@@ -65,11 +65,11 @@ class EstimatorAdminController {
       request.input('lumberListId')
     )
 
-    lumberList.status = LumberList.STATUS.complete
+    lumberList.status = LumberList.STATUS.COMPLETED
     await lumberList.save()
 
     const project = await lumberList.project().first()
-    project.status = Project.STATUS.lumberListCompleted
+    project.status = Project.STATUS.LUMBER_LIST_COMPLETED
 
     await project.save()
 
@@ -105,7 +105,7 @@ class EstimatorAdminController {
       request.input('lumberListId')
     )
 
-    lumberList.status = LumberList.STATUS.open
+    lumberList.status = LumberList.STATUS.OPEN
     await lumberList.save()
 
     const email = (await lumberList.estimator().first()).email
@@ -129,7 +129,7 @@ class EstimatorAdminController {
       await Project.query()
         .with('customer')
         .with('lumberLists', (builder) =>
-          builder.whereNot('status', LumberList.STATUS.cancelled)
+          builder.whereNot('status', LumberList.STATUS.CANCELLED)
         )
         .fetch()
     ).toJSON()
