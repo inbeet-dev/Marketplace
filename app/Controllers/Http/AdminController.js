@@ -116,15 +116,15 @@ class AdminController {
       .getCount()
 
     const inReviewLumberListCount = await LumberList.query()
-      .where('status', LumberList.STATUS.inReview)
+      .where('status', LumberList.STATUS.OPEN)
       .getCount()
 
     const receivedLumberListCount = await LumberList.query()
-      .where('status', LumberList.STATUS.received)
+      .where('status', LumberList.STATUS.COMPLETED)
       .getCount()
 
     const awaitingManagerApprovalLumberListCount = await LumberList.query()
-      .where('status', LumberList.STATUS.Awaiting)
+      .where('status', LumberList.STATUS.AWAITING_MANAGER_APPROVAL)
       .getCount()
 
     const { rows: customerRows } = await Database.raw(
@@ -180,7 +180,7 @@ class AdminController {
 
     const completeLumberList = await LumberList.query().where(
       'status',
-      LumberList.STATUS.complete
+      LumberList.STATUS.COMPLETED
     )
 
     return {
@@ -201,8 +201,8 @@ class AdminController {
           }
         },
         lumberLists: {
-          inReview: Number(inReviewLumberListCount),
-          received: Number(receivedLumberListCount),
+          open: Number(inReviewLumberListCount),
+          completed: Number(receivedLumberListCount),
           awaitingManagerApproval: Number(
             awaitingManagerApprovalLumberListCount
           ),
