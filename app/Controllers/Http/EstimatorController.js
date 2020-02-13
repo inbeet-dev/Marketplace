@@ -57,6 +57,14 @@ class EstimatorController {
       success: true
     }
   }
+
+  async cancelLumberList({ auth, response }) {
+    await authenticate.estimator(response, auth)
+
+    return {
+      success: true
+    }
+  }
 }
 
 module.exports = EstimatorController
