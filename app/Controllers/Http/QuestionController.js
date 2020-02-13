@@ -9,6 +9,10 @@ const AnswerValidator = use('App/Utils/answerValidation')
 const Auth = use('App/Utils/authenticate')
 const authenticate = new Auth()
 const ServerException = use('App/Exceptions/ServerException')
+const Mail = use('Mail')
+const LumberList = use('App/Models/LumberList')
+const User = use('App/Models/User')
+const Env = use('Env')
 
 class QuestionController {
   async createQuestion({ request, response, auth }) {
@@ -54,6 +58,16 @@ class QuestionController {
     projectQuestion.status = ProjectQuestion.STATUS.notAnswered
 
     await save(projectQuestion, response)
+
+    const lumberList = await LumberList.findBy('project_id', project.id)
+    const estimator = await User.find(lumberList.estimator_id)
+
+    Mail.send('emails.project.question', { project }, (messages) => {
+      messages
+        .to(estimator.email)
+        .from(Env.get('MAIL_FROM'), 'Lumber Click')
+        .subject('Qeustion Submitted')
+    })
 
     return {
       success: true,
