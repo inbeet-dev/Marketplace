@@ -229,10 +229,26 @@ class AdminController {
   }
 
   async changeRole({ request, response, auth }) {
-    const { userId } = request.all()
+    const { userId, role } = request.all()
 
     const user = await User.find(userId)
     if (!user) throw new ServerException('User not found', 404)
+
+    if (
+      ![
+        User.STATUS.customer,
+        User.STATUS.supplier,
+        User.STATUS.estimator,
+        User.STATUS.estimatorAdmin,
+        User.STATUS.customerSupport,
+        User.STATUS.admin
+      ].includes(role)
+    ) {
+      throw new ServerException('Invalid role', 400)
+    }
+
+    user.role = role
+    await user.save()
 
     return {
       success: true
