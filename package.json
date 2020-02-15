@@ -37,6 +37,7 @@
     "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/pwa": "^3.0.0-0",
     "cross-env": "^5.2.0",
+    "csv-parse": "^4.8.5",
     "knex-postgis": "^0.8.1",
     "leaflet": "^1.5.1",
     "material-design-icons": "^3.0.1",

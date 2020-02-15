@@ -4,8 +4,10 @@
     <lumber-header
       :items="[
         { name: 'home', link: '/' },
-        { name: 'account profile', link: 'profile' },
-        { name: 'messages', link: 'message' }
+        { name: 'about us', link: 'about' },
+        { name: 'service', link: 'service' },
+        { name: 'blog', link: 'blog' },
+        { name: 'contact us', link: 'contact' }
       ]"
       :login="{ name: 'need help ?', link: 'need-help' }"
     />

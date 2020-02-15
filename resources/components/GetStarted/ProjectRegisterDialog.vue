@@ -34,6 +34,7 @@
               name="address"
               message="Address is required"
               :error="$v.address.$error"
+              @input="location"
             />
           </v-col>
           <v-col xl="3" lg="3" md="6" sm="6" cols="12">
@@ -146,7 +147,7 @@ export default {
       }
       const formData = new FormData(this.$refs.registerForm)
       formData.append('lat', this.position.lat)
-      formData.append('long', this.position.lng)
+      formData.append('long', this.position.long)
       this.$axios
         .post('/api/v1/project/register', formData, {
           headers: {
@@ -166,6 +167,16 @@ export default {
         .catch(function(e) {
           this.disable = false
         })
+      this.disable = false
+    },
+    async location() {
+      if (this.address) {
+        this.position = (
+          await this.$axios.post('/api/v1/location', {
+            address: this.address
+          })
+        ).data
+      }
     }
   }
 }

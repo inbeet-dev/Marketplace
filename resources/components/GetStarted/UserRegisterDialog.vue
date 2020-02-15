@@ -70,7 +70,8 @@
                 placeholder="Enter Contact Number"
                 label="Contact Number"
                 name="phoneNumber"
-                message="Contact number is required"
+                message="Only Number!"
+                :error="$v.phoneNumber.$error"
               />
             </v-col>
             <v-col cols="12">
@@ -201,7 +202,11 @@ export default {
         return
       }
       const formData = new FormData(this.$refs.regsiterForm)
-      formData.append('accountType', this.type.toLowerCase())
+      console.log(this.$store.getters['Dialog/getData'].toLowerCase())
+      formData.append(
+        'accountType',
+        this.$store.getters['Dialog/getData'].toLowerCase()
+      )
       this.$axios
         .post('/api/v1/user/register', formData, {})
         .then((data) => {

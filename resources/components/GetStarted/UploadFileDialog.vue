@@ -106,7 +106,7 @@ export default {
       const formData = new FormData()
       formData.append(
         'type',
-        this.$store.getters['UploadType/getUplaodType'] || 'files'
+        this.$store.getters['UploadType/getUploadType'] || 'files'
       )
       formData.append(
         'projectId',
@@ -126,6 +126,7 @@ export default {
           this.dialog = false
           if (this.data.action) this.data.action()
           else this.$store.dispatch('Dialog/show', 'UploadMessage')
+          this.$store.dispatch('Dialog/show', 'UplaodCompleteDialog')
         })
         .catch(function() {
           this.disable = false

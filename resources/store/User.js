@@ -1,6 +1,6 @@
 export const state = {
-  name: 'asd',
-  role: 'asdas'
+  name: '',
+  role: ''
 }
 
 export const getters = {

@@ -11,9 +11,9 @@
             v-for="(question, index) in questions"
             :key="index"
             v-model="questions[index]"
-            @save="save(index)"
             class="component"
             :disabled="question.id > 0"
+            @save="save(index)"
           />
         </v-col>
       </v-row>

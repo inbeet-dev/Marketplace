@@ -3,6 +3,7 @@
     <lumber-header
       :items="[
         { name: 'home', link: '/' },
+        { name: 'dashboard', link: '/customer', active: true },
         { name: 'messages', link: 'message' }
       ]"
     />
@@ -33,13 +34,7 @@
           </v-row>
           <hr style="margin:0 -40px;border:1px solid #fafafa" />
           <v-row>
-            <v-col sm="8" cols="12" class="jobs-completed">
-              <b>
-                <v-icon color="#3ce057" size="20px">mdi-check</v-icon> Projects
-                Completed</b
-              >: 46
-            </v-col>
-            <v-col class="edit" sm="4" cols="12">
+            <v-col class="edit" sm="4" cols="12" offset-sm="8">
               <v-btn
                 href="/customer/edit-profile"
                 depressed
@@ -97,38 +92,57 @@
 import * as moment from 'moment'
 import LumberHeader from '@/components/Header.vue'
 export default {
+  components: {
+    LumberHeader
+  },
+
   data() {
     return {
       STATUS: {
+        'In Review': {
+          text: 'In Review',
+          icon: 'mdi-circle-outline',
+          color: '#000000'
+        },
         'Lumber List open': {
           text: 'Not Started',
           icon: 'mdi-circle-outline',
           color: '#000000'
         },
-        'Lumber List Complete': {
+        'Lumber List Completed': {
           text: 'Awaiting Manager Approval',
           icon: 'mdi-clock',
           color: '#f78f1e'
         },
-        'Awaiting Manager Approval': {
-          text: 'Awaiting Manager Approval',
+        'Open For Bid': {
+          text: 'Open For Bid',
           icon: 'mdi-clock',
-          color: '#f78f1e'
+          color: '#7c1ef7'
+        },
+        'Waiting For Supplier Confirmation': {
+          text: 'Waiting For Supplier Confirmation',
+          icon: 'mdi-clock',
+          color: '#1e75f7'
         },
         'Project Complete': {
           text: 'Project Complete',
           icon: 'mdi-check',
           color: '#3ce057'
         },
+        'Project Blocked': {
+          text: 'Project Blocked',
+          icon: 'mdi-clock',
+          color: '#FFA726'
+        },
         'Project Canceled': {
           text: 'Project Canceled',
           icon: 'mdi-close-circle',
-          color: 'red'
+          color: '#F4511E'
         },
         'Project On Hold': {
           text: 'Project On Hold',
           icon: 'mdi-pause',
-          color: '#7e7e7e'
+          color: '#9E9E9E'
         }
       },
       name: '',
@@ -139,17 +153,7 @@ export default {
       projects: null
     }
   },
-  components: {
-    LumberHeader
-  },
-  methods: {
-    dateConvert(date) {
-      return moment(date).format('DD MMMM YYYY')
-    },
-    projectProcess(id) {
-      this.$router.push('/customer/project/' + id)
-    }
-  },
+
   async mounted() {
     await this.$store.restored
     this.$axios
@@ -178,6 +182,14 @@ export default {
           this.$router.push('/login')
         }
       })
+  },
+  methods: {
+    dateConvert(date) {
+      return moment(date).format('DD MMMM YYYY')
+    },
+    projectProcess(id) {
+      this.$router.push('/customer/project/' + id)
+    }
   }
 }
 </script>

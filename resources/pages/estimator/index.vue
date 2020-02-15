@@ -132,6 +132,11 @@ export default {
   data() {
     return {
       STATUS: {
+        'In Review': {
+          text: 'In Review',
+          icon: 'mdi-circle-outline',
+          color: '#000000'
+        },
         'Lumber List open': {
           text: 'Not Started',
           icon: 'mdi-circle-outline',
@@ -142,25 +147,35 @@ export default {
           icon: 'mdi-clock',
           color: '#f78f1e'
         },
-        'Awaiting Admin Approval': {
-          text: 'Awaiting Admin Approval',
+        'Open For Bid': {
+          text: 'Open For Bid',
           icon: 'mdi-clock',
-          color: '#f78f1e'
+          color: '#7c1ef7'
+        },
+        'Waiting For Supplier Confirmation': {
+          text: 'Waiting For Supplier Confirmation',
+          icon: 'mdi-clock',
+          color: '#1e75f7'
         },
         'Project Complete': {
           text: 'Project Complete',
           icon: 'mdi-check',
           color: '#3ce057'
         },
+        'Project Blocked': {
+          text: 'Project Blocked',
+          icon: 'mdi-clock',
+          color: '#FFA726'
+        },
         'Project Canceled': {
           text: 'Project Canceled',
           icon: 'mdi-close-circle',
-          color: 'red'
+          color: '#F4511E'
         },
         'Project On Hold': {
           text: 'Project On Hold',
           icon: 'mdi-pause',
-          color: '#7e7e7e'
+          color: '#9E9E9E'
         }
       },
       name: '',
@@ -231,7 +246,7 @@ export default {
   font-stretch: normal;
   letter-spacing: normal;
   text-align: left;
-  color: #f78f1e;
+  color: #a01ef7;
   display: inline-block;
   vertical-align: middle;
   margin: 15px 0;
