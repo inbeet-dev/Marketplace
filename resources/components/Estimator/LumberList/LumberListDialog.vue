@@ -117,6 +117,7 @@
             width="100%"
             color="#f78f1e"
             class="submit"
+            :disabled="disableImport"
             @click="$refs.inputFile.click()"
             >import</v-btn
           ></v-col
@@ -172,7 +173,8 @@ export default {
       lumberList: { items: [] },
       categories: ['HRDW/FRAME', 'LUMBER', 'LUMBER/ENG', 'SHEATHING'],
       disable: false,
-      seperateArray: []
+      seperateArray: [],
+      disableImport: false
     }
   },
   watch: {
@@ -200,6 +202,7 @@ export default {
   },
   methods: {
     onFileChange(e) {
+      this.disableImport = true
       const files = e.target.files || e.dataTransfer.files
       if (!files.length) return
       this.createInput(files[0])
@@ -208,6 +211,7 @@ export default {
       const reader = new FileReader()
       reader.onload = (e) => {
         this.seperate(parse(reader.result, {}))
+        this.disableImport = false
       }
       reader.readAsText(file)
     },

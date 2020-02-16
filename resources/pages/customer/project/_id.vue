@@ -64,6 +64,7 @@
                 color="#f78f1e"
                 width="100%"
                 height="50px"
+                depressed
                 style="color:#ffffff !important"
                 @click.stop="dialog = !dialog"
               >
@@ -77,6 +78,7 @@
                 width="100%"
                 height="50px"
                 style="color:#ffffff !important"
+                depressed
               >
                 lumber list
               </v-btn>
@@ -86,6 +88,7 @@
                 color="#f78f1e"
                 width="100%"
                 height="50px"
+                depressed
                 style="color:#ffffff !important"
                 @click="questionList = !questionList"
               >
@@ -99,6 +102,7 @@
                 width="100%"
                 height="50px"
                 style="color:#ffffff !important"
+                depressed
                 @click.stop="
                   $store.dispatch('Dialog/show', {
                     name: 'BidderSelectionDialog',

@@ -188,31 +188,21 @@ export default {
   },
   async mounted() {
     await this.$store.restored
-    this.$axios
-      .get('/api/v1/estimator/dashboard', {
-        headers: {
-          Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
-        }
-      })
-      .then((data) => {
-        this.name = data.data.data.user.name
-        this.phoneNumber = data.data.data.user.meta.phoneNumber
-        this.createdAt = this.time = moment(
-          data.data.data.user.created_at
-        ).format('DD MMMM YYYY')
-
-        this.projects = data.data.data.projects
-
-        this.$store.dispatch('User/setUser', {
-          name: data.data.user.name,
-          role: data.data.user.role
-        })
-      })
-      .catch((data) => {
-        if (data.response.data.error.status === 401) {
-          this.$router.push('/login')
-        }
-      })
+    const data = await this.$axios.get('/api/v1/estimator/dashboard', {
+      headers: {
+        Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
+      }
+    })
+    this.name = data.data.data.user.name
+    this.phoneNumber = data.data.data.user.meta.phoneNumber
+    this.createdAt = this.time = moment(data.data.data.user.created_at).format(
+      'DD MMMM YYYY'
+    )
+    this.projects = data.data.data.projects
+    this.$store.dispatch('User/setUser', {
+      name: data.data.user.name,
+      role: data.data.user.role
+    })
   },
   methods: {
     dateConvert(date) {
@@ -246,7 +236,7 @@ export default {
   font-stretch: normal;
   letter-spacing: normal;
   text-align: left;
-  color: #a01ef7;
+  color: #f78f1e;
   display: inline-block;
   vertical-align: middle;
   margin: 15px 0;

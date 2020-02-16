@@ -118,7 +118,12 @@ export default {
               token: data.data.data.token
             })
             .then(() => {
-              this.$router.push(DASHBOARDS[data.data.data.role])
+              if (this.$store.getters['User/getLastLocation']) {
+                this.$router.push(this.$store.getters['User/getLastLocation'])
+                this.$store.commit('User/setLastLocation', '')
+              } else {
+                this.$router.push(DASHBOARDS[data.data.data.role])
+              }
             })
           this.$store
             .dispatch('User/setUser', {

@@ -69,6 +69,7 @@
                 color="#f78f1e"
                 width="100%"
                 height="50px"
+                depressed
                 style="color:#ffffff !important"
                 @click.stop="dialog = !dialog"
               >
@@ -81,6 +82,7 @@
                 color="#f78f1e"
                 width="100%"
                 height="50px"
+                depressed
                 style="color:#ffffff !important"
                 @click.stop="showLumberListDialog()"
               >
@@ -92,6 +94,7 @@
                 color="#f78f1e"
                 width="100%"
                 height="50px"
+                depressed
                 style="color:#ffffff !important"
                 @click="questionList = !questionList"
               >

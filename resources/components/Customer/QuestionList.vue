@@ -90,6 +90,15 @@ export default {
           }
         )
       }
+      this.$axios
+        .get('/api/v1/project/question/' + this.$route.params.id, {
+          headers: {
+            Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
+          }
+        })
+        .then((data) => {
+          this.questions = data.data.question
+        })
       this.disable = false
       this.$store.dispatch('SnackBar/show', 'Your answers successfully saved')
     }
