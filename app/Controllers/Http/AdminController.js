@@ -228,6 +228,44 @@ class AdminController {
     }
   }
 
+  async changeRole({ request, response, auth }) {
+    await authenticate.admin(response, auth)
+
+    const rules = {
+      userId: 'required',
+      role: 'required'
+    }
+
+    const validation = await validate(request.all(), rules)
+    if (validation.fails())
+      throw new ServerException(validation.messages(), 400)
+
+    const { userId, role } = request.all()
+
+    const user = await User.find(userId)
+    if (!user) throw new ServerException('User not found', 404)
+
+    if (
+      ![
+        User.ROLES.customer,
+        User.ROLES.supplier,
+        User.ROLES.estimator,
+        User.ROLES.estimatorAdmin,
+        User.ROLES.customerSupport,
+        User.ROLES.admin
+      ].includes(role)
+    ) {
+      throw new ServerException('Invalid role', 400)
+    }
+
+    user.role = role
+    await user.save()
+
+    return {
+      success: true
+    }
+  }
+
   async changeStatus({ request, response, auth }) {
     await authenticate.admin(response, auth)
 
