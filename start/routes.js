@@ -101,6 +101,8 @@ Route.group(() => {
   Route.put('employee/role', 'AdminController.changeRole')
   Route.put('employee/status', 'AdminController.changeStatus')
   Route.put('lumberlist', 'AdminController.approvalLumberList')
+  Route.put('user/role', 'AdminController.changeRole')
+  Route.put('user/status', 'AdminController.changeStatus')
 }).prefix('api/v1/admin')
 
 Route.group(() => {

@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" max-width="900px">
+  <v-dialog v-model="dialog" max-width="1900px">
     <v-card class="lumber-list-dialog">
       <h3 class="header">
         Lumber List
@@ -29,6 +29,13 @@
                   dense
                   outlined
                 ></v-select>
+              </td>
+              <td>
+                <text-field
+                  v-model="lumberList.items[index].meta.code"
+                  dense
+                  class="text-field"
+                />
               </td>
               <td>
                 <text-field
@@ -75,6 +82,13 @@
                 />
               </td>
               <td>
+                <text-field
+                  v-model="lumberList.items[index].meta.price"
+                  dense
+                  class="text-field"
+                />
+              </td>
+              <td>
                 <v-btn text fab @click="remove(index)"
                   ><v-icon color="red">mdi-delete</v-icon></v-btn
                 >
@@ -90,13 +104,30 @@
           >
         </v-col></v-row
       >
+      <input
+        ref="inputFile"
+        type="file"
+        accept=".csv"
+        class="d-none"
+        @change="onFileChange"
+      />
       <v-row justify="end" style="margin:0">
+        <v-col lg="5" md="12"
+          ><v-btn
+            width="100%"
+            color="#f78f1e"
+            class="submit"
+            :disabled="disableImport"
+            @click="$refs.inputFile.click()"
+            >import</v-btn
+          ></v-col
+        >
         <v-col lg="2" md="12"
           ><v-btn
             width="100%"
             color="#f1f4f8"
             class="save"
-            :disabled="lumberList.status !== 'In Review'"
+            :disabled="lumberList.status !== 'In Review' || disable"
             @click="save()"
             >Save List</v-btn
           ></v-col
@@ -117,6 +148,7 @@
 </template>
 
 <script>
+import parse from 'csv-parse/lib/sync'
 import TextField from '../../Shared/TextField.vue'
 export default {
   components: {
@@ -127,17 +159,22 @@ export default {
       headers: [
         '#Item',
         'CATEGORY',
+        'CODE',
         'QTY',
         'UNIT',
         'DESCRIPTION',
         'LF',
         'BF',
-        'SF'
+        'SF',
+        'PRICE $'
       ],
       units: ['EA', 'BF', 'SF', 'LF'],
       dialog: false,
       lumberList: { items: [] },
-      categories: ['HRDW/FRAME', 'LUMBER', 'LUMBER/ENG', 'SHEATHING']
+      categories: ['HRDW/FRAME', 'LUMBER', 'LUMBER/ENG', 'SHEATHING'],
+      disable: false,
+      seperateArray: [],
+      disableImport: false
     }
   },
   watch: {
@@ -164,6 +201,42 @@ export default {
     )
   },
   methods: {
+    onFileChange(e) {
+      this.disableImport = true
+      const files = e.target.files || e.dataTransfer.files
+      if (!files.length) return
+      this.createInput(files[0])
+    },
+    createInput(file) {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        this.seperate(parse(reader.result, {}))
+        this.disableImport = false
+      }
+      reader.readAsText(file)
+    },
+    seperate(records) {
+      let category = ''
+      for (let i = 8; i < records.length; i++) {
+        if (records[i][0] === 'TOTALS') continue
+        if (!records[i][0] && records[i + 1][0]) {
+          category = records[i + 1][0].replace('CATEGORY: ', '').trim()
+          i += 3
+        }
+        this.lumberList.items.push({
+          type: category,
+          meta: {
+            code: records[i][0].trim(),
+            quantity: records[i][1].trim(),
+            unit: records[i][2].trim(),
+            description: records[i][3].trim(),
+            lf: records[i][4].trim(),
+            bf: records[i][5].trim(),
+            sf: records[i][6].trim()
+          }
+        })
+      }
+    },
     add() {
       this.lumberList.items.push({
         type: 'HRDW/FRAME',
@@ -174,6 +247,7 @@ export default {
       this.lumberList.items.splice(index, 1)
     },
     async save() {
+      this.disable = true
       await this.$store.restored
       const list = {
         projectId: this.$route.params.id,
@@ -186,6 +260,7 @@ export default {
           }
         })
         .then((data) => {
+          this.disable = false
           this.$store.dispatch(
             'SnackBar/show',
             'Lumber List successfully saved'
@@ -194,6 +269,7 @@ export default {
         })
         .catch((data) => {
           this.$store.dispatch('SnackBar/show', 'an error occured')
+          this.disable = false
         })
     },
     submitForApproval() {

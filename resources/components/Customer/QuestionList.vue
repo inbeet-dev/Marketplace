@@ -19,7 +19,9 @@
       </v-row>
       <v-row style="margin:0;" justify="end">
         <v-col cols="12" md="4" style="text-align:center">
-          <v-btn class="submit" @click="submit()">SUBMIT Answers</v-btn>
+          <v-btn class="submit" :disabled="disable" @click="submit()"
+            >SUBMIT Answers</v-btn
+          >
         </v-col>
       </v-row>
     </v-card>
@@ -42,7 +44,8 @@ export default {
         'yes-no': YesNoQuestion,
         'multi-choice': MultiChoiceQuestion,
         general: GeneralQuestion
-      }
+      },
+      disable: false
     }
   },
   watch: {
@@ -71,6 +74,7 @@ export default {
       return this.components[type]
     },
     submit() {
+      this.disable = true
       for (let i = 0; i < this.questions.length; i++) {
         if (this.questions[i].answered_at) continue
         this.$axios.put(
@@ -86,6 +90,16 @@ export default {
           }
         )
       }
+      this.$axios
+        .get('/api/v1/project/question/' + this.$route.params.id, {
+          headers: {
+            Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
+          }
+        })
+        .then((data) => {
+          this.questions = data.data.question
+        })
+      this.disable = false
       this.$store.dispatch('SnackBar/show', 'Your answers successfully saved')
     }
   }

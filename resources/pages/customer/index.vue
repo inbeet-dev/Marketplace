@@ -3,6 +3,7 @@
     <lumber-header
       :items="[
         { name: 'home', link: '/' },
+        { name: 'dashboard', link: '/customer', active: true },
         { name: 'messages', link: 'message' }
       ]"
     />
@@ -33,23 +34,16 @@
           </v-row>
           <hr style="margin:0 -40px;border:1px solid #fafafa" />
           <v-row>
-            <v-col sm="8" cols="12" class="jobs-completed">
-              <b>
-                <v-icon color="#3ce057" size="20px">mdi-check</v-icon> Projects
-                Completed</b
-              >: 46
-            </v-col>
-            <v-col class="edit" sm="4" cols="12">
-              <a href="/customer/edit-profile">
-                <v-btn
-                  depressed
-                  width="100%"
-                  color="#f1f4f8"
-                  class="edit__button"
-                >
-                  Edit Profile
-                </v-btn>
-              </a>
+            <v-col class="edit" sm="4" cols="12" offset-sm="8">
+              <v-btn
+                href="/customer/edit-profile"
+                depressed
+                width="100%"
+                color="#f1f4f8"
+                class="edit__button"
+              >
+                Edit Profile
+              </v-btn>
             </v-col>
           </v-row>
         </v-card>
@@ -101,23 +95,34 @@ export default {
   components: {
     LumberHeader
   },
+
   data() {
     return {
       STATUS: {
+        'In Review': {
+          text: 'In Review',
+          icon: 'mdi-circle-outline',
+          color: '#000000'
+        },
         'Lumber List open': {
           text: 'Not Started',
           icon: 'mdi-circle-outline',
           color: '#000000'
         },
-        'Lumber List Complete': {
+        'Lumber List Completed': {
           text: 'Awaiting Manager Approval',
           icon: 'mdi-clock',
           color: '#f78f1e'
         },
-        'Awaiting Manager Approval': {
-          text: 'Awaiting Manager Approval',
+        'Open For Bid': {
+          text: 'Open For Bid',
           icon: 'mdi-clock',
-          color: '#f78f1e'
+          color: '#7c1ef7'
+        },
+        'Waiting For Supplier Confirmation': {
+          text: 'Waiting For Supplier Confirmation',
+          icon: 'mdi-clock',
+          color: '#1e75f7'
         },
         'Open For Bids': {
           text: 'Open For Bids',
@@ -129,15 +134,20 @@ export default {
           icon: 'mdi-check',
           color: '#3ce057'
         },
+        'Project Blocked': {
+          text: 'Project Blocked',
+          icon: 'mdi-clock',
+          color: '#FFA726'
+        },
         'Project Canceled': {
           text: 'Project Canceled',
           icon: 'mdi-close-circle',
-          color: 'red'
+          color: '#F4511E'
         },
         'Project On Hold': {
           text: 'Project On Hold',
           icon: 'mdi-pause',
-          color: '#7e7e7e'
+          color: '#9E9E9E'
         }
       },
       name: '',
@@ -148,6 +158,7 @@ export default {
       projects: null
     }
   },
+
   async mounted() {
     await this.$store.restored
     this.$axios
@@ -159,7 +170,7 @@ export default {
       .then((data) => {
         this.name = data.data.data.user.name
         this.phoneNumber = data.data.data.user.meta.phoneNumber
-        // this.address = data.data.data.user.projects[0].address
+        this.address = data.data.data.user.meta.address
         this.createdAt = this.time = moment(
           data.data.data.user.created_at
         ).format('DD MMMM YYYY')

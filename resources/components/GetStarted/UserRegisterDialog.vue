@@ -70,7 +70,7 @@
                 placeholder="Enter Contact Number"
                 label="Contact Number"
                 name="phoneNumber"
-                message="Contact number is required"
+                message="Only Number!"
                 :error="$v.phoneNumber.$error"
               />
             </v-col>
@@ -112,13 +112,17 @@
                 class="free-div"
               ></v-col>
               <v-col xl="6" lg="6" md="12" sm="12" cols="12">
-                <button
-                  :disabled="!checkBox"
+                <v-btn
+                  :disabled="!checkBox || disable"
                   class="signup"
+                  height="56px"
+                  color="#f48f2e"
+                  width="100%"
+                  depressed
                   @click.stop.prevent="submit()"
                 >
                   SIGN UP
-                </button>
+                </v-btn>
               </v-col>
               <v-col
                 cols="12"
@@ -152,7 +156,8 @@ export default {
       reTypePassword: '',
       phoneNumber: '',
       checkBox: '',
-      type: ''
+      type: '',
+      disable: false
     }
   },
   /* eslint-disable */
@@ -165,7 +170,6 @@ export default {
       email
     },
     phoneNumber: {
-      required,
       numeric
     },
     password: {
@@ -191,11 +195,18 @@ export default {
       this.email = value.toLowerCase()
     },
     submit() {
+      this.disable = true
       if (this.$v.$invalid) {
         this.$store.dispatch('SnackBar/show', 'Please input correct values')
+        this.disable = false
         return
       }
       const formData = new FormData(this.$refs.regsiterForm)
+      console.log(this.$store.getters['Dialog/getData'].toLowerCase())
+      formData.append(
+        'accountType',
+        this.$store.getters['Dialog/getData'].toLowerCase()
+      )
       this.$axios
         .post('/api/v1/user/register', formData, {})
         .then((data) => {
@@ -205,6 +216,7 @@ export default {
               token: data.data.token
             })
             .then(() => {
+              this.disable = false
               this.$store.dispatch('Dialog/show', 'ProjectRegisterDialog')
               this.dialog = false
               this.$store.dispatch('User/setUser', {
@@ -215,6 +227,7 @@ export default {
         })
         .catch((e) => {
           this.$store.dispatch('SnackBar/show', e.response.data.error)
+          this.disable = false
         })
     }
   },
@@ -252,8 +265,6 @@ export default {
   padding: 5px 12px;
 }
 button.signup {
-  height: 56px;
-  width: 100%;
   background-color: #f48f2e;
   border-radius: 8px;
   color: #ffffff;

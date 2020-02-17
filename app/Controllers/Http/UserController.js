@@ -23,19 +23,17 @@ class UserController {
     if (validation.fails())
       throw new ServerException(validation.messages(), 400)
 
-    const { token, refreshToken } = await auth
-      .withRefreshToken()
-      .attempt(email, password)
+    const user = await User.findBy({ email, status: User.STATUS.active })
+    if (!user) throw new ServerException('User not found', 404)
 
-    const user = await User.findBy('email', email)
+    const { token } = await auth.withRefreshToken().attempt(email, password)
 
     return {
       success: true,
       data: {
         role: user.role,
         name: user.name,
-        token,
-        refreshToken
+        token
       }
     }
   }
