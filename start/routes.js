@@ -75,6 +75,7 @@ Route.group(() => {
     'EstimatorController.lumberListAdminApproval'
   )
   Route.get('lumber-list/:projectId', 'EstimatorController.lumberList')
+  Route.put('lumber-list/cancel', 'EstimatorController.cancelLumberList')
 }).prefix('api/v1/estimator')
 
 Route.group(() => {
@@ -100,6 +101,8 @@ Route.group(() => {
   Route.put('employee/role', 'AdminController.changeRole')
   Route.put('employee/status', 'AdminController.changeStatus')
   Route.put('lumberlist', 'AdminController.approvalLumberList')
+  Route.put('user/role', 'AdminController.changeRole')
+  Route.put('user/status', 'AdminController.changeStatus')
 }).prefix('api/v1/admin')
 
 Route.group(() => {

@@ -137,7 +137,7 @@ export default {
           icon: 'mdi-circle-outline',
           color: '#000000'
         },
-        'Lumber List Complete': {
+        'Lumber List Completed': {
           text: 'Awaiting Manager Approval',
           icon: 'mdi-clock',
           color: '#f78f1e'

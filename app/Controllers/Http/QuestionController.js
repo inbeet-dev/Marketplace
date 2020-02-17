@@ -129,6 +129,18 @@ class QuestionController {
 
     await save(projectQuestion, response)
 
+    const project = await Project.find(projectQuestion.project_id)
+    if (!project) throw new ServerException('Project not found', 404)
+
+    const customer = await User.find(project.user_id)
+
+    await Mail.send('emails.project.answer', { project }, (message) => {
+      message
+        .to(customer.email)
+        .from(Env.get('MAIL_FROM'), 'Lumber Click')
+        .subject('Answer Submitted')
+    })
+
     return {
       success: true,
       question: projectQuestion

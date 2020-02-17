@@ -30,7 +30,7 @@ class LumberListController {
     const user = await auth.getUser()
 
     lumberList.estimator_id = user.id
-    lumberList.status = LumberList.STATUS.awaitingForAdmin
+    lumberList.status = LumberList.STATUS.AWAITING_MANAGER_APPROVAL
     await save(lumberList, response)
 
     for (let i = 0; i < items.length; i++) {
@@ -49,14 +49,19 @@ class LumberListController {
   async editItems({ request, response, auth }) {
     await authenticate.estimator(response, auth)
 
+    const user = await auth.getUser()
+
     const { projectId, items } = request.all()
 
-    const lumberList = await LumberList.findBy('project_id', projectId)
+    const lumberList = await LumberList.findBy({
+      project_id: projectId,
+      estimator_id: user.id
+    })
 
     if (!lumberList)
       throw new ServerException('lumber list of project not found')
 
-    if (lumberList.status !== LumberList.STATUS.open)
+    if (lumberList.status !== LumberList.STATUS.OPEN)
       throw new ServerException('User has no access', 403)
 
     await LumberListItem.query()
@@ -79,6 +84,8 @@ class LumberListController {
   async getLumberList({ response, params, auth }) {
     await authenticate.estimator(response, auth)
 
+    const user = await auth.getUser()
+
     const { projectId } = params
 
     const items = await Database.select(
@@ -93,6 +100,7 @@ class LumberListController {
         'lumber_lists.id'
       )
       .where('lumber_lists.project_id', projectId)
+      .andWhere('lumber_lists.estimator_id', user.id)
 
     return {
       success: true,

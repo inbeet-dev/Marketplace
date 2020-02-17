@@ -96,7 +96,7 @@
             width="100%"
             color="#f1f4f8"
             class="save"
-            :disabled="lumberList.status !== 'open'"
+            :disabled="lumberList.status !== 'In Review'"
             @click="save()"
             >Save List</v-btn
           ></v-col
@@ -106,7 +106,7 @@
             width="100%"
             color="#f78f1e"
             class="submit"
-            :disabled="lumberList.status !== 'open'"
+            :disabled="lumberList.status !== 'In Review'"
             @click="submitForApproval()"
             >Sumbit For Manager Approval</v-btn
           ></v-col
@@ -222,14 +222,16 @@ export default {
         })
     },
     async loadLumberList() {
-      this.lumberList = (await this.$axios.get(
-        '/api/v1/estimator/lumber-list/' + this.$route.params.id,
-        {
-          headers: {
-            Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
+      this.lumberList = (
+        await this.$axios.get(
+          '/api/v1/estimator/lumber-list/' + this.$route.params.id,
+          {
+            headers: {
+              Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
+            }
           }
-        }
-      )).data
+        )
+      ).data
     }
   }
 }
