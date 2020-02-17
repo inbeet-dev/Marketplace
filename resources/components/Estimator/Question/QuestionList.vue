@@ -11,44 +11,41 @@
             v-for="(question, index) in questions"
             :key="index"
             v-model="questions[index]"
-            @save="save(index)"
             class="component"
             :disabled="question.id > 0"
+            @save="save(index)"
+            @deleteItem="deleteItem(index)"
           />
         </v-col>
       </v-row>
       <v-row style="margin:0;" justify="center">
         <v-col cols="12" md="4" style="text-align:center">
           <v-btn
+            style="width:100%;background:#f78f1e;color:#ffffff;height:45px"
             @click="addQuestion('yes-no-create')"
-            style="width:100%;
-          background:#f78f1e;
-          color:#ffffff;
-          height:45px;
-          "
             >Yes/No Question</v-btn
           >
         </v-col>
         <v-col cols="12" md="4" style="text-align:center">
           <v-btn
-            @click="addQuestion('multi-choice-create')"
             style="width:100%;
             background:#f78f1e;
             color:#ffffff;
             height:45px;
             "
+            @click="addQuestion('multi-choice-create')"
           >
             Multi Choice Question
           </v-btn>
         </v-col>
         <v-col cols="12" md="4" style="text-align:center">
           <v-btn
-            @click="addQuestion('general-create')"
             style="width:100%;
           background:#f78f1e;
           color:#ffffff;
           height:45px;
           "
+            @click="addQuestion('general-create')"
             >General Question</v-btn
           >
         </v-col>
@@ -72,6 +69,9 @@ import YesNoQuestion from '@/components/Questions/YesNoQuestion.vue'
 import GeneralQuestion from '@/components/Questions/GeneralQuestion.vue'
 
 export default {
+  props: {
+    value: { type: Boolean, default: false }
+  },
   data() {
     return {
       questionList: false,
@@ -99,9 +99,6 @@ export default {
       this.$emit('input', this.questionList)
     }
   },
-  props: {
-    value: { type: Boolean, default: false }
-  },
   async mounted() {
     await this.$store.restored
 
@@ -117,7 +114,7 @@ export default {
   },
   methods: {
     addQuestion(type) {
-      this.questions.push(this.schemas[type])
+      this.questions.push(JSON.parse(JSON.stringify(this.schemas[type])))
     },
     typeToComponent(type) {
       return this.components[type]
@@ -146,6 +143,9 @@ export default {
             'Your question successfully saved'
           )
         })
+    },
+    deleteItem(index) {
+      this.questions.splice(index, 1)
     }
   }
 }

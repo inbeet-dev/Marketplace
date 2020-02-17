@@ -14,8 +14,10 @@
       />
     </v-col>
     <v-col cols="12" sm="4" class="general-question-create__actions">
-      <v-btn icon color="red"><v-icon>mdi-delete</v-icon></v-btn>
-      <v-btn icon color="#4998ff" @click="save()" class="">
+      <v-btn icon color="red" @click="deleteItem()"
+        ><v-icon>mdi-delete</v-icon></v-btn
+      >
+      <v-btn icon color="#4998ff" @click="save()">
         <v-icon>mdi-content-save</v-icon>
       </v-btn>
     </v-col>
@@ -57,6 +59,9 @@ export default {
   methods: {
     save() {
       this.$emit('save')
+    },
+    deleteItem() {
+      this.$emit('deleteItem')
     }
   }
 }

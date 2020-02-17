@@ -1,6 +1,7 @@
 export const state = {
-  name: 'asd',
-  role: 'asdas'
+  name: '',
+  role: '',
+  lastLocation: ''
 }
 
 export const getters = {
@@ -12,6 +13,9 @@ export const getters = {
   },
   getUser(state) {
     return state
+  },
+  getLastLocation(state) {
+    return state.lastLocation
   }
 }
 
@@ -21,6 +25,9 @@ export const mutations = {
   },
   setRole(state, value) {
     state.role = value
+  },
+  setLastLocation(state, value) {
+    state.lastLocation = value
   }
 }
 

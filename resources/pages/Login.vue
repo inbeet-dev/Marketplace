@@ -4,8 +4,10 @@
     <lumber-header
       :items="[
         { name: 'home', link: '/' },
-        { name: 'account profile', link: 'profile' },
-        { name: 'messages', link: 'message' }
+        { name: 'about us', link: 'about' },
+        { name: 'service', link: 'service' },
+        { name: 'blog', link: 'blog' },
+        { name: 'contact us', link: 'contact' }
       ]"
       :login="{ name: 'need help ?', link: 'need-help' }"
     />
@@ -67,7 +69,7 @@
                     class="login-item"
                     @click.stop.prevent="login"
                   >
-                    <button>login</button>
+                    <v-btn :disabled="disable" depressed>login</v-btn>
                   </v-col>
                 </v-row>
               </form>
@@ -95,7 +97,8 @@ export default {
   },
   data() {
     return {
-      email: ''
+      email: '',
+      disable: false
     }
   },
   methods: {
@@ -103,6 +106,8 @@ export default {
       this.email = value.toLowerCase()
     },
     login() {
+      this.disable = true
+
       const formData = new FormData(this.$refs.loginForm)
       this.$axios
         .post('/api/v1/user/login', formData, {})
@@ -113,7 +118,12 @@ export default {
               token: data.data.data.token
             })
             .then(() => {
-              this.$router.push(DASHBOARDS[data.data.data.role])
+              if (this.$store.getters['User/getLastLocation']) {
+                this.$router.push(this.$store.getters['User/getLastLocation'])
+                this.$store.commit('User/setLastLocation', '')
+              } else {
+                this.$router.push(DASHBOARDS[data.data.data.role])
+              }
             })
           this.$store
             .dispatch('User/setUser', {
@@ -121,10 +131,11 @@ export default {
               role: data.data.data.role
             })
             .then(() => {
-              console.log(data)
+              this.disable = false
             })
         })
         .catch((e) => {
+          this.disable = false
           if (e.response) {
             this.$store.dispatch('SnackBar/show', e.response.data[0].message)
           } else {

@@ -70,6 +70,7 @@
             </v-col>
             <v-col cols="11">
               <v-btn
+                :disabled="disable"
                 width="100%"
                 color="#f78f1e"
                 height="45px"
@@ -101,7 +102,8 @@ export default {
         email: '',
         phoneNumber: '',
         address: ''
-      }
+      },
+      disable: false
     }
   },
   async mounted() {
@@ -122,6 +124,7 @@ export default {
   },
   methods: {
     edit() {
+      this.disable = true
       const info = {
         name: this.info.name,
         address: this.info.address,
@@ -137,12 +140,14 @@ export default {
           }
         })
         .then((data) => {
+          this.disable = false
           this.$store.dispatch(
             'SnackBar/show',
             'Your Profile Successfuly Updated'
           )
         })
         .catch((e) => {
+          this.disable = false
           if (e.response) {
             this.$store.dispatch(
               'SnackBar/show',

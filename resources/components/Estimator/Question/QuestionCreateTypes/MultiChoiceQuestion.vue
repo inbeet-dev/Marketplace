@@ -39,7 +39,9 @@
 "
         ><v-icon>mdi-plus</v-icon></v-btn
       >
-      <v-btn icon color="red"><v-icon>mdi-delete</v-icon></v-btn>
+      <v-btn icon color="red" @click="deleteItem()"
+        ><v-icon>mdi-delete</v-icon></v-btn
+      >
       <v-btn icon color="#4998ff" @click="save()"
         ><v-icon>mdi-content-save</v-icon></v-btn
       >
@@ -94,6 +96,9 @@ export default {
     },
     save() {
       this.$emit('save')
+    },
+    deleteItem() {
+      this.$emit('deleteItem')
     }
   }
 }

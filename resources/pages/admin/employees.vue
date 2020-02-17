@@ -165,9 +165,14 @@
                   class="submit-"
                 >
                   <v-col xl="12" lg="12" md="12" sm="12" cols="12">
-                    <button class="signup" @click.prevent="submit()">
+                    <v-btn
+                      depressed
+                      :disabled="disable"
+                      class="signup"
+                      @click.prevent="submit()"
+                    >
                       SIGN UP
-                    </button>
+                    </v-btn>
                   </v-col>
                 </v-row>
               </form>
@@ -210,7 +215,8 @@ export default {
         phone: '',
         address: '',
         role: ''
-      }
+      },
+      disable: false
     }
   },
   async mounted() {
@@ -240,6 +246,7 @@ export default {
       this.newEmployee.email = value.toLowerCase()
     },
     async submit() {
+      this.disable = true
       await this.$store.restored
       this.$axios
         .post('/api/v1/admin/employee', this.newEmployee, {
@@ -248,9 +255,11 @@ export default {
           }
         })
         .then((data) => {
+          this.disable = false
           this.$store.dispatch('SnackBar/show', 'Employee Successfuly Added')
         })
         .catch((e) => {
+          this.disable = false
           if (e.response) {
             this.$store.dispatch(
               'SnackBar/show',

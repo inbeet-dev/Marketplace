@@ -8,10 +8,6 @@
               <h1>
                 Upload Complete!
               </h1>
-              <p>
-                Make sure to check your email or track your project in our
-                mobile app for updates.
-              </p>
             </v-card-text>
             <br />
             <v-row class="row" justify="center">
@@ -66,11 +62,6 @@ h1 {
   color: #464646;
   text-align: center;
   line-height: 60px;
-}
-p {
-  color: #464646;
-  text-align: center;
-  font-size: 16px;
 }
 .row {
   margin: 0px;

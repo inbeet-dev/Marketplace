@@ -54,7 +54,8 @@ module.exports = {
    */
   plugins: [
     { src: '~/plugins/Vuelidate.js' },
-    { src: '~/plugins/vuex-persist', ssr: false }
+    { src: '~/plugins/vuex-persist', ssr: false },
+    { src: '~/plugins/ErrorHandler' }
   ],
   /*
    ** Nuxt.js dev-modules
