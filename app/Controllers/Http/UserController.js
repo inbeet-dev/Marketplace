@@ -23,31 +23,29 @@ class UserController {
     if (validation.fails())
       throw new ServerException(validation.messages(), 400)
 
-    const { token, refreshToken } = await auth
-      .withRefreshToken()
-      .attempt(email, password)
+    const user = await User.findBy({ email, status: User.STATUS.active })
+    if (!user) throw new ServerException('User not found', 404)
 
-    const user = await User.findBy('email', email)
+    const { token } = await auth.withRefreshToken().attempt(email, password)
 
     return {
       success: true,
       data: {
         role: user.role,
         name: user.name,
-        token,
-        refreshToken
+        token
       }
     }
   }
 
   async register({ request, response, auth }) {
-    const { name, email, password, phoneNumber } = request.all()
+    const { name, email, password, phoneNumber, accountType } = request.all()
 
     const rules = {
       email: 'required|email',
       name: 'required',
       password: 'required',
-      phoneNumber: 'required'
+      accoutType: 'required'
     }
 
     const validation = await validate(request.all(), rules)
@@ -55,10 +53,17 @@ class UserController {
     if (validation.fails())
       throw new ServerException(validation.messages(), 400)
 
+    if (
+      ![User.ACCOUNT_TYPES.company, User.ACCOUNT_TYPES.individual].includes(
+        accountType
+      )
+    )
+      throw new ServerException('Invalid role', 400)
+
     const findUser = await User.findBy('email', email)
     if (findUser) throw new ServerException('Email exists', 403)
 
-    const meta = { phoneNumber }
+    const meta = { phoneNumber, accountType }
 
     const user = new User()
 

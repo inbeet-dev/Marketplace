@@ -205,6 +205,21 @@ export default {
   },
 
   methods: {
+    async loadProjects() {
+      this.projects = (
+        await this.$axios.get('/api/v1/estimator-admin/lumber-lists', {
+          headers: {
+            Authorization: `Bearer ${this.$store.getters['Auth/getToken']}`
+          }
+        })
+      ).data
+    },
+    show(index) {
+      this.$store.dispatch('Dialog/show', {
+        name: 'LumberListViewer',
+        data: this.projects[index].items
+      })
+    },
     save($event, index) {
       this.data[index].date = $event
       this.$axios.put(

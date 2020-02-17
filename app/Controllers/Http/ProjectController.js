@@ -13,8 +13,8 @@ const Database = use('Database')
 const Notification = use('App/Utils/notifyValidation')
 const Auth = use('App/Utils/authenticate')
 const authenticate = new Auth()
-const ProjectSupplier = use('App/Models/ProjectSupplier')
 const ServerException = use('App/Exceptions/ServerException')
+const User = use('App/Models/User')
 
 class ProjectController {
   async register({ request, response, auth }) {
@@ -47,7 +47,7 @@ class ProjectController {
       name,
       zip_code: zipCode,
       address,
-      status: Project.STATUS.open,
+      status: Project.STATUS.IN_REVIEW,
       user_id: user.id,
       notify_config: notifyConfig.everyBid,
       due_date: new Date(Date.now() + 7 * 24 * 3600000).toUTCString(),
@@ -55,31 +55,6 @@ class ProjectController {
     })
       .into('projects')
       .returning('id')
-
-    const query = await Database.raw(`SELECT location, res2.* FROM (SELECT res1.* , concat('SRID=4326;POINT(',lat,' ',long,')') AS location FROM (SELECT *, meta::json->>'lat' AS lat, meta::json->>'long' AS long FROM users WHERE users.role='supplier') AS res1) AS res2 WHERE
-    ST_Distance(location::geometry,'SRID=4326;POINT(${lat} ${long})'::geometry) < 5`)
-
-    const suppliers = query.rows
-
-    const lumberList = new LumberList()
-    lumberList.project_id = projectId[0]
-    lumberList.status = LumberList.STATUS.inReview
-
-    const estimators = await Database.raw(
-      `SELECT id, name, estimator_id, COUNT(estimator_id) AS num FROM (SELECT users.id, users.name, users.role, lumber_lists.estimator_id, lumber_lists.created_at FROM users LEFT JOIN lumber_lists ON users.id = lumber_lists.estimator_id WHERE users.role='estimator' AND (lumber_lists.status = 'In Review' OR lumber_lists.status IS NULL) ORDER BY lumber_lists.updated_at) AS tb GROUP BY estimator_id, name, id ORDER BY num`
-    )
-
-    const estimatorId = estimators.rows.length ? estimators.rows[0].id : null
-    lumberList.estimator_id = estimatorId
-
-    await save(lumberList, response)
-
-    for (let i = 0; i < suppliers.length; i++) {
-      const projectSupplier = new ProjectSupplier()
-      projectSupplier.project_id = projectId[0]
-      projectSupplier.supplier_id = suppliers[i].id
-      await save(projectSupplier, response)
-    }
 
     return {
       success: true,
@@ -144,6 +119,8 @@ class ProjectController {
   async close({ request, response, auth, params }) {
     await authenticate.allUser(response, auth)
 
+    const user = await auth.getUser()
+
     const { closeReason, projectId } = request.all()
 
     const rules = {
@@ -156,7 +133,7 @@ class ProjectController {
     if (validation.fails())
       throw new ServerException(validation.messages(), 400)
 
-    const project = await Project.find(projectId)
+    const project = await Project.findBy({ id: projectId, user_id: user.id })
     if (!project) throw new ServerException('Project not found', 404)
 
     project.closed_at = new Date()
@@ -172,9 +149,11 @@ class ProjectController {
   async getProject({ params, response, auth }) {
     await authenticate.allUser(response, auth)
 
+    const user = await auth.getUser()
+
     const id = params.id
 
-    const project = await Project.find(id)
+    const project = await Project.findBy({ id, user_id: user.id })
     if (!project) throw new ServerException('Project not found', 404)
 
     return {
@@ -186,9 +165,11 @@ class ProjectController {
   async plans({ response, params, auth }) {
     await authenticate.allUser(response, auth)
 
+    const user = await auth.getUser()
+
     const id = params.id
 
-    const project = await Project.find(id)
+    const project = await Project.findBy({ id, user_id: user.id })
     if (!project) throw new ServerException('Project not found', 404)
 
     const projectFiles = await project.files().fetch()
@@ -202,9 +183,11 @@ class ProjectController {
   async getList({ response, params, auth }) {
     await authenticate.allUser(response, auth)
 
+    const user = await auth.getUser()
+
     const id = params.id
 
-    const project = await Project.find(id)
+    const project = await Project.findBy({ id, user_id: user.id })
     if (!project) throw new ServerException('Project not found', 404)
 
     const lists = await project.lists().fetch()
@@ -218,6 +201,8 @@ class ProjectController {
   async changeNotification({ request, response, auth }) {
     await authenticate.allUser(response, auth)
 
+    const user = await auth.getUser()
+
     const rules = {
       projectId: 'required',
       notifyConfig: 'required'
@@ -229,7 +214,7 @@ class ProjectController {
 
     const { projectId, notifyConfig } = request.all()
 
-    const project = await Project.find(projectId)
+    const project = await Project.findBy({ id: projectId, user_id: user.id })
     if (!project) throw new ServerException('Project not found', 404)
 
     const notification = new Notification()
@@ -247,6 +232,8 @@ class ProjectController {
   async cancelProject({ request, response, auth }) {
     await authenticate.allUser(response, auth)
 
+    const user = await auth.getUser()
+
     const rules = {
       projectId: 'required',
       closeReason: 'required'
@@ -258,10 +245,10 @@ class ProjectController {
 
     const { projectId, closeReason } = request.all()
 
-    const project = await Project.find(projectId)
+    const project = await Project.findBy({ id: projectId, user_id: user.id })
     if (!project) throw new ServerException('Project not found', 404)
 
-    project.status = Project.STATUS.canceled
+    project.status = Project.STATUS.CANCELLED
     project.close_reason = closeReason
     project.closed_at = new Date()
     await save(project, response)
@@ -274,6 +261,8 @@ class ProjectController {
   async onHoldProject({ request, response, auth }) {
     await authenticate.allUser(response, auth)
 
+    const user = await auth.getUser()
+
     const rules = { projectId: 'required' }
 
     const validation = await validate(request.all(), rules)
@@ -282,10 +271,10 @@ class ProjectController {
 
     const { projectId } = request.all()
 
-    const project = await Project.find(projectId)
+    const project = await Project.findBy({ id: projectId, user_id: user.id })
     if (!project) throw new ServerException('Project not found', 404)
 
-    project.status = Project.STATUS.onHold
+    project.status = Project.STATUS.ON_HOLD
     project.on_hold_at = new Date()
     await save(project, response)
 
@@ -297,9 +286,11 @@ class ProjectController {
   async getProjectBid({ response, params, auth }) {
     await authenticate.allUser(response, auth)
 
+    const user = await auth.getUser()
+
     const id = params.id
 
-    const project = await Project.find(id)
+    const project = await Project.findBy({ id, user_id: user.id })
     if (!project) throw new ServerException('Project not found', 404)
 
     await project.load('lists.items.bidItems')
@@ -319,16 +310,18 @@ class ProjectController {
       projectId: 'required'
     }
 
+    const user = await auth.getUser()
+
     const validation = await validate(request.all(), rules)
     if (validation.fails())
       throw new ServerException(validation.messages(), 400)
 
     const { projectId } = request.all()
 
-    const project = await Project.find(projectId)
+    const project = await Project.findBy({ id: projectId, user_id: user.id })
     if (!project) throw new ServerException('Project not found', 404)
 
-    project.status = Project.STATUS.complete
+    project.status = Project.STATUS.COMPLETED
     await save(project, response)
 
     return {
@@ -350,6 +343,37 @@ class ProjectController {
       data: {
         project
       }
+    }
+  }
+
+  async assignEstimator({ response, request, auth }) {
+    await authenticate.estimatorAdmin(response, auth)
+
+    const { projectId, estimatorId } = request.all()
+
+    const project = await Project.find(projectId)
+    if (!project) throw new ServerException('Project not found', 404)
+
+    const estimator = await User.findBy({
+      id: estimatorId,
+      role: User.ROLES.estimator
+    })
+
+    if (!estimator) throw new ServerException('Estimator not found', 404)
+
+    await LumberList.query()
+      .where('project_id', projectId)
+      .update({ status: LumberList.STATUS.CANCELLED })
+
+    const lumberList = new LumberList()
+    lumberList.project_id = projectId
+    lumberList.status = LumberList.STATUS.OPEN
+    lumberList.estimator_id = estimator.id
+
+    await save(lumberList, response)
+
+    return {
+      success: true
     }
   }
 }

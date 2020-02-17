@@ -41,6 +41,7 @@ Route.group(() => {
   Route.get(':id/bid', 'ProjectController.getProjectBid')
   Route.put('despoit', 'ProjectController.despoit')
   Route.get(':id/suppliers', 'ProjectController.getSuppliers')
+  Route.put('assign', 'ProjectController.assignEstimator')
 }).prefix('api/v1/project')
 
 Route.group(() => {
@@ -58,7 +59,7 @@ Route.group(() => {
   Route.put('', 'SupplierController.changeStatus')
   Route.put('edit', 'SupplierController.editSupplier')
   Route.put('status', 'SupplierController.changeStatus')
-  Route.get('projects/:id', 'SupplierController.getBidPage')
+  Route.get('project/:id', 'SupplierController.getBidPage')
 }).prefix('api/v1/supplier')
 
 Route.group(() => {
@@ -74,15 +75,21 @@ Route.group(() => {
     'EstimatorController.lumberListAdminApproval'
   )
   Route.get('lumber-list/:projectId', 'EstimatorController.lumberList')
+  Route.put('lumber-list/cancel', 'EstimatorController.cancelLumberList')
 }).prefix('api/v1/estimator')
 
 Route.group(() => {
   Route.get('lumber-lists', 'EstimatorAdminController.lumberLists')
+  Route.get('lumber-list/:projectId', 'EstimatorAdminController.lumberList')
   Route.post(
     'lumber-list-approve',
     'EstimatorAdminController.lumberListApprove'
   )
   Route.post('lumber-list-reject', 'EstimatorAdminController.lumberListReject')
+  Route.get('projects', 'EstimatorAdminController.projects')
+  Route.put('due-date', 'EstimatorAdminController.setDueDate')
+  Route.get('files', 'EstimatorAdminController.files')
+  Route.get('estimators', 'EstimatorAdminController.estimators')
 }).prefix('api/v1/estimator-admin')
 
 Route.group(() => {
@@ -94,6 +101,8 @@ Route.group(() => {
   Route.put('employee/role', 'AdminController.changeRole')
   Route.put('employee/status', 'AdminController.changeStatus')
   Route.put('lumberlist', 'AdminController.approvalLumberList')
+  Route.put('user/role', 'AdminController.changeRole')
+  Route.put('user/status', 'AdminController.changeStatus')
 }).prefix('api/v1/admin')
 
 Route.group(() => {
@@ -111,5 +120,7 @@ Route.group(() => {
   Route.post('vendors/add', 'CustomerSupportController.addSupplierToProject')
   Route.get('vendors', 'CustomerSupportController.vendors')
 }).prefix('api/v1/customer-support')
+
+Route.post('api/v1/location', 'AddressController.getLocation')
 
 Route.any('*', 'NuxtController.render')

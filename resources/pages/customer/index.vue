@@ -124,6 +124,11 @@ export default {
           icon: 'mdi-clock',
           color: '#1e75f7'
         },
+        'Open For Bids': {
+          text: 'Open For Bids',
+          icon: 'mdi-clock',
+          color: '#7e7e7e'
+        },
         'Project Complete': {
           text: 'Project Complete',
           icon: 'mdi-check',

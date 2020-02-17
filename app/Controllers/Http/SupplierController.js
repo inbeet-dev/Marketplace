@@ -11,7 +11,6 @@ const Project = use('App/Models/Project')
 const LumberList = use('App/Models/LumberList')
 const LumberListBid = use('App/Models/LumberListBid')
 const LumberListBidItem = use('App/Models/LumberListBidItem')
-const LumberListItem = use('App/Models/LumberListItem')
 const WKX = require('wkx')
 
 class SupplierController {
@@ -61,7 +60,7 @@ class SupplierController {
       await supplier
         .projects()
         .with('lumberLists', (builder) => {
-          builder.where('status', LumberList.STATUS.complete)
+          builder.where('status', LumberList.STATUS.COMPLETED)
           builder.withCount('bids')
         })
         .fetch()
@@ -76,8 +75,9 @@ class SupplierController {
 
       let location = WKX.Geometry.parse(Buffer.from(project.location, 'hex'))
       location = { lat: location.x, long: location.y }
-      if (project.status === Project.STATUS.openForBids)
+      if (project.status === Project.STATUS.OPEN_FOR_BIDS)
         projectsAcceptingBids.push({
+          id: project.id,
           address: project.address,
           dateCreated: project.created_at,
           estimatedPrice: project.lumberLists[0].estimated_price,
@@ -87,6 +87,7 @@ class SupplierController {
         })
       else
         closedOrWonProjects.push({
+          id: project.id,
           address: project.address,
           dateCreated: project.created_at,
           estimatedPrice: project.lumberLists[0].estimated_price,
@@ -135,7 +136,6 @@ class SupplierController {
       email: 'required|email',
       name: 'required',
       password: 'required',
-      phoneNumber: 'required',
       lat: 'required',
       long: 'required',
       accountType: 'required'
@@ -160,6 +160,7 @@ class SupplierController {
     user.email = email
     user.password = password
     user.role = User.ROLES.supplier
+    user.status = User.STATUS.deActive
     user.meta = meta
 
     await save(user, response)
@@ -180,8 +181,8 @@ class SupplierController {
     await authenticate.supplier(response, auth)
 
     const rules = {
-      shipping: 'required',
-      tax: 'required',
+      discount: 'required',
+      lumberListId: 'required',
       items: 'required'
     }
 
@@ -190,30 +191,34 @@ class SupplierController {
     if (validation.fails())
       throw new ServerException(validation.messages(), 400)
 
-    const { shipping, tax, items } = request.all()
+    const { discount, lumberListId, items } = request.all()
 
     const user = await auth.getUser()
 
     const lumberListBid = new LumberListBid()
 
-    lumberListBid.shipping_cost = shipping
-    lumberListBid.tax = tax
+    let total = 0
+
+    items.forEach((item) => {
+      total += item.itemRate * item.meta.quantity
+    })
+
+    total *= 1 - discount / 100
+
+    lumberListBid.discount = discount
+    lumberListBid.total = total
     lumberListBid.supplier_id = user.id
+    lumberListBid.lumber_list_id = lumberListId
     lumberListBid.status = LumberListBid.STATUS.open
 
     await save(lumberListBid, response)
 
     items.forEach(async (item) => {
-      const lumberListItem = await LumberListItem.find(item.lumber_list_item_id)
-
-      if (!lumberListItem)
-        throw new ServerException('Lumber list item not found', 404)
-
       const lumberListBidItem = new LumberListBidItem()
 
       lumberListBidItem.amount = item.price
       lumberListBidItem.lumber_list_bid_id = lumberListBid.id
-      lumberListBidItem.lumber_list_item_id = lumberListItem.id
+      lumberListBidItem.lumber_list_item_id = item.lumber_list_item_id
 
       await save(lumberListBidItem, response)
     })
@@ -224,17 +229,32 @@ class SupplierController {
   }
 
   async getBidPage({ response, auth, params }) {
-    // await authenticate.supplier(response, auth)
+    await authenticate.supplier(response, auth)
 
-    const project = await Project.find(params.id)
-    const lumberListItems = await project.lumberListItems().fetch()
+    const supplier = await auth.getUser()
 
-    return {
-      success: true,
-      data: {
-        lumberListItems
+    const project = (
+      await supplier
+        .projects()
+        .where('projects.id', params.id)
+        .with('lumberLists', (builder) => {
+          builder.where('status', LumberList.STATUS.COMPLETED)
+          builder.with('items')
+        })
+        .first()
+    ).toJSON()
+    if (project.lumberLists.length !== 1) {
+      throw new ServerException('Incompatible lumberlist data')
+    }
+
+    const data = {
+      lumberLists: {
+        id: project.lumberLists[0].id,
+        items: project.lumberLists[0].items
       }
     }
+
+    return data
   }
 
   async editSupplier({ response, request, auth }) {
