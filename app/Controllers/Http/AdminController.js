@@ -227,6 +227,101 @@ class AdminController {
       }
     }
   }
+
+  async changeRole({ request, response, auth }) {
+    await authenticate.admin(response, auth)
+
+    const rules = {
+      userId: 'required',
+      role: 'required'
+    }
+
+    const validation = await validate(request.all(), rules)
+    if (validation.fails())
+      throw new ServerException(validation.messages(), 400)
+
+    const { userId, role } = request.all()
+
+    const user = await User.find(userId)
+    if (!user) throw new ServerException('User not found', 404)
+
+    if (
+      ![
+        User.ROLES.customer,
+        User.ROLES.supplier,
+        User.ROLES.estimator,
+        User.ROLES.estimatorAdmin,
+        User.ROLES.customerSupport,
+        User.ROLES.admin
+      ].includes(role)
+    ) {
+      throw new ServerException('Invalid role', 400)
+    }
+
+    user.role = role
+    await user.save()
+
+    return {
+      success: true
+    }
+  }
+
+  async changeStatus({ request, response, auth }) {
+    await authenticate.admin(response, auth)
+
+    const rules = {
+      userId: 'required',
+      status: 'required'
+    }
+
+    const { userId, status } = request.all()
+
+    const validation = await validate(request.all(), rules)
+    if (validation.fails())
+      throw new ServerException(validation.messages(), 400)
+
+    const user = await User.find(userId)
+    if (!user) throw new ServerException('User not found', 404)
+
+    if (
+      ![
+        User.STATUS.active,
+        User.STATUS.deActive,
+        User.STATUS.terminated,
+        User.STATUS.inReview,
+        User.STATUS.paused,
+        User.STATUS.removed,
+        User.STATUS.cancelled
+      ].includes(status)
+    )
+      throw new ServerException('Invalid status', 400)
+
+    if (user.role === User.ROLES.supplier) {
+      if (status !== User.ROLES.terminated) {
+        throw new ServerException('Invalid status for supplier', 400)
+      }
+
+      user.status = status
+    } else {
+      if (
+        [
+          User.STATUS.paused,
+          User.STATUS.removed,
+          User.STATUS.cancelled
+        ].includes(status)
+      ) {
+        throw new ServerException(`Invalid status for ${user.role}`, 400)
+      }
+
+      user.status = status
+    }
+
+    await user.save()
+
+    return {
+      success: true
+    }
+  }
 }
 
 module.exports = AdminController

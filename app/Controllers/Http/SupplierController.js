@@ -160,6 +160,7 @@ class SupplierController {
     user.email = email
     user.password = password
     user.role = User.ROLES.supplier
+    user.status = User.STATUS.deActive
     user.meta = meta
 
     await save(user, response)
