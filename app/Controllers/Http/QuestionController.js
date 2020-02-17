@@ -9,6 +9,9 @@ const AnswerValidator = use('App/Utils/answerValidation')
 const Auth = use('App/Utils/authenticate')
 const authenticate = new Auth()
 const ServerException = use('App/Exceptions/ServerException')
+const User = use('App/Models/User')
+const Mail = use('Mail')
+const Env = use('Env')
 
 class QuestionController {
   async createQuestion({ request, response, auth }) {
@@ -114,6 +117,18 @@ class QuestionController {
     projectQuestion.status = ProjectQuestion.STATUS.answered
 
     await save(projectQuestion, response)
+
+    const project = await Project.find(projectQuestion.project_id)
+    if (!project) throw new ServerException('Project not found', 404)
+
+    const customer = await User.find(project.user_id)
+
+    await Mail.send('emails.project.answer', { project }, (message) => {
+      message
+        .to(customer.email)
+        .from(Env.get('MAIL_FROM'), 'Lumber Click')
+        .subject('Answer Submitted')
+    })
 
     return {
       success: true,
