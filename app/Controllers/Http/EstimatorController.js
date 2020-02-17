@@ -19,7 +19,10 @@ class EstimatorController {
       throw new ServerException('User has no access', 403)
 
     const estimates = await user.estimates().fetch()
-    const projects = await user.estimatedProject().fetch()
+    const projects = await user
+      .estimatedProject()
+      .orderBy('created_at', 'desc')
+      .fetch()
 
     return {
       success: true,
