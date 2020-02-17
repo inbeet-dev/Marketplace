@@ -149,7 +149,7 @@ export default {
       this.$router.push('/')
     },
     profile() {
-      this.$router.push(this.$store.getters['User/getUser'].role)
+      this.$router.push('/' + this.$store.getters['User/getUser'].role)
     }
   }
 }

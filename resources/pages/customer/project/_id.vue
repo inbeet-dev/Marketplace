@@ -37,7 +37,7 @@
           <ul class="status-card__list">
             <li
               v-for="status in statuses"
-              :key="status.name"
+              :key="status.text"
               class="status-card__list__item"
               :class="status.class"
             >
@@ -46,7 +46,7 @@
                 class="status-card__list__item__icon"
                 >mdi-check</v-icon
               >
-              {{ status.name }}
+              {{ status.text }}
             </li>
           </ul>
         </v-card>
@@ -64,6 +64,7 @@
                 color="#f78f1e"
                 width="100%"
                 height="50px"
+                depressed
                 style="color:#ffffff !important"
                 @click.stop="dialog = !dialog"
               >
@@ -77,6 +78,7 @@
                 width="100%"
                 height="50px"
                 style="color:#ffffff !important"
+                depressed
               >
                 lumber list
               </v-btn>
@@ -86,6 +88,7 @@
                 color="#f78f1e"
                 width="100%"
                 height="50px"
+                depressed
                 style="color:#ffffff !important"
                 @click="questionList = !questionList"
               >
@@ -99,6 +102,7 @@
                 width="100%"
                 height="50px"
                 style="color:#ffffff !important"
+                depressed
                 @click.stop="
                   $store.dispatch('Dialog/show', {
                     name: 'BidderSelectionDialog',
@@ -137,12 +141,62 @@ export default {
       dialog: false,
       questionList: false,
       project: {},
-      statuses: [
-        { name: 'Lumber list open', class: 'active' },
-        { name: 'lumber list completed', class: 'active' },
-        { name: 'awating manager approval', class: 'active' },
-        { name: 'project completed', class: 'active' }
-      ]
+      statuses: {
+        'In Review': {
+          text: 'In Review',
+          icon: 'mdi-circle-outline',
+          color: '#000000',
+          class: 'active'
+        },
+        'Lumber List open': {
+          text: 'Not Started',
+          icon: 'mdi-circle-outline',
+          color: '#000000',
+          class: 'active'
+        },
+        'Lumber List Completed': {
+          text: 'Awaiting Manager Approval',
+          icon: 'mdi-clock',
+          color: '#f78f1e',
+          class: 'active'
+        },
+        'Open For Bid': {
+          text: 'Open For Bid',
+          icon: 'mdi-clock',
+          color: '#7c1ef7',
+          class: 'active'
+        },
+        'Waiting For Supplier Confirmation': {
+          text: 'Waiting For Supplier Confirmation',
+          icon: 'mdi-clock',
+          color: '#1e75f7',
+          class: 'active'
+        },
+        'Project Complete': {
+          text: 'Project Complete',
+          icon: 'mdi-check',
+          color: '#3ce057',
+          class: 'active'
+        },
+        'Project Blocked': {
+          text: 'Project Blocked',
+          icon: 'mdi-clock',
+          color: '#FFA726',
+          class: 'active'
+        },
+        'Project Canceled': {
+          text: 'Project Canceled',
+          icon: 'mdi-close-circle',
+          color: '#F4511E',
+          class: 'active'
+        },
+        'Project On Hold': {
+          text: 'Project On Hold',
+          icon: 'mdi-pause',
+          color: '#9E9E9E',
+          class: 'active'
+        }
+      }
     }
   },
   computed: {
